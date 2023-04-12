@@ -1,0 +1,60 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{lmodern}
+\usepackage{authblk}
+\usepackage[skip=10pt plus1pt, indent=20pt]{parskip}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{xparse}
+\usepackage{float}
+
+%%%% debugging de l'affichage : à commenter pour cacher les frames %%%%
+
+%\usepackage[]{showframe}
+
+%%%% authblk en fr %%%%
+
+\renewcommand\Authand{, }
+\renewcommand\Authands{ et }
+
+
+\floatstyle{ruled}
+\restylefloat{figure}
+
+
+\setlength{\textheight}{1.15\textheight}
+\setlength{\headheight}{15.35403pt}
+
+
+\makeatletter
+\NewDocumentCommand\headerspdf{ O {pages=-} m }{% [options for include pdf]{filename.pdf}
+  \includepdf[%
+    #1,
+    pagecommand={\thispagestyle{fancy}},
+    scale=.7,
+    ]{#2}}
+\NewDocumentCommand\secpdf{somO{1}m}{% [short title]{section title}[page specification]{filename.pdf} --- possibly starred
+  \clearpage
+  \thispagestyle{fancy}%
+  \includepdf[%
+    pages=#4,
+    pagecommand={%
+      \IfBooleanTF{#1}{%
+        \section*{#3}}{%
+        \IfNoValueTF{#2}{%
+          \section{#3}}{%
+          \section[#2]{#3}}}},
+    scale=.65,
+    ]%
+    {#5}}
+\makeatother
+
+\pagestyle{fancy}
