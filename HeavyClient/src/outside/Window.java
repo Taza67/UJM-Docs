@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 /**
  * Classe représentant une fenêtre de style éditeur de texte
@@ -11,13 +12,18 @@ import javax.swing.JFrame;
  */
 public class Window extends JFrame {
 	private static final long serialVersionUID = 5686413746254777823L;
-
+	/**
+	 * Variable contenant le panneau d'édition de texte du programme
+	 */
+	private TextPanel textPanel;
+	
+	
 	/**
 	 * Construit une instance de la fenêtre de l'éditeur
 	 */
 	public Window() {
         // Titre de la fenêtre
-        setTitle("UJMDoc");
+        setTitle("UDoc");
 
         // Taille de la fenêtre
         setSize(1000, 900);
@@ -29,6 +35,11 @@ public class Window extends JFrame {
         int x = (dim.width - w) / 2;
         int y = (dim.height - h) / 2;
         setLocation(x, y);
+        
+        // Ajout du panneau d'édition
+        textPanel = new TextPanel("<html><head></head><body>Je m'appelle Mourtaza</body></html>");
+        JScrollPane scrollPane = new JScrollPane(textPanel);
+        add(scrollPane);
         
         // Terminer le processus Java lorsque la fenêtre est fermée
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
