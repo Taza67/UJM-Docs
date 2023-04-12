@@ -4,7 +4,7 @@
 \author{Mourtaza \bsc{AKIL}}
 \author{Hany \bsc{BAYAZID}}
 \author{Bruno \bsc{ROMAIN}}
-\affil{UJM}
+\affil{Université Jean Monnet}
 \date{\today}
 \title{Cahier des charges}
 \begin{document}
@@ -18,10 +18,7 @@
 
 \section{Descriptif}
 
-	Notre projet consistera à réaliser une plateforme d'édition collaborative de documents textes riches (style word, google docs).
-	
-\newpage
-
+	Notre projet consistera à réaliser une plateforme d'édition collaborative de documents textes riches (style word, google docs). Notre plateforme ressemblera typiquement à ce que propose Microsoft Word, mais avec moins de fonctionnalités.
 
 \section{Fonctionnalités}
 
@@ -29,14 +26,14 @@
 	Voici une liste des fonctionnalités qu'on implémentera initialement : \par
 	
 	\begin{itemize}
-		\item \textbf{Création de documents} : \par un utilisateur pourra utiliser la plateforme pour créer un nouveau document et indiquer les caractéristiques de celui-ci. Pour une première version, il n'y aura pas un large éventail de choix. Mais pour la version finale, il aura la possiblité de choisir parmi ces fonctionnalités et éventuellement d'autres (qu'on pense implémenter) : \par 
+		\item \textbf{Création de documents} : \par Un utilisateur pourra utiliser la plateforme pour créer un nouveau document et indiquer les caractéristiques de celui-ci. Pour une première version, il n'y aura pas un large éventail de choix. Mais pour la version finale, il aura la possiblité de choisir parmi ces fonctionnalités et éventuellement d'autres (qu'on pense implémenter) : \par 
 		\begin{itemize}
 			\item[$\bullet$] Choix sur la police,
 			\item[$\bullet$] Génération de structures déjà faites,
 			\item[$\bullet$] Table des matières dynamique.
 		\end{itemize}
 		
-		\item \textbf{Téléchargement} : \par tout document, du moment qu'il puisse l'être, pourra être téléchargé au format PDF (au moins). On tnetera également d'implémenter la possibilité de le télécharger au format utilisé par la plateforme.
+		\item \textbf{Téléchargement} : \par Tout document, du moment qu'il puisse l'être, pourra être téléchargé au format PDF (au moins). On tentera également d'implémenter la possibilité de le télécharger au format utilisé par la plateforme.
 		
 		\item \textbf{Organisation de sessions de travail autour d'un document} : \par Un utilisateur pourra décider de mettre en partage ses documents, c'est-à-dire l'option d'organiser des sessions de collaboration auxquelles d'autres utilisateurs pourront demander l'accès (par un lien par exemple) pour qu'ils puissent lire/modifier un document simultanément.
 		
@@ -46,8 +43,8 @@
 		Les collaborateurs auront l'accés à une panoplie d'options en fonction de leur statuts. Par exemple, tout \emph{collaborateur} (collaborateur étant un statut) aura au moins la possibilité de lire en temps réel le document et un accès permanent à la messagerie de la session.
 		
 		\item \textbf{Messagerie} : \par 
-		Un utilisateur connecté pourra envoyer des messages à tout autre utilisateur lorsqu'ils sont, soit connectés à une même session de travail, soit membres de la même équipe de travail. On pense également à implémenter un système de liens dynamiques qui permettra de référencer une section du document dans le message.
-
+		Un utilisateur connecté pourra envoyer des messages à tout autre utilisateur lorsqu'ils sont, soit connectés à une même session de travail, soit membres de la même équipe de travail. 
+		
 	\end{itemize}
 	
 	\newpage
@@ -60,6 +57,15 @@
 			\item \textbf{Mise en place d'équipes de travail} : \par
 			Un utilisateur pourra créer une équipe de travail dans laquelle il accordera des statuts aux membres de l'équipe. La différence avec les sessions de travail se trouvent dans l'idée qu'une équipe de travail est permanente alors qu'une session de travail aura une durée de vie. De plus, dans une équipe, dans une äuipe de travail, il y aura également un système de hiérarchie plus complexe que celui des sessions de travail. \par
 			Les membres d'une équipe auront accès à tous les documents réalisés dans le cadre du "projet" pour lequel l'équipe existe.
+			
+			\item \textbf{Commentaires} : \par
+			L'idée d'intégrer les commentaires et annotations nous semble intéressante. Ce sera probablement l'une des fonctionnalités qu'on tentera d'intégrer parmi les secondaires.
+			
+			
+			\item \textbf{Liens/références dynamiques} : \par
+			On pense également à implémenter un système de liens dynamiques qui permettra de référencer une section du document dans un message.
+		
+			
 		\end{itemize}
 		
 		\section{Architecture}
@@ -79,15 +85,79 @@
 				\item[$\bullet$] Le client lourd, qui permettra une connexion via une application en \textsl{Swing/JavaFX}.
 			\end{itemize}
 		\end{itemize}
-	\newpage
+		
+		Au niveau de l'organisation du projet, on aura un projet java qui implémentera le client lourd et un projet web dynamique, qui servira de serveur de données (communication avec la base de données, intermédiaire entre les clients, etc) et serveur web pour la plateforme web. 
+		
+	\section{Plan de la plateforme}
+
+	Voici, globalement, les étapes à réaliser pour utiliser notre plateforme :
 	
+	\begin{itemize}
+	
+		\item L'utilisateur, en arrivant sur la plateforme, devra avant tout s'authentifier. Une interface de connexion sera donc mise en place, aussi bien côté swing que côté web.
+		
+		\item Il accèdera ensuite à un panneau qui lui permettra soit de charger des documents sur lesquels il a déjà travaillé, soit d'en créer un nouveau.
+		
+		\item S'il a demandé à créer un nouveau, un panneau de mise en forme pré-traitement lui sera ouvert.
+		
+		\item Il aura ensuite accès au panneau d'édition sur lequel il aura 3 sections (pour l'instant) : \par
+		
+		\begin{itemize}
+			
+			\item[$\bullet$] Une barre de menu qui va lui permettre des options sur le fichier (sauvegarde, chargement, exportation, annuler modification, etc)
+			
+			\item[$\bullet$] Un panneau qui donner accès à tous les outils de gestion de mise en forme, police, listes, couleurs, etc.
+			
+			\item[$\bullet$] Le panneau d'édition de texte.
+		
+		\end{itemize}
+	
+	\end{itemize}		
+	
+	\section{Base de données}
+	
+	Pour l'instant, notre base de données est plutôt élémentaire. Elle n'a que deux tables. En fonction des fonctionnalités qu'on implémentera, on suppose que cette base s'enrichira.
+	
+	\begin{itemize}
+		
+		\item Une table qui va stocker les informations sur les utilisateurs : \par
+		
+		\begin{itemize}
+			
+			\item[$\bullet$] Un identifiant unique
+			
+			\item[$\bullet$] Un mot de passe crypté
+			
+			\item[$\bullet$] La liste des documents auxquels il a accès
+			
+		\end{itemize}
+		
+		\item Une table qui va stocker les informations sur les documents : \par
+		
+		\begin{itemize}
+		
+			\item[$\bullet$] Un identifiant unique
+			
+			\item[$\bullet$] Le nom du fichier
+			
+			\item[$\bullet$] Caractéristiques (format, taille, etc)
+			
+			\item[$\bullet$] Propriétaire
+			
+			\item[$\bullet$] Liste des collaborateurs (personnes qui y ont accès en plus du propriétaire)
+			
+			\item[$\bullet$] Date de dernière modification
+		
+		\end{itemize}
+	
+	\end{itemize}
+	
+	\newpage
 	
 	\section{Annexe}
 	\appendix
-	\newpage
 	
-	\subsection{premier annexe}
-\par
+	\subsection{Diagramme de cas d'utilisation}
 
 	\begin{figure}[hb]
 		\centering
@@ -129,7 +199,27 @@
 	
 	\caption{Diagramme de séquence pour le cas de la suppression d'un fichier}
 	\end{figure}
-	
 
+	\newpage	
+	
+	\subsection{Modèle de l'interface pour une version initiale}
+	
+	\begin{figure}[hb]
+	\centering
+	\includegraphics[scale=.6]{setup/modele_interface.png}
+	
+	\caption{Modèle de l'interface pour une version initiale}
+	\end{figure}	
+	
+	\newpage
+	
+	\subsection{Modèle entité-assiocation de la base de données initiale}
+	
+	\begin{figure}[hb]
+	\centering
+	\includegraphics[scale=.5]{setup/modele_entite_association.png}
+	
+	\caption{Modèle entité-assiocation de la base de données initiale}
+	\end{figure}
 		
 \end{document}
