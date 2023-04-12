@@ -1,0 +1,135 @@
+\input{setup/preamble.tex}
+
+\author{Valentin \bsc{RIEU-FERRARA}}
+\author{Mourtaza \bsc{AKIL}}
+\author{Hany \bsc{BAYAZID}}
+\author{Bruno \bsc{ROMAIN}}
+\affil{UJM}
+\date{\today}
+\title{Cahier des charges}
+\begin{document}
+
+\maketitle
+
+\newpage
+\tableofcontents
+
+\newpage
+
+\section{Descriptif}
+
+	Notre projet consistera à réaliser une plateforme d'édition collaborative de documents textes riches (style word, google docs).
+	
+\newpage
+
+
+\section{Fonctionnalités}
+
+	\subsection{Principales}
+	Voici une liste des fonctionnalités qu'on implémentera initialement : \par
+	
+	\begin{itemize}
+		\item \textbf{Création de documents} : \par un utilisateur pourra utiliser la plateforme pour créer un nouveau document et indiquer les caractéristiques de celui-ci. Pour une première version, il n'y aura pas un large éventail de choix. Mais pour la version finale, il aura la possiblité de choisir parmi ces fonctionnalités et éventuellement d'autres (qu'on pense implémenter) : \par 
+		\begin{itemize}
+			\item[$\bullet$] Choix sur la police,
+			\item[$\bullet$] Génération de structures déjà faites,
+			\item[$\bullet$] Table des matières dynamique.
+		\end{itemize}
+		
+		\item \textbf{Téléchargement} : \par tout document, du moment qu'il puisse l'être, pourra être téléchargé au format PDF (au moins). On tnetera également d'implémenter la possibilité de le télécharger au format utilisé par la plateforme.
+		
+		\item \textbf{Organisation de sessions de travail autour d'un document} : \par Un utilisateur pourra décider de mettre en partage ses documents, c'est-à-dire l'option d'organiser des sessions de collaboration auxquelles d'autres utilisateurs pourront demander l'accès (par un lien par exemple) pour qu'ils puissent lire/modifier un document simultanément.
+		
+		\item \textbf{Système de status} : \par Tous les utilisateurs connectés auront un ensemble de statuts et en fonction de ces statuts, ils auront l'accés à certaines options et services. Tous les utilisateurs connectés à la session seront par exemple considérés comme des \emph{collaborateurs}
+		
+		\item \textbf{Options} : \par 
+		Les collaborateurs auront l'accés à une panoplie d'options en fonction de leur statuts. Par exemple, tout \emph{collaborateur} (collaborateur étant un statut) aura au moins la possibilité de lire en temps réel le document et un accès permanent à la messagerie de la session.
+		
+		\item \textbf{Messagerie} : \par 
+		Un utilisateur connecté pourra envoyer des messages à tout autre utilisateur lorsqu'ils sont, soit connectés à une même session de travail, soit membres de la même équipe de travail. On pense également à implémenter un système de liens dynamiques qui permettra de référencer une section du document dans le message.
+
+	\end{itemize}
+	
+	\newpage
+	\subsection{Secondaires}
+	
+		Voici certaines des fonctionnalités de travail qu'on ajoutera aux fonctionnalités principales : \par 
+		
+		\begin{itemize}
+		
+			\item \textbf{Mise en place d'équipes de travail} : \par
+			Un utilisateur pourra créer une équipe de travail dans laquelle il accordera des statuts aux membres de l'équipe. La différence avec les sessions de travail se trouvent dans l'idée qu'une équipe de travail est permanente alors qu'une session de travail aura une durée de vie. De plus, dans une équipe, dans une äuipe de travail, il y aura également un système de hiérarchie plus complexe que celui des sessions de travail. \par
+			Les membres d'une équipe auront accès à tous les documents réalisés dans le cadre du "projet" pour lequel l'équipe existe.
+		\end{itemize}
+		
+		\section{Architecture}
+		
+		En terme d'architecture, on reprendra exactement ce qui est demandé dans le sujet :
+		
+		\begin{itemize}
+		
+			\item Un serveur qui hébergera les documents, qui servira d'intermédiaire de communication entre les clients que ce soit pour la messagerie ou l'écriture collaborative de documents. Il stockera également toutes les informations sur les utilisateurs, équipes, sessions de travail.
+			
+			\item Le client léger/lourd permettra de se connecter, ou non (pour la réalisation de documents à court terme), et ensuite de travailler sur des documents personnels ou des documents collaboratifs (uniquement si identifié) : \par
+			
+			\begin{itemize}
+			
+				\item[$\bullet$] Le client léger, qui aura plus ou moins les mêmes options que le client lourd, en ligne via une connexion Web.
+				
+				\item[$\bullet$] Le client lourd, qui permettra une connexion via une application en \textsl{Swing/JavaFX}.
+			\end{itemize}
+		\end{itemize}
+	\newpage
+	
+	
+	\section{Annexe}
+	\appendix
+	\newpage
+	
+	\subsection{premier annexe}
+\par
+
+	\begin{figure}[hb]
+		\centering
+
+		\includegraphics[scale=.3]{setup/diagramme_de_cas.png}
+	\caption{Diagramme de cas d'utilisation}	
+	\end{figure}
+	\newpage
+	
+	\subsection{Diagramme de séquence de partage}
+	
+	\begin{figure}[hb]
+		\vspace*{1em}
+		\centering
+		\includegraphics[scale=.13]{setup/diagramme_sequence_partage.png}
+		
+		\caption{Diagramme de séquence de partage}
+		\vspace*{1em}
+	\end{figure}
+	
+	\newpage
+	
+	\subsection{Diagramme de création}
+	
+	\begin{figure}[hb]
+	\centering
+	\includegraphics[scale=.32]{setup/diagramme_sequence_creation.png}
+	
+	\caption{Diagramme de séquence de création}
+	\end{figure}
+	
+	\newpage
+	
+	\subsection{Diagramme de séquence de suppression}
+	
+	\begin{figure}[hb]
+	\centering
+	\includegraphics[scale=.3]{setup/diagramme_sequence_suppression.png}
+	
+	\caption{Diagramme de séquence pour le cas de la suppression d'un fichier}
+	\end{figure}
+	
+
+		
+\end{document}
