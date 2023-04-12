@@ -11,7 +11,7 @@ public class TextPanel extends JEditorPane {
 
 	/**
 	 * Construit une instance du panneau d'édition du texte
-	 * @param content
+	 * @param content Contenu préchargé dans l'éditeur de texte
 	 */
 	public TextPanel(String content) {
 		super();
