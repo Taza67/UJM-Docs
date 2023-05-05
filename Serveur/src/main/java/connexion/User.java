@@ -1,17 +1,5 @@
 package connexion;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.sql.Date;
-import com.mysql.cj.xdevapi.Result;
-
-import communication.AttackInformations;
-import inside.Board;
-
 public class User {
 	/**
 	 * Identifiant de l'utilisateur
@@ -101,5 +89,14 @@ public class User {
 	 */
 	public void setPassword(String password) {this.password = password;}
 	
+	public User(int idt, String p, String mdp) {
+		this.id = idt;
+		this.pseudo = p;
+		this.password = mdp;
+		position = 0;
+	}
 	
+	public static void AddUser() {
+		
+	}
 }
