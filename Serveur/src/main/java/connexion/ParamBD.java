@@ -3,7 +3,7 @@ package connexion;
 import javax.servlet.ServletContext;
 
 public class ParamBD {
-	
+
 	protected static String bdURL;
 	protected static String bdLogin;
 	protected static String bdPassword;
