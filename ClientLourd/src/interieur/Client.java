@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+
 /**
  * Classe représentant un client vis-à-vis de la communication TCP
  * @author mourtaza
@@ -53,7 +54,6 @@ public class Client implements IConfig {
 			out = new DataOutputStream(cliSoc.getOutputStream());
 			System.err.println("- Flux d'entrée/sortie initialisés");
 			
-			// Récupération de la notice d'utilisation
 			out.writeUTF(pseudo);
 			out.writeUTF(password);
 			System.err.println("- Envoi des identifiants de connexion");
@@ -119,5 +119,10 @@ public class Client implements IConfig {
 		// On suppose dans notre cas que cet entier est impossible
 		// à récupérer sur le flux d'entrée
 		return IMPOSSIBLE_CODE; 
+	}
+	
+	public static void main(String[] args) {
+		Client c = new Client(COMMUNICATION_PORT);
+		c.connect("tom","tomlerat");
 	}
 }
