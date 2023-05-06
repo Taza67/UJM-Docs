@@ -10,24 +10,25 @@ import javax.servlet.http.HttpSession;
 
 
 @WebServlet(urlPatterns = "/login", loadOnStartup = 1)
+
 public class Login extends HttpServlet{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public void init() {
-		ParamBD.init(this.getServletContext());
-	}
-
-
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// si la personne est déjà connectée, on l'envoie sur sa TODOList
-		HttpSession ses = req.getSession();
-
-	}
+    public void init() {
+        ParamBD.init(this.getServletContext());
+    }
 
 
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-	}
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        // si la personne est déjà connectée, on l'envoie sur sa TODOList
+        HttpSession ses = req.getSession();
+
+    }
+
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+    }
+
 }
-
-

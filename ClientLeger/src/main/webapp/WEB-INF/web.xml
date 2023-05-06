@@ -8,8 +8,20 @@
         <servlet-class>fr.clientleger.HelloServlet
         </servlet-class>
     </servlet>
+        
+    <servlet>
+        <servlet-name>Inscription</servlet-name>
+        <servlet-class>fr.clientleger.Inscription</servlet-class>
+    </servlet>
+    
     <servlet-mapping>
         <servlet-name>Hello</servlet-name>
         <url-pattern></url-pattern>
     </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>Inscription</servlet-name>
+        <url-pattern>/inscription</url-pattern>
+    </servlet-mapping>
+    
 </web-app>
