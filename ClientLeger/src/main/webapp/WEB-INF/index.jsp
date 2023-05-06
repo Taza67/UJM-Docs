@@ -22,7 +22,9 @@
 
     <c:when test="${inscrit!= null}">
         <p>Nouvel inscrit</p>
+        <p>Vous pouvez vous connecter</p>
         <br/>
+
     </c:when>
 </c:choose>
 
