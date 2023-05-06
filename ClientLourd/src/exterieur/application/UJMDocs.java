@@ -1,10 +1,11 @@
-package exterieur;
+package exterieur.application;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Button;
 
@@ -13,18 +14,15 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Component;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 import javax.swing.event.ChangeEvent;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.JSeparator;
 import java.awt.Font;
-import javax.swing.JEditorPane;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JPanel;
@@ -34,18 +32,21 @@ import javax.swing.JScrollPane;
 import java.awt.CardLayout;
 import javax.swing.BoxLayout;
 import java.awt.TextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class UJMDocs {
 	public static final int DEFAULT_EDITOR_MARGE = 200;
 	public static final int DEFAULT_PAGE_MARGE = 60;
 
 	private JFrame frmUjmDocs;
-	private boolean isMenuBarVisible = true;
+	private boolean isStatusBarVisible = false;
 	private boolean isToolBarVisible = true;
-	private float zoomLevel = 1f;
 	
 	/**
-	 * Launch the application.
+	 * Lance l'application
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -61,14 +62,14 @@ public class UJMDocs {
 	}
 
 	/**
-	 * Create the application.
+	 * Crée l'application
 	 */
 	public UJMDocs() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise le contenu de la frame
 	 */
 	private void initialize() {
 		frmUjmDocs = new JFrame();
@@ -84,10 +85,12 @@ public class UJMDocs {
 		frmUjmDocs.setTitle("UJM Docs");
 		frmUjmDocs.setBounds(100, 100, 1080, 720);
 		frmUjmDocs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmUjmDocs.setLocationRelativeTo(null);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 		frmUjmDocs.setJMenuBar(menuBar);
+		menuBar.setVisible(false);
 		
 		JMenu mnFichier = new JMenu("Fichier");
 		mnFichier.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
@@ -125,13 +128,13 @@ public class UJMDocs {
 		mntmRefaire.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
 		mndition.add(mntmRefaire);
 		
-		JMenuItem mntmCopier = new JMenuItem("Copier");
-		mntmCopier.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
-		mndition.add(mntmCopier);
-		
 		JMenuItem mntmCouper = new JMenuItem("Couper");
 		mntmCouper.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
 		mndition.add(mntmCouper);
+		
+		JMenuItem mntmCopier = new JMenuItem("Copier");
+		mntmCopier.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
+		mndition.add(mntmCopier);
 		
 		JMenuItem mntmColler = new JMenuItem("Coller");
 		mntmColler.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
@@ -141,13 +144,13 @@ public class UJMDocs {
 		mnVue.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
 		menuBar.add(mnVue);
 		
-		JCheckBoxMenuItem chckbxmntmBarreDeMenu = new JCheckBoxMenuItem("Barre de menu");
-		chckbxmntmBarreDeMenu.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
-		mnVue.add(chckbxmntmBarreDeMenu);
-		
 		JCheckBoxMenuItem chckbxmntmBarreDoutils = new JCheckBoxMenuItem("Barre d'outils");
 		chckbxmntmBarreDoutils.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
 		mnVue.add(chckbxmntmBarreDoutils);
+		
+		JCheckBoxMenuItem chckbxmntmBarreDeStatut = new JCheckBoxMenuItem("Barre de statut");
+		chckbxmntmBarreDeStatut.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
+		mnVue.add(chckbxmntmBarreDeStatut);
 		
 		JMenu mnInsertion = new JMenu("Insertion");
 		mnInsertion.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
@@ -206,9 +209,13 @@ public class UJMDocs {
 		Connecter.setMaximumSize(new Dimension(300, 30));
 		connectionContainerPanel.add(Connecter);
 		
+		////////////////////////// EDITEUR-CARD ////////////////////////////////
+		
 		JPanel editeur = new JPanel();
 		frmUjmDocs.getContentPane().add(editeur, "name_22610450387445");
 		editeur.setLayout(new BorderLayout(0, 0));
+		
+		// Barre d'outils //////////////////////////////////////////////////////
 		
 		JToolBar toolBar = new JToolBar();
 		editeur.add(toolBar, BorderLayout.NORTH);
@@ -246,22 +253,27 @@ public class UJMDocs {
 		Coller.setFont(new Font("Gentium Book Basic", Font.PLAIN, 12));
 		toolBar.add(Coller);
 		
+		// Conteneur de l'éditeur //////////////////////////////////////////////
+		
 		JPanel editorContainerPanel = new JPanel();
+		editorContainerPanel.setSize(new Dimension(90, 1000));
+		editorContainerPanel.setMinimumSize(new Dimension(90, 1000));
+		editorContainerPanel.setPreferredSize(new Dimension(90, 1000));
+		editorContainerPanel.setMaximumSize(new Dimension(90, 1000));
 		editorContainerPanel.setBorder(BorderFactory.createEmptyBorder(DEFAULT_EDITOR_MARGE, DEFAULT_EDITOR_MARGE, DEFAULT_EDITOR_MARGE, DEFAULT_EDITOR_MARGE));
-		editorContainerPanel.setLayout(new BorderLayout(0, 0));
 		
-		JEditorPane editorPane = new JEditorPane();
-		editorPane.setContentType("text/html");
-		editorPane.setText("<html><body></body></html>");
-		editorPane.setBorder(BorderFactory.createEmptyBorder(DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE));
-		editorPane.setPreferredSize(new Dimension(80, 1000));
-		editorPane.setSize(new Dimension(80, 1000));
-		editorPane.setMinimumSize(new Dimension(80, 1000));
-		editorContainerPanel.add(editorPane, BorderLayout.CENTER);
+        // PopupMenu de l'éditeur //////////////////////////////////////////////
+        JPopupMenu popupMenu = new JPopupMenu();
+        
+        JMenuItem ppMnCouper = new JMenuItem("Couper");
+        JMenuItem ppMnCopier = new JMenuItem("Copier");
+        JMenuItem ppMnColler = new JMenuItem("Coller");
+        
+        popupMenu.add(ppMnCouper);
+        popupMenu.add(ppMnCopier);
+        popupMenu.add(ppMnColler);
 		
-		JScrollPane scrollPane = new JScrollPane(editorContainerPanel);
-		scrollPane.setAutoscrolls(true);
-		editeur.add(scrollPane);
+		// Barre de statut /////////////////////////////////////////////////////
 		
 		JToolBar statusBar = new JToolBar();
 		statusBar.setBorder(null);
@@ -271,22 +283,31 @@ public class UJMDocs {
 		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
 		statusBar.add(rigidArea);
 		
-		JLabel NumeroPage = new JLabel("Page 1/1");
-		NumeroPage.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
-		statusBar.add(NumeroPage);
+		JLabel lineIndicator = new JLabel("1 / 1 Lignes");
+		lineIndicator.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
+		statusBar.add(lineIndicator);
 		
-		Component rigidArea1 = Box.createRigidArea(new Dimension(20, 20));
+		Component rigidArea1 = Box.createRigidArea(new Dimension(50, 20));
 		rigidArea1.setPreferredSize(new Dimension(50, 20));
 		statusBar.add(rigidArea1);
 		
-		JLabel MotsCaracteres = new JLabel("0 Mots, 0 caractères");
-		MotsCaracteres.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
-		statusBar.add(MotsCaracteres);
+		JLabel wordIndicator = new JLabel("0 / 0 Mots");
+		wordIndicator.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
+		statusBar.add(wordIndicator);
+		
+		Component rigidArea2 = Box.createRigidArea(new Dimension(50, 20));
+		rigidArea1.setPreferredSize(new Dimension(50, 20));
+		statusBar.add(rigidArea2);
+		
+		JLabel charIndicator = new JLabel("0 / 0 Caractères");
+		charIndicator.setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
+		statusBar.add(charIndicator);
 		
 		Component glue = Box.createGlue();
 		statusBar.add(glue);
 		
 		JSlider zoomSlider = new JSlider();
+		zoomSlider.setMinimum(50);
 		zoomSlider.setValue(100);
 		zoomSlider.setSnapToTicks(true);
 		zoomSlider.setName("Zoom");
@@ -300,52 +321,202 @@ public class UJMDocs {
 		Component rigidArea3 = Box.createRigidArea(new Dimension(20, 20));
 		rigidArea3.setName("Zoom");
 		statusBar.add(rigidArea3);
+        
+        // Éditeur /////////////////////////////////////////////////////////////
+        
+		JScrollPane scrollPane = new JScrollPane(editorContainerPanel);
+		editorContainerPanel.setLayout(new BoxLayout(editorContainerPanel, BoxLayout.X_AXIS));
 		
-		chckbxmntmBarreDeMenu.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				isMenuBarVisible = !isMenuBarVisible;
-				menuBar.setVisible(isMenuBarVisible);
+		JEditorPanePerso textEditorPane = new JEditorPanePerso(lineIndicator, wordIndicator, charIndicator);
+		editorContainerPanel.add(textEditorPane);
+		scrollPane.setAutoscrolls(true);
+		editeur.add(scrollPane);
+		
+		/////////////////////////// GESTION EVENEMENTS /////////////////////////
+		
+		// Panneau de connexion
+		// Gestion des clics sur le bouton connecter
+		Connecter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Vérification des arguments
+				if (pseudo.getText() == null || pseudo.getText().isEmpty() || pseudo.getText().isBlank() || 
+					motDePasse.getText() == null || motDePasse.getText().isEmpty() || motDePasse.getText().isBlank()) {
+					System.err.println("- Appui sur le bouton connexion + Un, au moins, des champs vide");
+			        JOptionPane.showMessageDialog(null, "Un, au moins, des champs vide !!!", "Erreur", JOptionPane.ERROR_MESSAGE);
+			        
+			        return;
+				}
+				
+				System.err.println("- Appui sur le bouton connexion");
+				((CardLayout)frmUjmDocs.getContentPane().getLayout()).next(frmUjmDocs.getContentPane());
+				
+				// Ajout de la barre d'outils
+				isStatusBarVisible = true;
+				menuBar.setVisible(isStatusBarVisible);
 			}
 		});
 		
+		// Barre de menu
+		// // Édition
+		// // // Annuler
+		mntmAnnuler.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Annulation de la dernière modification
+				if (textEditorPane.getUndoManager().canUndo()) {
+					textEditorPane.getUndoManager().undo();
+                }
+			}
+		});
+		
+		// // // Refaire
+		mntmRefaire.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Annulation de la dernière annulation
+				if (textEditorPane.getUndoManager().canRedo()) {
+					textEditorPane.getUndoManager().redo();
+                }
+			}
+		});
+		
+		// // // Couper
+		mntmCouper.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Coupure du texte sélectionné
+				textEditorPane.cut();
+			}
+		});
+		
+		// // // Copier
+		mntmCopier.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Copie du texte sélectionné
+				textEditorPane.copy();
+			}
+		});
+		
+		// // // Coller
+		mntmColler.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Collage à la position du curseur
+				textEditorPane.pasteText();
+			}
+		});
+		
+		// // Vue
+		// // // Barre d'outils
 		chckbxmntmBarreDoutils.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				isToolBarVisible = !isToolBarVisible;
-				toolBar.setVisible(isToolBarVisible);
+				// Coupure du texte sélectionné
+				textEditorPane.cut();toolBar.setVisible(isToolBarVisible);
 			}
 		});
 		
+		// // // Barre de statut
+		chckbxmntmBarreDeStatut.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				isStatusBarVisible = !isStatusBarVisible;
+				statusBar.setVisible(isStatusBarVisible);
+			}
+		});
+		
+		// Barre de statut
+		// // Zoom
 		zoomSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				int editorMarge = DEFAULT_EDITOR_MARGE * (200 - zoomSlider.getValue()) / 100;
 				
+				// Marges
 				editorContainerPanel.setBorder(BorderFactory.createEmptyBorder(editorMarge, editorMarge, editorMarge, editorMarge));
 				editorContainerPanel.revalidate();
 				
-				zoomLevel = zoomSlider.getValue() - 100;
-				
-				System.err.println(zoomLevel);
-				
-				// HTML
-				String content = editorPane.getText();
-	            HTMLEditorKit editorKit = new HTMLEditorKit();
-	            editorPane.setEditorKit(editorKit);
-	            StyleSheet styleSheet = new StyleSheet();
-	            styleSheet.addRule("body { transform: scale(" + zoomLevel + "); color: \"purple\"; }");
-	            editorKit.setStyleSheet(styleSheet);
-	            editorPane.setText(content);
+				// Document
+				double scaleFactor = zoomSlider.getValue() / 100.;
+				textEditorPane.scale(scaleFactor);
 			}
 		});
 		
-		frmUjmDocs.addKeyListener(new KeyAdapter() {
-		    @Override
-		    public void keyPressed(KeyEvent e) {
-		        if (e.getKeyCode() == KeyEvent.VK_ALT) {
-		        	isMenuBarVisible = !isMenuBarVisible;
-		        	menuBar.setVisible(isMenuBarVisible);
-		        	chckbxmntmBarreDeMenu.setEnabled(isMenuBarVisible);
-		        }
-		    }
+		// Barre d'outils
+		// // Couper
+		Couper.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// Coupure du texte sélectionné
+				textEditorPane.cut();
+			}
+		});
+		
+		// // Copier
+		Copier.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Copie du texte sélectionné
+				textEditorPane.copy();
+			}
+		});
+		
+		// // Coller
+		Coller.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// Collage à la position du curseur
+				textEditorPane.pasteText();
+			}
+		});
+		
+		// Souris
+		// // Clic sur le panneau d'édition
+		textEditorPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    popupMenu.show(textEditorPane, e.getX(), e.getY());
+                }
+			}
+		});
+		
+		// PopupMenu
+		// // Couper
+		ppMnCouper.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// Coupure du texte sélectionné
+				textEditorPane.cut();
+			}
+		});
+		
+		// // Copier
+		ppMnCopier.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Copie du texte sélectionné
+				textEditorPane.copy();
+			}
+		});
+		
+		// // Coller
+		ppMnColler.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// Collage à la position du curseur
+				textEditorPane.pasteText();
+			}
 		});
 	}
 }
