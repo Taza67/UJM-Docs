@@ -12,7 +12,7 @@ import org.w3c.dom.NodeList;
 public class ParamBD {
 
 	protected static String bdURL;
-	protected static String bdLogin;
+	protected String bdLogin;
 	protected static String bdPassword;
 
 	public static void init(ServletContext context) {
