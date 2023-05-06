@@ -1,4 +1,4 @@
-package main.java.connexion.document;
+package connexion.document;
 
 import java.sql.Date;
 import java.util.ArrayList;

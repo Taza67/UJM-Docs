@@ -1,4 +1,4 @@
-package main.java.connexion.document;
+package connexion.document;
 
 import java.util.LinkedList;
 import connexion.User;

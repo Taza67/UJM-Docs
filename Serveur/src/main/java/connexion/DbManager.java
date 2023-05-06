@@ -84,6 +84,37 @@ public class DbManager extends ParamBD{
         System.out.println("Utilisateur trouvé.");
         return new User(uid, p,pw);
     }
+    
+    public boolean IsUserValid(User u) {
+        int uid = -1;
+        try {
+            Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
+            String sql = "SELECT id, pseudo, mot_de_passe "
+                    + "FROM utilisateur "
+                    + "WHERE pseudo = ? "
+                    + "AND mot_de_passe = ?;";
+            PreparedStatement pst = c.prepareStatement(sql);
+            pst.setString(1, u.getPseudo());
+            pst.setString(2, u.getPassword());
+            ResultSet rs = pst.executeQuery();
+            if(rs.next()) {
+                uid = rs.getInt("id");
+            }
+            rs.close();
+            pst.close();
+            c.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if(uid == -1) {
+            System.out.println("Aucun utilisateur correspondant.");
+            return false;
+        }
+
+        System.out.println("Utilisateur trouvé.");
+        return true;
+    }
+
 
     public static void AddUser(User u) {
         int ligne = -1;
