@@ -17,26 +17,52 @@ import com.mysql.cj.xdevapi.Result;
 
 
 
+
 public class DbManager extends ParamBD{
 
 	private volatile HashMap<Integer, User> UserList;
+	private static Connection connection;
 
 	public DbManager() {
 		UserList = new HashMap();
+		init();
+	}
+
+
+	private void init() {
+		ParamBD.init("src/main/webapp/WEB-INF/web.xml");
+		String jdbcDriver = "com.mysql.cj.jdbc.Driver";
+		String jdbcUrl = ParamBD.bdURL;
+		String jdbcLogin = ParamBD.bdLogin;
+		String jdbcPassword = ParamBD.bdPassword;
+		
+		System.out.println("JDBC_DRIVER: " + "com.mysql.cj.jdbc.Driver");
+	    System.out.println("JDBC_URL: " + bdURL);
+	    System.out.println("JDBC_LOGIN: " + bdLogin);
+	    System.out.println("JDBC_PASSWORD: " + bdPassword);
+
+		try {
+			Class.forName(jdbcDriver);
+			connection = DriverManager.getConnection(jdbcUrl, jdbcLogin, jdbcPassword);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public HashMap<Integer, User> getUserList() {
 		return UserList;
 	}
 
+	public static Connection getConnection() {return connection;}
+
 	public static User IsUserValid(String p, String pw) {
 		int uid = -1;
 		try {
 			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
-			String sql = "SELECT id, pseudo,mot_de_passe"
-					+ "FROM utilisateur"
-					+ "WHERE pseudo = ? "
-					+ "AND mot_de_passe = ?;";
+			String sql = "SELECT id, pseudo, mot_de_passe "
+			        + "FROM utilisateur "
+			        + "WHERE pseudo = ? "
+			        + "AND mot_de_passe = ?;";
 			PreparedStatement pst = c.prepareStatement(sql);
 			pst.setString(1, p);
 			pst.setString(2, pw);
@@ -59,16 +85,17 @@ public class DbManager extends ParamBD{
 			return new User(uid, p,pw);
 		}
 	}
-	
-	
-	public static boolean IsUserValid(User u) {
+
+
+	public boolean IsUserValid(User u) {
 		int uid = -1;
 		try {
 			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
-			String sql = "SELECT id, pseudo,mot_de_passe"
-					+ "FROM utilisateur"
+			String sql = "SELECT id, pseudo,mot_de_passe "
+					+ "FROM utilisateur "
 					+ "WHERE pseudo = ? "
 					+ "AND mot_de_passe = ?;";
+			System.out.println(sql);
 			PreparedStatement pst = c.prepareStatement(sql);
 			pst.setString(1, u.getPseudo());
 			pst.setString(2, u.getPassword());
@@ -123,8 +150,8 @@ public class DbManager extends ParamBD{
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 
 
 
