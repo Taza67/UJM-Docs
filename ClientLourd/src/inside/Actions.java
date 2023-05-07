@@ -1,4 +1,4 @@
-package interieur;
+package inside;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +35,7 @@ public class Actions implements IConfig {
 	
 	/**
 	 * Retourne la tête de la liste
+	 * @return Action en tête de la liste
 	 */
 	public synchronized Integer getHeadAction() {
 		if (actionsCodes.isEmpty()) return null;

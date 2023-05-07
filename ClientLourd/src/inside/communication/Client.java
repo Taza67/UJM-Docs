@@ -1,9 +1,11 @@
-package interieur;
+package inside.communication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+
+import inside.IConfig;
 
 
 /**
@@ -41,6 +43,8 @@ public class Client implements IConfig {
 	
 	/**
 	 * Initie la connexion avec le serveur
+	 * @param pseudo Pseudo à communiquer pour l'authentification
+	 * @param password Mot de passe à communiquer pour l'authentification
 	 * @return true si la connexion s'est réalisée, false sinon
 	 */
 	public boolean connect(String pseudo, String password) {
@@ -121,6 +125,10 @@ public class Client implements IConfig {
 		return IMPOSSIBLE_CODE; 
 	}
 	
+	/**
+	 * Méthode appelée pour tester
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Client c = new Client(COMMUNICATION_PORT);
 		c.connect("tom","tomlerat");

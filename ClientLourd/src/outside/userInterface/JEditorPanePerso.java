@@ -1,4 +1,4 @@
-package exterieur.application;
+package outside.userInterface;
 
 import java.awt.Font;
 import java.awt.Insets;
@@ -11,16 +11,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.EventObject;
-
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
-import interieur.IConfig;
-import interieur.TextUtilities;
+
+import inside.IConfig;
+import inside.Manager;
+import inside.utilities.TextUtilities;
 
 /**
  * Classe représentant un panneau d'édition de texte personnalisé
@@ -30,6 +29,10 @@ import interieur.TextUtilities;
 public class JEditorPanePerso extends JEditorPane implements IConfig {
 	private static final long serialVersionUID = -1414889860922748909L;
 	
+	/**
+	 * Manager de l'application
+	 */
+	private Manager manager;
 	/**
 	 * Gestionnaire de undo/redo (défaire/refaire)
 	 */
@@ -62,9 +65,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 
 	/**
 	 * Instancie un panneau d'édition de texte personnalisé
-	 * @param li JLabel indiquant le nombre de lignes
-	 * @param wi JLabel indiquant le nombre de mots
-	 * @param ci JLabel indiquant le nombre de caractères
+	 * @param li Référence au JLabel indiquant le nombre de lignes
+	 * @param wi Référence au JLabel indiquant le nombre de mots
+	 * @param ci Référence au JLabel indiquant le nombre de caractères
 	 */
 	public JEditorPanePerso(JLabel li, JLabel wi, JLabel ci) {
 		super("text/plain", "");
@@ -95,6 +98,14 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 		return undoManager;
 	}
 	
+	/**
+	 * Modifie la référence au manager de l'application
+	 * @param manager Nouvelle référence à un manager
+	 */
+	public void setManager(Manager ma) {
+		manager = ma;
+	}
+	
 	
 	/**
 	 * Initialisate la gestion d'événements
@@ -105,9 +116,21 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
             @Override
             public void keyPressed(KeyEvent e) {
                 if ((e.getKeyCode() == KeyEvent.VK_Z) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
-                    if (undoManager.canUndo()) undoManager.undo();
+                    if (undoManager.canUndo()) {
+                    	// Annuler
+                    	undoManager.undo();
+                    	// manager.faisQuelqueChose() //////////////////////////////
+                        //
+                        //
+                    }
                 } else if ((e.getKeyCode() == KeyEvent.VK_Y) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
-                    if (undoManager.canRedo())undoManager.redo();
+                    if (undoManager.canRedo()) {
+                    	// Refaire
+                    	undoManager.redo();
+                    	// manager.faisQuelqueChose() //////////////////////////////
+                    	//
+                    	//
+                    }
                 }
             }
         });
@@ -124,11 +147,17 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
                 updateCounts(epp.getText());
+                // manager.faisQuelqueChose() //////////////////////////////
+                //
+                //
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
                 updateCounts(epp.getText());
+                // manager.faisQuelqueChose() //////////////////////////////
+                //
+                //
 			}
 			
 			/**
@@ -175,6 +204,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 
             // On retire le texte sélectionné
             this.replaceSelection("");
+            // manager.faisQuelqueChose() //////////////////////////////
+            //
+            //
         }
     }
 	
@@ -199,6 +231,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
         try {
             String clipboardText = (String) clipboard.getData(DataFlavor.stringFlavor);
             this.replaceSelection(clipboardText);
+            // manager.faisQuelqueChose() //////////////////////////////
+            //
+            // 
         } catch (IOException | UnsupportedFlavorException e) {
             e.printStackTrace();
         }
