@@ -15,19 +15,22 @@ public class Login extends HttpServlet{
 
     private static final long serialVersionUID = 1L;
 
-    public void init() {
+    @Override
+	public void init() {
         ParamBD.init(this.getServletContext());
     }
 
 
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    @Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // si la personne est déjà connectée, on l'envoie sur sa TODOList
         HttpSession ses = req.getSession();
 
     }
 
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    @Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
     }
 

@@ -13,8 +13,8 @@ public class DocManager {
 	 * Document à modifier
 	 */
 	private Document d;
-	
-	
-	
-	
+
+
+
+
 }
