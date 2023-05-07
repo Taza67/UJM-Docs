@@ -14,7 +14,7 @@ public class DocManager {
 	 */
 	private Document d;
 	
-
-
-
+	
+	
+	
 }
