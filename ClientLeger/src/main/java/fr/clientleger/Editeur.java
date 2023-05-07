@@ -1,13 +1,22 @@
 package fr.clientleger;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
 import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import connexion.DbManager;
+import connexion.User;
 
 @WebServlet(name = "Editeur", value = "/editeur")
 public class Editeur extends HttpServlet {
-    @Override
+    private static final long serialVersionUID = 1L;
+
+	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
 
@@ -19,7 +28,7 @@ public class Editeur extends HttpServlet {
 
         User u = (User)session.getAttribute("user");
 
-        if(!(DbManager.isUserValid(u))) {
+        if(!(DbManager.IsUserValid(u))) {
             session.setAttribute("error", "weird");
             response.sendRedirect("");
             return;
@@ -27,7 +36,7 @@ public class Editeur extends HttpServlet {
         if(u.isGuest()) {
             session.setAttribute("guest", "true");
         }
-        
+
         request.getRequestDispatcher("WEB-INF/jsp/editeur.jsp").forward(request, response);
     }
 

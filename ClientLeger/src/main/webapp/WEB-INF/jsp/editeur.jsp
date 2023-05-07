@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="connexion.User" %> <!-- import the User class -->
 <jsp:useBean id="u" class="connexion.User" scope="session"/>
 
 <!DOCTYPE html>
@@ -32,7 +33,7 @@
 
     <c:otherwise>
       <%
-        pseudo = user.pseudo();
+        pseudo = u.getPseudo();
         guest = false;
       %>
     </c:otherwise>

@@ -29,6 +29,12 @@
 		<servlet-name>Inscription</servlet-name>
 		<servlet-class>fr.clientleger.Inscription</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>Editeur</servlet-name>
+		<servlet-class>fr.clientleger.Editeur</servlet-class>
+	</servlet>
+	
 
 	<servlet-mapping>
 		<servlet-name>Hello</servlet-name>
