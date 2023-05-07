@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!ClientLeger/src/main/webapp/WEB-INF/lib/*.jar
 *.war
 *.nar
 *.ear

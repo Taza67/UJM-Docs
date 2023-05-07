@@ -38,7 +38,8 @@ public class HelloServlet extends HttpServlet {
         User u;
         if((u = DbManager.IsUserValid(pseudo, mdp)) == null) {
             req.setAttribute("error", "pseudo");
-            return doGet(req, resp);
+            doGet(req, resp);
+            return;
         }
 
         HttpSession ses = req.getSession();

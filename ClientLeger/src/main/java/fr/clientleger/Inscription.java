@@ -42,6 +42,7 @@ public class Inscription extends HttpServlet {
         if(DbManager.IsUserValid(pseudo, mdp)!= null) {
             request.setAttribute("error", "exists");
             doGet(request, response);
+            return;
         }
 
         DbManager.AddUser(new User(1, pseudo, mdp));
