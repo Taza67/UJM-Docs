@@ -20,6 +20,14 @@ public class User {
 	 */
 	private String password;
 	
+	/**
+	 * Booleen indiquant si l'utilisateur 
+	 * est un invité ou non
+	 */
+	
+	private boolean guest;
+	
+	
 	// Getters
 	
 	/**
@@ -89,12 +97,27 @@ public class User {
 	 */
 	public void setPassword(String password) {this.password = password;}
 	
+	/**
+	 * Change le statut de l'uitilisateur
+	 * @param le nouveau de l'utilisateur (invité ou non) 
+	 * 
+	 * @see User#guest
+	 */
+	public void setGuest(boolean state) {this.guest = state;}
+	
 	public User(int idt, String p, String mdp) {
 		this.id = idt;
 		this.pseudo = p;
 		this.password = mdp;
 		position = 0;
+		guest = false;
 	}
+	
+	/**
+	 * Indique si l'utilisateur est connecté ou non
+	 * @see User#guest
+	 */
+	public boolean isGuest() {return guest;}
 	
 	public static void AddUser() {
 		
