@@ -12,7 +12,9 @@ import java.io.IOException;
 @WebServlet(name = "Inscription", value = "/inscription")
 public class Inscription extends HttpServlet {
 
-    public void init(){
+    private static final long serialVersionUID = 1L;
+
+	public void init(){
         ParamBD.init(this.getServletContext());
     }
 

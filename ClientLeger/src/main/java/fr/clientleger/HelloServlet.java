@@ -12,7 +12,8 @@ import javax.servlet.annotation.*;
 @WebServlet(name = "helloServlet")
 public class HelloServlet extends HttpServlet {
 
-    public void init() {
+    private static final long serialVersionUID = 1L;
+	public void init() {
         ParamBD.init(this.getServletContext());
     }
 
