@@ -14,13 +14,6 @@
 			<br />
 		</c:when>
 
-
-
-		<c:when test="${invite!= null}">
-			<p>Invité</p>
-			<br />
-		</c:when>
-
 		<c:when test="${inscrit!= null}">
 			<p>Nouvel inscrit</p>
 			<p>Vous pouvez vous connecter</p>

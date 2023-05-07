@@ -27,18 +27,18 @@ public class HelloServlet extends HttpServlet {
         String invite = req.getParameter("invite");
 
         if(invite != null && invite.equals("true")) {
+            User u = new User(1, "invité", "");
 
-            req.setAttribute("invite", "true");
-
-            doGet(req, resp);
+            HttpSession ses = req.getSession();
+            ses.setAttribute("user", u);
+            resp.sendRedirect("editeur");
             return;
         }
         // test validité utilisateur
         User u;
         if((u = DbManager.IsUserValid(pseudo, mdp)) == null) {
             req.setAttribute("error", "pseudo");
-            doGet(req, resp);
-            return;
+            return doGet(req, resp);
         }
 
         HttpSession ses = req.getSession();
