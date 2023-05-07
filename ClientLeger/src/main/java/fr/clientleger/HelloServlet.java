@@ -18,7 +18,7 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("WEB-INF/index.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/index.jsp").forward(request, response);
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -29,7 +29,6 @@
 		</c:when>
 	</c:choose>
 
-
 	<h2>Connexion</h2>
 
 	<form method="post">
@@ -47,8 +46,6 @@
 			type="submit" value="Connexion en tant qu'invité">
 
 	</form>
-
-
 
 </body>
 </html>
