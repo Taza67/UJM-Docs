@@ -7,20 +7,42 @@
 <title>Accueil</title>
 </head>
 <body>
-	<c:choose>
 
-		<c:when test="${error == 'pseudo'}">
-			<p>Pseudo incorrect.</p>
-			<br />
-		</c:when>
+	<c:if var="error" test="${error != null}" scope="session">
+		<div id="error">
+		<c:choose>
 
-		<c:when test="${inscrit!= null}">
+			<c:when test="${error == 'pseudo'}">
+				<p>Pseudo incorrect.</p>
+				<br />
+
+				<c:remove var="error" scope="session"/>
+			</c:when>
+
+			<c:when test="${error == 'inaccessible'}">
+				<p>Vous ne pouvez pas accéder à cette page</p>
+				<p>Merci de vous connecter</p>
+				<c:remove var="error" scope="session"/>
+			</c:when>
+
+			<c:when test="${error == 'weird'}">
+				<p>Cet utilisateur n'est pas valide</p>
+				<p>Merci de vous connecter avec un utilisateur valide</p>
+
+				<c:remove var="error" scope="session"/>
+			</c:when>
+		</c:choose>
+		</div>
+	</c:if>
+
+	<c:if var="inscrit" test="${inscrit!= null}" scope="session">
+		<div class="info">
 			<p>Nouvel inscrit</p>
 			<p>Vous pouvez vous connecter</p>
 			<br />
-
-		</c:when>
-	</c:choose>
+		</div>
+		<c:remove var="inscrit" scope="session"/>
+	</c:if>
 
 	<h2>Connexion</h2>
 

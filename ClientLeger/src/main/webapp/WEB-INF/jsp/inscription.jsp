@@ -14,6 +14,7 @@
     <c:when test="${error == 'exists'}">
         <p> Ce compte existe déjà.</p>
         <a href="">Se connecter</a>
+        <c:remove var="error" scope="session"/>
     </c:when>
 </c:choose>
 
