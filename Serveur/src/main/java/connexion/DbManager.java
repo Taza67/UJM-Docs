@@ -7,13 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.sql.Date;
-
-
-import java.util.HashMap;
-import java.util.List;
-import java.sql.Date;
-import com.mysql.cj.xdevapi.Result;
 
 
 
@@ -84,7 +77,7 @@ public class DbManager extends ParamBD{
         System.out.println("Utilisateur trouvé.");
         return new User(uid, p,pw);
     }
-    
+
     public static boolean IsUserValid(User u) {
         int uid = -1;
         try {

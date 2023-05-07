@@ -2,14 +2,9 @@ package connexion;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Classe représentant un server vis-à-vis de la communication TCP
@@ -47,7 +42,7 @@ public class HeavyServer {
 		try {
 			servSoc = new ServerSocket(PORT);
 			System.out.println("S : serveur actif");
-		} 
+		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -59,7 +54,7 @@ public class HeavyServer {
 			in.close();
 			out.close();
 			cliSoc.close();
-		} 
+		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -82,7 +77,7 @@ public class HeavyServer {
 				User u = new User(-1, pseudo, pw);
 				boolean accept = DbManager.IsUserValid(u);
 				if(!accept) {
-					out.writeUTF("Identification impossible. Erreur dans le pseudo ou mot de passe"); 
+					out.writeUTF("Identification impossible. Erreur dans le pseudo ou mot de passe");
 				}
 				else {
 					System.out.println("Communication établie. Bienvenue " + u.getPseudo());
@@ -99,7 +94,7 @@ public class HeavyServer {
 	public static void main(String[] args) {
 		HeavyServer s = new HeavyServer();
 		s.listen();
-		
+
 	}
 
 }
