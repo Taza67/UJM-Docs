@@ -85,7 +85,7 @@ public class DbManager extends ParamBD{
         return new User(uid, p,pw);
     }
     
-    public boolean IsUserValid(User u) {
+    public static boolean IsUserValid(User u) {
         int uid = -1;
         try {
             Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);

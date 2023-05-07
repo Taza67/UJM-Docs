@@ -68,7 +68,6 @@ public class HeavyServer {
 
 
 	public void listen() {
-		DbManager m = new DbManager();
 		while(true) {
 			try {
 				cliSoc = servSoc.accept();
@@ -82,7 +81,7 @@ public class HeavyServer {
 				String pw = in.readUTF();
 
 				User u = new User(-1, pseudo, pw);
-				boolean accept = m.IsUserValid(u);
+				boolean accept = DbManager.IsUserValid(u);
 				if(!accept) {
 					out.writeUTF("Identification impossible. Erreur dans le pseudo ou mot de passe"); 
 				}
