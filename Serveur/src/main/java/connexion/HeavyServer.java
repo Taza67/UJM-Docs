@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.StringTokenizer;
 
 /**
  * Classe représentant un server vis-à-vis de la communication TCP
