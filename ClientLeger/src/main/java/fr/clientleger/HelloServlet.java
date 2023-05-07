@@ -12,7 +12,7 @@ import javax.servlet.annotation.*;
 @WebServlet(name = "helloServlet")
 public class HelloServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersion UID = 1L;
 	public void init() {
         ParamBD.init(this.getServletContext());
     }
@@ -46,6 +46,7 @@ public class HelloServlet extends HttpServlet {
         ses.setAttribute("user", u);
         resp.sendRedirect("editeur");
     }
+
     public void destroy() {
     }
 }

@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<jsp:useBean id="u" class="connexion.User" scope="session"/>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +14,32 @@
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
+
+<!-- Récupération des attributs -->
+<%
+  String pseudo = "";
+  Boolean guest = false;
+%>
+<c:if var="user" test="${user != null}" scope="session">
+
+  <c:choose>
+    <c:when test="{guest == 'true'}">
+      <%
+        pseudo = "Invité";
+        guest = true;
+      %>
+    </c:when>
+
+    <c:otherwise>
+      <%
+        pseudo = user.pseudo();
+        guest = false;
+      %>
+    </c:otherwise>
+  </c:choose>
+
+</c:if>
+
 <!-- Barre de navigation -->
 <nav class="menu-bar">
   <ul class="menu-bar-list">
