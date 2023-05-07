@@ -1,95 +1,82 @@
-package exterieur.application;
+package outside.userInterface;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Button;
-
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Component;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
-import javax.swing.JSeparator;
 import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.JScrollPane;
-import java.awt.CardLayout;
-import javax.swing.BoxLayout;
 import java.awt.TextField;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class UJMDocs {
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import inside.Manager;
+
+/**
+ * Classe représentant un panneau d'édition de texte personnalisé
+ * @author mourtaza
+ *
+ */
+public class JFramePerso extends JFrame {
+	private static final long serialVersionUID = -4199820632154473949L;
+	
 	public static final int DEFAULT_EDITOR_MARGE = 200;
 	public static final int DEFAULT_PAGE_MARGE = 60;
 
-	private JFrame frmUjmDocs;
+	private JFrame self;
+	private JEditorPanePerso textEditorPane;
+	private Manager manager;
 	private boolean isStatusBarVisible = false;
 	private boolean isToolBarVisible = true;
-	
-	/**
-	 * Lance l'application
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UJMDocs window = new UJMDocs();
-					window.frmUjmDocs.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
-	 * Crée l'application
+	 * Instancie une fenêtre personnalisée
 	 */
-	public UJMDocs() {
-		initialize();
-	}
-
-	/**
-	 * Initialise le contenu de la frame
-	 */
-	private void initialize() {
-		frmUjmDocs = new JFrame();
-		frmUjmDocs.getContentPane().setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
-		frmUjmDocs.getContentPane().setLayout(new CardLayout(0, 0));
-		frmUjmDocs.setFont(new Font("Gentium Book Basic", Font.PLAIN, 12));
-		frmUjmDocs.setSize(new Dimension(1080, 720));
-		frmUjmDocs.setVisible(true);
-		frmUjmDocs.requestFocusInWindow();
-		frmUjmDocs.setForeground(new Color(102, 102, 102));
-		frmUjmDocs.setBackground(new Color(51, 51, 51));
-		frmUjmDocs.getContentPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		frmUjmDocs.setTitle("UJM Docs");
-		frmUjmDocs.setBounds(100, 100, 1080, 720);
-		frmUjmDocs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmUjmDocs.setLocationRelativeTo(null);
+	public JFramePerso() {
+		super();
+		this.getContentPane().setFont(new Font("Gentium Book Basic", Font.PLAIN, 15));
+		this.getContentPane().setLayout(new CardLayout(0, 0));
+		this.setFont(new Font("Gentium Book Basic", Font.PLAIN, 12));
+		this.setSize(new Dimension(1080, 720));
+		this.setVisible(true);
+		this.requestFocusInWindow();
+		this.setForeground(new Color(102, 102, 102));
+		this.setBackground(new Color(51, 51, 51));
+		this.getContentPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		this.setTitle("UJM Docs");
+		this.setBounds(100, 100, 1080, 720);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		
+		self = this;
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		frmUjmDocs.setJMenuBar(menuBar);
+		this.setJMenuBar(menuBar);
 		menuBar.setVisible(false);
 		
 		JMenu mnFichier = new JMenu("Fichier");
@@ -169,7 +156,7 @@ public class UJMDocs {
 		menuBar.add(mnAide);
 		
 		JPanel connection = new JPanel();
-		frmUjmDocs.getContentPane().add(connection, "name_22684711362580");
+		this.getContentPane().add(connection, "name_22684711362580");
 		connection.setLayout(new BorderLayout(0, 0));
 		
 		Component rigidAreaConnectionLeft = Box.createRigidArea(new Dimension(350, 107));
@@ -212,7 +199,7 @@ public class UJMDocs {
 		////////////////////////// EDITEUR-CARD ////////////////////////////////
 		
 		JPanel editeur = new JPanel();
-		frmUjmDocs.getContentPane().add(editeur, "name_22610450387445");
+		this.getContentPane().add(editeur, "name_22610450387445");
 		editeur.setLayout(new BorderLayout(0, 0));
 		
 		// Barre d'outils //////////////////////////////////////////////////////
@@ -327,14 +314,16 @@ public class UJMDocs {
 		JScrollPane scrollPane = new JScrollPane(editorContainerPanel);
 		editorContainerPanel.setLayout(new BoxLayout(editorContainerPanel, BoxLayout.X_AXIS));
 		
-		JEditorPanePerso textEditorPane = new JEditorPanePerso(lineIndicator, wordIndicator, charIndicator);
+		textEditorPane = new JEditorPanePerso(lineIndicator, wordIndicator, charIndicator);
 		editorContainerPanel.add(textEditorPane);
 		scrollPane.setAutoscrolls(true);
 		editeur.add(scrollPane);
 		
+		////////////////////////////////////////////////////////////////////////
 		/////////////////////////// GESTION EVENEMENTS /////////////////////////
 		
-		// Panneau de connexion
+		// Panneau de connexion ////////////////////////////////////////////////
+		
 		// Gestion des clics sur le bouton connecter
 		Connecter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -348,7 +337,7 @@ public class UJMDocs {
 				}
 				
 				System.err.println("- Appui sur le bouton connexion");
-				((CardLayout)frmUjmDocs.getContentPane().getLayout()).next(frmUjmDocs.getContentPane());
+				((CardLayout)self.getContentPane().getLayout()).next(self.getContentPane());
 				
 				// Ajout de la barre d'outils
 				isStatusBarVisible = true;
@@ -518,5 +507,21 @@ public class UJMDocs {
 				textEditorPane.pasteText();
 			}
 		});
+	}
+	
+	
+	/**
+	 * Retourne la référence au panneau de l'éditeur
+	 * @return Référence au panneau de l'éditeur
+	 */
+	public JEditorPanePerso getTextEditorPane() {
+		return textEditorPane;
+	}
+	
+	/**
+	 * Change la référence au manager de l'application
+	 */
+	public void setManager(Manager ma) {
+		manager = ma;
 	}
 }

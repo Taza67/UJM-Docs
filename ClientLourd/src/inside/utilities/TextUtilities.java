@@ -1,4 +1,4 @@
-package interieur;
+package inside.utilities;
 
 /**
  * Classe implémentant des méthodes utiles au traitement de texte
