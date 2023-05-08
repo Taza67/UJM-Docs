@@ -58,6 +58,9 @@ public class Client implements IConfig {
 			out = new DataOutputStream(cliSoc.getOutputStream());
 			System.err.println("- Flux d'entrée/sortie initialisés");
 			
+			System.err.println(pseudo);
+			System.err.println(password);
+			
 			out.writeUTF(pseudo);
 			out.writeUTF(password);
 			System.err.println("- Envoi des identifiants de connexion");
@@ -123,6 +126,34 @@ public class Client implements IConfig {
 		// On suppose dans notre cas que cet entier est impossible
 		// à récupérer sur le flux d'entrée
 		return IMPOSSIBLE_CODE; 
+	}
+	
+	/**
+	 * Envoie un entier au serveur
+	 * @param value Entier à envoyer
+	 */
+	public void sendInt(int value) {
+		try {
+			out.writeInt(value);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("- Client#sendInt() -> "
+					+ "Échec de l'envoi de l'entier (Interruption par une erreur IO)");
+		}
+	}
+	
+	/**
+	 * Envoie une chaine de caractères au serveur
+	 * @param value Chaîne à envoyer
+	 */
+	public void sendString(String message) {
+		try {
+			out.writeUTF(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("- Client#sendString() -> "
+					+ "Échec de l'envoi de la chaîne de caractères (Interruption par une erreur IO)");
+		}
 	}
 	
 	/**

@@ -45,7 +45,7 @@ public class TCommunication extends Thread implements IConfig {
 	 */
 	public void run() {		
 		while (!Thread.currentThread().isInterrupted()) {
-			int actionCode = actions.getHeadAction();
+			int actionCode = actions.getHeadAction().getCode();
 			
 			// Action à envoyer
 			if (actions.getSize() != 0)
@@ -105,7 +105,10 @@ public class TCommunication extends Thread implements IConfig {
 	 * Envoie la première action de l'ensemble d'actions
 	 */
 	private void sendFirstAction() {
-		System.err.println("- Envoi de l'action en tête de file au serveur");
+		System.err.println("- Envoi de l'action " + actions.getHeadAction().getCode() + " en tête de file au serveur");
+		client.sendInt(actions.getHeadAction().getCode());
+		client.sendString(actions.getHeadAction().getMessage());
+		actions.removeHeadAction();
 	}
 	
 	/**
@@ -114,5 +117,6 @@ public class TCommunication extends Thread implements IConfig {
 	 */
 	private void sendNoAction() {
 		System.err.println("- Envoi d'un no action au serveur");
+		client.sendInt(NO_ACTION_CODE);
 	}
 }

@@ -5,22 +5,22 @@ import java.util.List;
 
 /**
  * Classe représentant l'ensemble des actions réalisées
- * par l'utilisateur sur l'UI (ex : sauvegarde, charge)
+ * par l'utilisateur sur l'UI (ex : sauvegarde, charge, etc)
  * @author mourtaza
  *
  */
 public class Actions implements IConfig {
 	/**
-	 * Liste des codes associés aux actions demandées et pas encore réalisées
+	 * Liste des actions demandées et pas encore réalisées
 	 */
-	private List<Integer> actionsCodes;
+	private List<Action> actionsList;
 	
 	
 	/**
 	 * Instancie un objet représentant l'ensemble d'actions
 	 */
 	public Actions() {
-		actionsCodes = new LinkedList<Integer>();
+		actionsList = new LinkedList<Action>();
 	}
 	
 	
@@ -29,7 +29,7 @@ public class Actions implements IConfig {
 	 * @return Taille de l'ensemble d'actions
 	 */
 	public synchronized int getSize() {
-		return actionsCodes.size();
+		return actionsList.size();
 	}
 	
 	
@@ -37,24 +37,25 @@ public class Actions implements IConfig {
 	 * Retourne la tête de la liste
 	 * @return Action en tête de la liste
 	 */
-	public synchronized Integer getHeadAction() {
-		if (actionsCodes.isEmpty()) return null;
-		return actionsCodes.get(0);
+	public synchronized Action getHeadAction() {
+		if (actionsList.isEmpty()) return null;
+		return actionsList.get(0);
 	}
 	
 	/**
 	 * Retire la tête de la liste
 	 */
 	public synchronized void removeHeadAction() {
-		if (actionsCodes.isEmpty()) return;
-		actionsCodes.remove(0);
+		if (actionsList.isEmpty()) return;
+		actionsList.remove(0);
 	}
 	
 	/**
 	 * Ajoute une action
 	 * @param actionCode Code de l'action à ajouter
+	 * @param message Message à envoyer pour l'action
 	 */
-	public synchronized void addAction(Integer actionCode) {
-		actionsCodes.add(actionCode);
+	public synchronized void addAction(Integer actionCode, String message) {
+		actionsList.add(new Action(actionCode, message));
 	}
 }

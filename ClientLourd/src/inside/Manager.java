@@ -75,7 +75,7 @@ public class Manager implements IConfig {
 	 */
 	synchronized public boolean connectApplication(String ps, String pass) {
 		// Connexion refusée
-		if (!client.connect(pseudo, password)) return false;
+		if (!client.connect(ps, pass)) return false;
 		
 		// Connexion accordée
 		pseudo = ps;
@@ -107,7 +107,7 @@ public class Manager implements IConfig {
 	 */
 	synchronized public void askNewDocument(String newDocument, boolean isOnline) {
 		if (isOnline) {
-			actions.addAction(NEW_DOCUMENT_REQUEST_CODE);
+			actions.addAction(NEW_DOCUMENT_REQUEST_CODE, newDocument);
 			
 			beginCommunication();
 			try {
@@ -134,7 +134,7 @@ public class Manager implements IConfig {
 	 * @param documentName Nom du document à ouvrir
 	 */
 	synchronized public void askLoadDocument(String documentName) {
-		actions.addAction(LOAD_DOCUMENT_REQUEST_CODE);
+		actions.addAction(LOAD_DOCUMENT_REQUEST_CODE, documentName);
 		// Récupération du document ///////////////////////////////////////////
 		//
 		//
@@ -149,14 +149,14 @@ public class Manager implements IConfig {
 	 * Demande la sauvegarde du document
 	 */
 	synchronized public void askSaveDocument() {
-		actions.addAction(SAVE_DOCUMENT_REQUEST_CODE);
+		actions.addAction(SAVE_DOCUMENT_REQUEST_CODE, "sauvegarde");
 	}
 	
 	/**
 	 * Demande l'application de la modification du document réalisée par l'utilisateur
 	 */
 	synchronized public void askModifyDocument() {
-		actions.addAction(MODIFY_DOCUMENT_REQUEST_CODE);
+		actions.addAction(MODIFY_DOCUMENT_REQUEST_CODE, "modification");
 	}
 	
 	/**

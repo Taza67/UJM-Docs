@@ -8,11 +8,16 @@
     <link rel="stylesheet" href="inscriptionStylesheet.css">
 </head>
 <body>
+    <div class="title">
+        <h1>UJM<br>DOCS</h1>
+    </div>
     <form method="post">
-        <input type="text" id="pseudo" name="pseudo" required>
-        <input type="password" id="mot_de_passe" name="mot_de_passe" required>
-        <input type="password" id="verification" name="verification" required>
+        <input type="text" id="pseudo" name="pseudo" placeholder="Pseudo" required>
+        <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="Mot de passe, une fois..." required>
+        <input type="password" id="verification" name="verification" placeholder="Mot de passe, deux fois..." required>
+        <span class="error">Mots de passe différents</span>
         <input type="submit" value="S'inscrire">
+        <span class="error">Compte déjà existant</span>
     </form>
 </body>
 </html>
