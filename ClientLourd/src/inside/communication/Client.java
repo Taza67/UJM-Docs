@@ -47,7 +47,7 @@ public class Client implements IConfig {
 	 * @param password Mot de passe à communiquer pour l'authentification
 	 * @return true si la connexion s'est réalisée, false sinon
 	 */
-	public boolean connect(String pseudo, String password) {
+	public boolean connect(String pseudo, String password, boolean isNew) {
 		try {
 			// Connexion au serveur
 			cliSoc = new Socket(COMMUNICATION_HOST, port);
@@ -61,6 +61,7 @@ public class Client implements IConfig {
 			System.err.println(pseudo);
 			System.err.println(password);
 			
+			out.writeInt(isNew ? SUBSCRIBTION_REQUEST_CODE : CONNECTION_REQUEST_CODE);
 			out.writeUTF(pseudo);
 			out.writeUTF(password);
 			System.err.println("- Envoi des identifiants de connexion");
@@ -71,12 +72,14 @@ public class Client implements IConfig {
 				// Refus
 				System.err.println("- Échec de la connexion (Connexion refusée par le serveur)");
 				
+				disconnect();
 				return false;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("- Client#connect() -> Échec de la connexion (Connexion interrompue par une erreur IO)");
 			
+			disconnect();
 			return false;
 		}
 		
@@ -91,9 +94,9 @@ public class Client implements IConfig {
 	 */
 	public void disconnect() {
 		try {
-			in.close();
-			out.close();
-			cliSoc.close();
+			if (in != null) in.close();
+			if (out != null) out.close();
+			if (cliSoc != null) cliSoc.close();
 			System.out.println("- Client déconnecté");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -129,6 +132,32 @@ public class Client implements IConfig {
 	}
 	
 	/**
+	 * Attend un string depuis le serveur
+	 * @return String récupéré sur le flux d'entrée
+	 */
+	public String waitString() {
+		try {
+			// Récupération d'un entier sur le flux d'entrée
+			String response = in.readUTF();
+			
+			// On vérifie qu'il ne s'agit pas de l'entier impossible
+			if (response == "")
+				// Avertissement
+				System.err.println("- Client#WaitString() -> Attention !"
+					+ "Une chaîne de caractères vide a été récupérée");
+			
+			return response;
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("- Client#waitString() -> "
+				+ "Échec de la récupération du string (Interruption par une erreur IO)");
+		}
+		
+		// Seulement en cas d'exception
+		return "";
+	}
+	
+	/**
 	 * Envoie un entier au serveur
 	 * @param value Entier à envoyer
 	 */
@@ -138,7 +167,7 @@ public class Client implements IConfig {
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("- Client#sendInt() -> "
-					+ "Échec de l'envoi de l'entier (Interruption par une erreur IO)");
+				+ "Échec de l'envoi de l'entier (Interruption par une erreur IO)");
 		}
 	}
 	
@@ -152,16 +181,7 @@ public class Client implements IConfig {
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("- Client#sendString() -> "
-					+ "Échec de l'envoi de la chaîne de caractères (Interruption par une erreur IO)");
+				+ "Échec de l'envoi de la chaîne de caractères (Interruption par une erreur IO)");
 		}
-	}
-	
-	/**
-	 * Méthode appelée pour tester
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Client c = new Client(COMMUNICATION_PORT);
-		c.connect("tom","tomlerat");
 	}
 }

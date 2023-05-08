@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -44,6 +45,7 @@ import javax.swing.event.DocumentListener;
 import inside.IConfig;
 import inside.Manager;
 import inside.utilities.ResearchUtilities;
+import inside.utilities.Tuple;
 
 /**
  * Classe représentant un panneau d'édition de texte personnalisé
@@ -127,6 +129,9 @@ public class JFramePerso extends JFrame implements IConfig {
 	private JSlider zoomSlider;
 	protected JPanel editorContainerPanel;
 	
+	// Connection
+	private TextField pseudo;
+	private TextField motDePasse;
 	
 
 	/**
@@ -255,7 +260,7 @@ public class JFramePerso extends JFrame implements IConfig {
 		connection.add(formContainerPanel, BorderLayout.CENTER);
 		formContainerPanel.setLayout(new BoxLayout(formContainerPanel, BoxLayout.Y_AXIS));
 		
-		TextField pseudo = new TextField();
+		pseudo = new TextField();
 		pseudo.setFont(new Font("Gentium Book Basic", Font.BOLD, 14));
 		pseudo.setName("Pseudo");
 		pseudo.setMaximumSize(new Dimension(300, 30));
@@ -263,7 +268,7 @@ public class JFramePerso extends JFrame implements IConfig {
 		pseudo.setPreferredSize(new Dimension(300, 30));
 		formContainerPanel.add(pseudo);
 		
-		TextField motDePasse = new TextField();
+		motDePasse = new TextField();
 		motDePasse.setFont(new Font("Gentium Book Basic", Font.BOLD, 14));
 		motDePasse.setMinimumSize(new Dimension(300, 30));
 		motDePasse.setMaximumSize(new Dimension(300, 30));
@@ -506,51 +511,16 @@ public class JFramePerso extends JFrame implements IConfig {
 		// Gestion des clics sur le bouton connecter
 		connecter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Vérification des arguments
-				if (pseudo.getText() == null || pseudo.getText().isEmpty() || pseudo.getText().isBlank() || 
-					motDePasse.getText() == null || motDePasse.getText().isEmpty() || motDePasse.getText().isBlank()) {
-					System.err.println("- Appui sur le bouton connexion + Un, au moins, des champs vide");
-			        JOptionPane.showMessageDialog(null, "Un, au moins, des champs vide !!!", "Erreur", JOptionPane.ERROR_MESSAGE);
-			        
-			        return;
-				}
-				
-				System.err.println("- Appui sur le bouton se connexion");
-				((CardLayout)self.getContentPane().getLayout()).next(self.getContentPane());
-				
-				// Ajout de la barre de menu
-				menuBar.setVisible(true);
-				
-				// Ajout de la gestion d'événements à l'éditeur
-				// Les modifications seront envoyées au serveur (=>true)
-				textEditorPane.initEventManagement(true);
-				
-				// Ajout de la gestion d'événéments
-				self.initEventManagement(true);
-				
-				manager = new Manager(textEditorPane, pageIndicator, pageNumberIndicator);
-				textEditorPane.setManager(manager);
-				
-				// Connection
-				if (!manager.connectApplication(pseudo.getText(), motDePasse.getText()))
-					return;
-				
-				// Demande du nom du fichier
-				String nomFichier = JOptionPane.showInputDialog(self, "Entrez le nom du fichier");
-				
-				// // Annulation
-				if (nomFichier == null) {
-					JOptionPane.showMessageDialog(self, "Vous avez décidé d'annuler. Fermeture de l'application","Fermeture", JOptionPane.WARNING_MESSAGE);  
-					manager.disconnectApplication();
-					self.dispose();
-				}
-				
-				// // Nom incorrect
-				while (nomFichier.isBlank() || nomFichier.isEmpty())
-					nomFichier = JOptionPane.showInputDialog(self, "Attention ! Vous n'avez entré un nom valide ! Entrez le nom du fichier");
-				
-				// Création du nouveau document
-				manager.askNewDocument(nomFichier, true);
+				connect(false);
+			}
+		});
+		
+		// Gestion des clics sur le bouton s'inscrire
+		inscrire.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				connect(true);
 			}
 		});
 		
@@ -1032,5 +1002,93 @@ public class JFramePerso extends JFrame implements IConfig {
         BarreRecherche.addKeyListener(keyboardHandler);
         // // Fenêtre
         self.getContentPane().addKeyListener(keyboardHandler);
+	}
+	
+	/**
+	 * Connecte l'application
+	 * @param isNew true s'il s'agit d'une inscription, false sinon
+	 */
+	private void connect(boolean isNew) {
+		// Vérification des arguments
+		if (pseudo.getText() == null || pseudo.getText().isEmpty() || pseudo.getText().isBlank() || 
+			motDePasse.getText() == null || motDePasse.getText().isEmpty() || motDePasse.getText().isBlank()) {
+			System.err.println("- Appui sur le bouton " + (isNew ? "d'inscription" : "de connexion") + ". Un, au moins, des champs vide");
+	        JOptionPane.showMessageDialog(null, "Un, au moins, des champs vide !!!", "Erreur", JOptionPane.ERROR_MESSAGE);
+	        
+	        return;
+		}
+		
+		System.err.println("- Appui sur le bouton " + (isNew ? "d'inscription" : "de connexion"));
+		
+		manager = new Manager(textEditorPane, pageIndicator, pageNumberIndicator);
+		textEditorPane.setManager(manager);
+		
+		// Connection
+		if (!manager.connectApplication(pseudo.getText(), motDePasse.getText(), isNew)) {
+			String errorMessage;
+			
+			if (isNew) errorMessage = "Ces identifiants existent déjà ! Appuyez sur le bouton \"Connecter\"";
+			else errorMessage = "Pseudo ou mot de passe incorrects ! Rééssayez !";
+			
+			JOptionPane.showMessageDialog(null, errorMessage, "Erreur", JOptionPane.ERROR_MESSAGE);
+			
+			return;
+		}
+		
+		// Récupération des documents
+		if (!isNew) {
+			// Choix de l'option
+			String[] options = {"Nouveau document", "Ouvrir document"};
+			String choice = DialogUtilities.askChoiceFromOptions(
+				self, "Que souhaitez-vous faire ?", "", options
+			);
+			
+			if (choice == "Nouveau document") {
+				// Demande du nom du fichier
+				String nomFichier = JOptionPane.showInputDialog(self, "Entrez le nom du fichier");
+				
+				// // Annulation
+				if (nomFichier == null) {
+					JOptionPane.showMessageDialog(self, "Vous avez décidé d'annuler. Fermeture de l'application","Fermeture", JOptionPane.WARNING_MESSAGE);  
+					manager.disconnectApplication();
+					self.dispose();
+					return;
+				}
+				
+				// // Nom incorrect
+				while (nomFichier.isBlank() || nomFichier.isEmpty())
+					nomFichier = JOptionPane.showInputDialog(self, "Attention ! Vous n'avez entré un nom valide ! Entrez le nom du fichier");
+				
+				// Création du nouveau document
+				manager.askNewDocument(nomFichier, true);
+			} else if (choice == "Ouvrir document") {
+				List<Tuple> listDocuments = manager.getListDocuments();
+				String[] documentsNames = new String[listDocuments.size() / 2];
+				
+				// Formattage
+				int it = 0;
+				for (Tuple doc : listDocuments)
+					documentsNames[it++] = (String)doc.getSECOND();
+				
+				// Demande à l'utilisateur
+				choice = DialogUtilities.askChoiceFromOptions(
+					self, "Charger un document", "Choisissez un document", documentsNames);
+				
+				// Demande au serveur
+				manager.askLoadDocument(choice);
+			}
+		}
+		
+		// Ajout de la barre de menu
+		menuBar.setVisible(true);
+		
+		// Ajout de la gestion d'événements à l'éditeur
+		// Les modifications seront envoyées au serveur (=>true)
+		textEditorPane.initEventManagement(true);
+		
+		// Ajout de la gestion d'événéments
+		self.initEventManagement(true);
+		
+		((CardLayout)self.getContentPane().getLayout()).next(self.getContentPane());
 	}
 }
