@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.undo.UndoManager;
+import javax.swing.JLabel;
 
 import inside.communication.Client;
 import inside.communication.TCommunication;
@@ -54,17 +55,27 @@ public class Manager implements IConfig {
 	 * Numéro de la page ouverte
 	 */
 	private int currentPageNumber;
+	/**
+	 * Référence au JLabel indiquant le nombre de pages
+	 */
+	private JLabel pageIndicator;
+	/**
+	 * Référence au JLabel indiquant le numéro de page
+	 */
+	private JLabel pageNumberIndicator;
 	
 	
 	/**
 	 * Instancie un objet représentant le module de gestion
 	 * @param ed Référence au JPanelEditor contenant le document édité
 	 */
-	public Manager(JEditorPanePerso ed) {
+	public Manager(JEditorPanePerso ed, JLabel pi, JLabel pni) {
 		client = new Client(COMMUNICATION_PORT);
 		actions = new Actions();
 		communication = new TCommunication(client, actions, this);
 		editor = ed;
+		pageIndicator = pi;
+		pageNumberIndicator = pni;
 	}
 	
 	
@@ -141,6 +152,8 @@ public class Manager implements IConfig {
 		currentDocumentName = documentName;
 		// ATTENTION
 		currentDocument = null;		// IL FAUDRA RÉCUPÉRER LE DOCUMENT D'UNE CERTAINE MANIÈRE
+		pageIndicator.setText("1 page");
+		pageNumberIndicator.setText("1 / 1 page");
 		
 		System.err.println("- Nom du document : " + currentDocumentName);
 	}
@@ -166,6 +179,8 @@ public class Manager implements IConfig {
 	synchronized public void putModification(String text) {
 		editor.setText(text); // NE MARCHE PAS
 		// ATTENTION, GESTION DU DOCUMENT SOUS FORME DE PAGES
+		pageIndicator.setText("1 page");
+		pageNumberIndicator.setText("1 / 1p");
 	}
 	
 	/**
@@ -202,6 +217,9 @@ public class Manager implements IConfig {
 		currentPageNumber++;
 		currentDocument.addPage(currentPageNumber, "");
 		editor.setText("");
+		
+		pageIndicator.setText(currentDocument.getPageCount() + " page" + (currentDocument.getPageCount() > 1 ? "s" : ""));
+		pageNumberIndicator.setText((currentPageNumber + 1) + " / " + currentDocument.getPageCount() + "p");
 	}
 	
 	/**
@@ -217,6 +235,9 @@ public class Manager implements IConfig {
 		// Déplacement
 		currentPageNumber = pageNumber;
 		editor.setText(currentDocument.getPage(pageNumber));
+		
+		pageIndicator.setText(currentDocument.getPageCount() + " page" + (currentDocument.getPageCount() > 1 ? "s" : ""));
+		pageNumberIndicator.setText((currentPageNumber + 1) + " / " + currentDocument.getPageCount() + "p");
 	}
 	
 	/**
