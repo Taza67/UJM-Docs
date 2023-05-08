@@ -12,9 +12,6 @@ public class UJMDocs {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				JFramePerso window = new JFramePerso();
-				Manager manager = new Manager(window.getTextEditorPane());
-				window.setManager(manager);
-				window.getTextEditorPane().setManager(manager);
 			}
 		});
 	}
