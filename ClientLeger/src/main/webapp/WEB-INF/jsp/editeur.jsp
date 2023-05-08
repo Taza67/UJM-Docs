@@ -81,6 +81,12 @@
     <button class="bar-button">+</button>
     <button class="bar-button">-</button>
   </div>
+  <div class="bar-section">
+    <span class="bar-section-legend">Actions</span>
+    <form method="post">
+      <button class="bar-button" type="submit" name="deconnexion">Se déconnecter</button>
+    </form>
+  </div>
 </nav>
 
 <div class="editor-container">

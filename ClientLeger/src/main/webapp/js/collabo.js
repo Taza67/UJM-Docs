@@ -1,11 +1,9 @@
 function getUtilisateur() {
     let userDataElem = document.querySelector("#user-data");
-    let userJsonString = userDataElem.getAttribute('data-user');
-    let user = JSON.parse(userJsonString);
-    console.log(user.id);
-    console.log(user.username);
+    let encodedUserJsonString = userDataElem.getAttribute('data-user');
+    console.log(encodedUserJsonString);
+    let userJsonString = decodeURIComponent(encodedUserJsonString);
+    console.log(userJsonString);
 }
 
-$(document).ready(function() {
-    getUtilisateur();
-})
+getUtilisateur();

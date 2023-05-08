@@ -26,6 +26,15 @@ public class HelloServlet extends HttpServlet {
 
     @Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession ses = request.getSession();
+
+        String inscrit = (String)ses.getAttribute("inscrit");
+
+        if(inscrit != null && inscrit.equals("true")) {
+            System.out.println("inscrit ! ");
+            request.setAttribute("inscrit", "true");
+        }
+        ses.invalidate();
         request.getRequestDispatcher("WEB-INF/jsp/index.jsp").forward(request, response);
     }
 
