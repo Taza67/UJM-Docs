@@ -7,8 +7,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -217,9 +215,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
                 charCount = TextUtilities.countChars(text);
                 
                 // Modification des labels
-                lineIndicator.setText(lineCount + " lignes");
-                wordIndicator.setText(wordCount + " mots");
-                charIndicator.setText(charCount + " caractères");
+                lineIndicator.setText(lineCount + " ligne" + (lineCount > 1 ? "s" : ""));
+                wordIndicator.setText(wordCount + " mot" + (wordCount > 1 ? "s" : ""));
+                charIndicator.setText(charCount + " caractère" + (charCount > 1 ? "s" : ""));
             }
         });
 	}

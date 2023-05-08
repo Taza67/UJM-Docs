@@ -122,9 +122,11 @@ public class JFramePerso extends JFrame implements IConfig {
 	private JLabel charIndicator;
 	private Button pageSuivante;
 	private Button pagePrecedente;
+	private JLabel pageNumberIndicator;
 	private JLabel cursorIndicator;
 	private JSlider zoomSlider;
 	protected JPanel editorContainerPanel;
+	
 	
 
 	/**
@@ -423,6 +425,14 @@ public class JFramePerso extends JFrame implements IConfig {
 		Component glue = Box.createGlue();
 		statusBar.add(glue);
 		
+		pageNumberIndicator = new JLabel("1 / 1p");
+		pageNumberIndicator.setFont(new Font("Gentium Book Basic", Font.PLAIN, 14));
+		statusBar.add(pageNumberIndicator);
+		
+		Component rigidArea11 = Box.createRigidArea(new Dimension(50, 20));
+		rigidArea11.setPreferredSize(new Dimension(20, 20));
+		statusBar.add(rigidArea11);
+		
 		cursorIndicator = new JLabel("0 / 0c      1 / 1l");
 		cursorIndicator.setFont(new Font("Gentium Book Basic", Font.PLAIN, 14));
 		statusBar.add(cursorIndicator);
@@ -518,7 +528,7 @@ public class JFramePerso extends JFrame implements IConfig {
 				// Ajout de la gestion d'événéments
 				self.initEventManagement(true);
 				
-				manager = new Manager(textEditorPane);
+				manager = new Manager(textEditorPane, pageIndicator, pageNumberIndicator);
 				textEditorPane.setManager(manager);
 				
 				// Connection
@@ -562,7 +572,7 @@ public class JFramePerso extends JFrame implements IConfig {
 				self.initEventManagement(false);
 				
 				// Initialisation du manager
-				manager = new Manager(textEditorPane);
+				manager = new Manager(textEditorPane, pageIndicator, pageNumberIndicator);
 				textEditorPane.setManager(manager);
 				
 				// Création du premier document automatique en mode hors-ligne
@@ -999,12 +1009,20 @@ public class JFramePerso extends JFrame implements IConfig {
                 	BarreRecherche.requestFocusInWindow();
                 }
                 // Page suivante
-                else if ((e.getKeyCode() == KeyEvent.VK_RIGHT) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
+                else if ((e.getKeyCode() == KeyEvent.VK_RIGHT) && ((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != 0)) {
                 	manager.moveForward();
                 }
                 // Page précédente
-                else if ((e.getKeyCode() == KeyEvent.VK_RIGHT) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
+                else if ((e.getKeyCode() == KeyEvent.VK_LEFT) && ((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != 0)) {
                 	manager.moveBackward();
+                }
+                // Nouvelle page
+                else if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
+                	manager.addNewPage();
+                }
+                // Supprimer page
+                else if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0)) {
+                	System.err.println("- Suppression de la page");
                 }
             }
         };
