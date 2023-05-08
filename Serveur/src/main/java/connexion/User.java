@@ -28,6 +28,7 @@ public class User implements Serializable {
 	 */
 
 	private boolean guest;
+	private int pageNum;
 
 
 	// Getters
@@ -112,6 +113,7 @@ public class User implements Serializable {
 	}
 
 	public User(int idt, String p, String mdp) {
+		this.pageNum = 0;
 		this.id = idt;
 		this.pseudo = p;
 		this.password = mdp;
@@ -133,5 +135,13 @@ public class User implements Serializable {
 
 	public static void AddUser() {
 
+	}
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
 	}
 }

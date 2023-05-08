@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import connexion.DbManager;
 import connexion.User;
 
 /**
@@ -44,6 +45,18 @@ public class Page {
 			return null;
 		}
 		return this.authorizedModification.get(0);
+	}
+
+	public String toString() {
+		String result = "";
+		for (Word w: this.content) {
+			result += w.toString();
+		}
+		ArrayList<User> users = DbManager.getUserListFromDB();
+		for(Integer curseur : this.curseurs) {
+			result += "" + users.get(curseur).getposition() + '\0';
+		}
+		return result;
 	}
 
 	/**

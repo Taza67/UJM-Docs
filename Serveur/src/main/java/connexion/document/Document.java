@@ -236,4 +236,8 @@ public class Document {
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public String toString(int pageNum) {
+		return this.name + '\0' + pageNum + '\0' + this.content.size() + '\0' + this.content.get(pageNum).toString();
+	}
 }
