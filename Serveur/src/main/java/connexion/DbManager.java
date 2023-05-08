@@ -1,11 +1,13 @@
 package connexion;
 
 import java.io.FileNotFoundException;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -128,6 +130,24 @@ public class DbManager extends ParamBD {
 
 	public HashMap<Integer, User> getUserList() {
 		return UserList;
+	}
+
+	public static ArrayList<User> getUserListFromDB() {
+		ArrayList<User> users = new ArrayList<>();
+		try {
+			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
+			String sql  = "SELECT * FROM utilisateur;";
+			PreparedStatement pst = c.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				users.add(new User(rs.getInt("id"), rs.getString("pseudo"), rs.getString("mot_de_passe")));
+			}
+			rs.close();
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return users;
 	}
 
 	public static boolean IsUserValid(User u) {
