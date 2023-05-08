@@ -8,13 +8,24 @@ import connexion.document.Document;
  */
 
 
-public class DocManager {
+public class DocManager extends Thread{
 	/**
 	 * Document à modifier
 	 */
 	private Document d;
 
+// un doc manager sera crée quand un gars va essayer de crée ou de prendre accès d'un document
 
+	public DocManager(Document doc) {
+		d = doc;
+	}
 
+	@Override
+	public void run() {
 
+	}
+
+	public static void main(String[] args) {
+
+	}
 }
