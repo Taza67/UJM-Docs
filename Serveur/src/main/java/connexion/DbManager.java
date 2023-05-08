@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.sql.Date;
 
 import connexion.document.Document;
 
@@ -25,7 +24,7 @@ public class DbManager extends ParamBD{
     }
 
 
-    private void init() {
+    public static void init() {
         ParamBD.init("src/main/webapp/WEB-INF/web.xml");
         String jdbcDriver = "com.mysql.cj.jdbc.Driver";
         String jdbcUrl = ParamBD.bdURL;
@@ -108,6 +107,7 @@ public class DbManager extends ParamBD{
         }
 
         System.out.println("Utilisateur trouvé.");
+        u.setId(uid);
         return true;
     }
 

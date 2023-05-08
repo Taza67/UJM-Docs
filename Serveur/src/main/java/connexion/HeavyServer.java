@@ -36,7 +36,7 @@ public class HeavyServer extends Thread{
 	 * Flux de sortie
 	 */
 	private DataOutputStream out;
-	
+
 	/*
 	 * Utilisateur qui essaye de se connecter
 	 */
@@ -44,7 +44,7 @@ public class HeavyServer extends Thread{
 
 	/**
 	 * Instancie un objet représentant un serveur
-	 * 
+	 *
 	 */
 	public HeavyServer() {
 		try {
@@ -55,8 +55,8 @@ public class HeavyServer extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/**
 	 * Retourne l'utilisateur qui essaie de se connecter
 	 * @return l'utilisateur qui essaie de s'identifier
@@ -82,8 +82,11 @@ public class HeavyServer extends Thread{
 		}
 	}
 
-
+	/*
+	 * Methode qui gère le thread de communication
+	 */
 	public void listen() {
+		DbManager.init();
 		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				cliSoc = servSoc.accept();
@@ -100,17 +103,20 @@ public class HeavyServer extends Thread{
 				boolean accept = DbManager.IsUserValid(u);
 				if(!accept) {
 					out.writeUTF("Identification impossible. Erreur dans le pseudo ou mot de passe");
+					out.writeInt(0);
 				}
 				else {
 					System.out.println("Communication établie. Bienvenue " + u.getPseudo());
-					out.writeUTF("Communication établie. Bienvenue " + u.getPseudo());
+					u.getId();
+					//out.writeUTF("Communication établie. Bienvenue " + u.getPseudo());
 					out.writeInt(1);
 				}
-				
+
 				// création du thread intermédiaire
+				System.err.println("Je vais crée le DocStatusThread");
 				DocStatusThread docThread = new DocStatusThread(servSoc, cliSoc,u);
 				docThread.start();
-				
+
 			}
 			catch (IOException e) {
 				e.getStackTrace();
@@ -120,16 +126,17 @@ public class HeavyServer extends Thread{
 
 	/*
 	 * Thread qui assure la connexion et
-	 * l'acceptation de la demande de 
+	 * l'acceptation de la demande de
 	 * connexion du client
 	 */
+	@Override
 	public void run() {
 		listen();
 	}
 
 	public static void main(String[] args) {
-		//HeavyServer s = new HeavyServer();
-		//s.listen();
+		HeavyServer s = new HeavyServer();
+		s.start();
 
 	}
 

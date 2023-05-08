@@ -17,7 +17,7 @@ import connexion.User;
 public class Document {
 
 	private String name;
-	private Date lastModifDate; 
+	private Date lastModifDate;
 	private int ID;
 	private ArrayList<User> authorizedUser;
 	private LinkedList<Page> content;

@@ -19,8 +19,13 @@ public class DocManager extends Thread{
 	public DocManager(Document doc) {
 		d = doc;
 	}
-	
+
+	@Override
 	public void run() {
-		
+
+	}
+
+	public static void main(String[] args) {
+
 	}
 }
