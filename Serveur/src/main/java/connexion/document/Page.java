@@ -17,20 +17,25 @@ public class Page {
 	private final Word POINT_VIRGULE = new Word(";");
 	private final Word DEUX_POINTS = new Word(":");
 	private final Word POINT_D_EXCLAMATION = new Word("!");
+	private final Word RETOUR_CHARIOT = new Word("\n");
+	private final Word FIN_DE_PAGE = new Word("\f");
 
 	private LinkedList<Word> content;
 	private ArrayList<User> authorizedModification;
+	private ArrayList<Integer> curseurs;
 	private boolean locked;
 
 	public Page() {
 		this.content = new LinkedList<>();
 		this.authorizedModification = new ArrayList<>();
 		this.locked = false;
+		this.curseurs = new ArrayList<>();
 	}
 
 	public Page(User creator) {
 		this();
 		this.authorizedModification.add(creator);
+		this.curseurs.add(creator.getId());
 	}
 
 	public User getCreator() {
@@ -41,7 +46,7 @@ public class Page {
 	}
 
 	/**
-	 * Fonction qui vide la liste des utilisateur en laissant le créateur
+	 * Fonction qui vide la liste des utilisateur en laissant le créateur, idem pour
 	 * @author Bruno ROMAIN
 	 */
 	public void emptyAuthorized() {
@@ -50,7 +55,9 @@ public class Page {
 			return;
 		}
 		this.authorizedModification = new ArrayList<>();
+		this.curseurs = new ArrayList<>();
 		this.authorizedModification.add(creator);
+		this.curseurs.add(creator.getId());
 	}
 
 	public void removeAuthorized(User u) {
@@ -58,6 +65,7 @@ public class Page {
 			return;
 		}
 		this.authorizedModification.remove(u);
+		this.curseurs.remove(u.getId());
 	}
 
 	public boolean isAuthorized(User u) {
@@ -101,6 +109,16 @@ public class Page {
 		return null;
 	}
 
+	public void updateCurseur(int Id, int pos) {
+
+		this.curseurs.get(this.content.indexOf(Id)); // avec cet ID user, update le curseur à pos
+	}
+
+	public void deleteCharFromPos(int pos) {
+		Word toModify = getWordAtPos(pos);
+		toModify.deleteCharFromPos(pos);
+	}
+
 	/**
 	 * Cette fonction permet d'ajouter un mot dans une page à une position donnée. Si la position est invalide, le mot sera soit rajouté
 	 * en début ou en fin de page
@@ -125,6 +143,12 @@ public class Page {
 				case '!':
 					content.addFirst(POINT_D_EXCLAMATION);
 					break;
+				case '\n':
+					content.addFirst(RETOUR_CHARIOT);
+					break;
+				case '\0':
+					content.addFirst(FIN_DE_PAGE);
+					break;
 				default:
 					content.addFirst(new Word(word));
 			}
@@ -146,6 +170,11 @@ public class Page {
 				case '!':
 					content.addLast(POINT_D_EXCLAMATION);
 					break;
+				case '\n':
+					content.addLast(RETOUR_CHARIOT);
+					break;
+				case '\0':
+					content.addLast(FIN_DE_PAGE);
 				default:
 					content.addLast(new Word(word));
 			}
@@ -165,6 +194,12 @@ public class Page {
 				break;
 			case '!':
 				content.add(pos, POINT_D_EXCLAMATION);
+				break;
+			case '\n':
+				content.add(pos, RETOUR_CHARIOT);
+				break;
+			case '\0':
+				content.add(pos, FIN_DE_PAGE);
 				break;
 			default:
 				content.add(pos, new Word(word));
