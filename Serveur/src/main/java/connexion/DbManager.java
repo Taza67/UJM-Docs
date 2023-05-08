@@ -7,6 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.sql.Date;
+
+import connexion.document.Document;
 
 
 
@@ -113,12 +116,12 @@ public class DbManager extends ParamBD{
         int ligne = -1;
         try {
             Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
-            String sql = "INSERT utilisateur "
+            String sql = "INSERT INTO utilisateur "
                     + "(pseudo,mot_de_passe) "+
                     "VALUES (?,?);";
             PreparedStatement requete = c.prepareStatement(sql);
             if(u.getPseudo() == null || u.getPassword() == null) {
-                System.out.println("Le pseudo et le mot de passe sont nul (fichier DbManager).");
+                System.out.println("Le pseudo et le mot de passe sont nuls (fichier DbManager).");
                 requete.close();
                 c.close();
                 return;
@@ -141,7 +144,38 @@ public class DbManager extends ParamBD{
     }
 
 
+    public static void addDocument(User u, Document d) {
+    	int ligne = -1;
+        try {
+            Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
+            String sql = "INSERT INTO documents "
+                    + "(id_utilisateur,date_de_modification,chemin) "+
+                    "VALUES (?,?,?);";
+            PreparedStatement requete = c.prepareStatement(sql);
+            if(u.getPseudo() == null || u.getPassword() == null) {
+                System.out.println("Le pseudo et le mot de passe sont nuls (DbManager(addDocument)).");
+                requete.close();
+                c.close();
+                return;
+            }
+            else {
+            	requete.setInt(1,u.getId());
+                requete.setDate(2, d.getLastModifDate());
+                requete.setString(3,u.getPassword());
+            }
+            ligne = requete.executeUpdate();
+            requete.close();
+            c.close();
 
+            if(ligne==-1) {
+                System.out.println("ERREUR INSERTION");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 
