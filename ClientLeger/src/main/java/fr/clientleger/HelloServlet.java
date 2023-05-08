@@ -1,5 +1,9 @@
 package fr.clientleger;
 
+import connexion.DbManager;
+import connexion.ParamBD;
+import connexion.User;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -8,10 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import connexion.DbManager;
-import connexion.ParamBD;
-import connexion.User;
 
 
 @WebServlet(name = "helloServlet", value="/index")
@@ -36,8 +36,7 @@ public class HelloServlet extends HttpServlet {
         String invite = req.getParameter("invite");
 
         if(invite != null && invite.equals("true")) {
-            User u = new User(1, "invité", "ok");
-            u.setGuest(true);
+            User u = new User(1, "invité", "ok", true);
 
             HttpSession ses = req.getSession();
             ses.setAttribute("user", u);

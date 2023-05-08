@@ -9,7 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
+
 import org.apache.commons.io.FileUtils;
+
 import connexion.User;
 
 /**
@@ -235,5 +237,9 @@ public class Document {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String toString(int pageNum) {
+		return this.name + '\0' + pageNum + '\0' + this.content.size() + '\0' + this.content.get(pageNum).toString();
 	}
 }

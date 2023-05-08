@@ -95,28 +95,37 @@ public class HeavyServer extends Thread{
 				// Initialisation des flux d'entrée/sortie
 				out = new DataOutputStream(cliSoc.getOutputStream());
 				in = new DataInputStream(cliSoc.getInputStream());
+				
+				// savoir si c'est une connexion ou une inscription
+				// 0 = connexion, 1 = inscription
+				int type = in.readInt(); 
+				if(type == 0) { 
+					String pseudo = in.readUTF();
+					String pw = in.readUTF();
+					u = new User(-1, pseudo, pw);
+					boolean accept = DbManager.IsUserValid(u);
+					if(!accept) {
+						// 0 = Identification impossible
+						System.err.println("Identification impossible HeavyServer(l109)");
+						out.writeInt(0);
+					}
+					else {
+						System.out.println("Communication établie. Bienvenue " + u.getPseudo());
+						out.writeInt(1);
+						// création du thread intermédiaire
+						System.err.println("Je vais crée le DocStatusThread");
+						DocStatusThread docThread = new DocStatusThread(servSoc, cliSoc,u);
+						docThread.start();
+					}
 
-				String pseudo = in.readUTF();
-				String pw = in.readUTF();
-
-				u = new User(-1, pseudo, pw);
-				boolean accept = DbManager.IsUserValid(u);
-				if(!accept) {
-					out.writeUTF("Identification impossible. Erreur dans le pseudo ou mot de passe");
-					out.writeInt(0);
 				}
+				// type = inscription
 				else {
-					System.out.println("Communication établie. Bienvenue " + u.getPseudo());
-					u.getId();
-					//out.writeUTF("Communication établie. Bienvenue " + u.getPseudo());
-					out.writeInt(1);
+					
 				}
-
-				// création du thread intermédiaire
-				System.err.println("Je vais crée le DocStatusThread");
-				DocStatusThread docThread = new DocStatusThread(servSoc, cliSoc,u);
-				docThread.start();
-
+				
+				
+				
 			}
 			catch (IOException e) {
 				e.getStackTrace();

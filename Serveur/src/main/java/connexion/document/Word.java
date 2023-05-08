@@ -35,6 +35,14 @@ public class Word {
 		this.content.add(pos, c);
 	}
 
+	public String toString() {
+		String res = "";
+		for (char c: content) {
+			res += c;
+		}
+		return res + " ";
+	}
+
 	/**
 	 * Fonction qui ajoute un caractère en fin de mot
 	 * @param c le caractère à ajouter
