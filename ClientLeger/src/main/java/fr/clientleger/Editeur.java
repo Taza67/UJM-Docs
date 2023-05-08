@@ -19,24 +19,25 @@ public class Editeur extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-
+        System.out.println("ok editeur servlet");
         if(session == null || session.getAttribute("user") == null) {
             session.setAttribute("error", "inaccessible");
-            response.sendRedirect("");
+            response.sendRedirect("index");
             return;
         }
 
         User u = (User)session.getAttribute("user");
-
-        if(!(DbManager.IsUserValid(u))) {
-            session.setAttribute("error", "weird");
-            response.sendRedirect("");
-            return;
-        }
         if(u.isGuest()) {
             session.setAttribute("guest", "true");
         }
+        else if(!(DbManager.IsUserValid(u))) {
+            session.setAttribute("error", "weird");
+            response.sendRedirect("index");
+            return;
+        }
 
+
+        session.setAttribute("user", u);
         request.getRequestDispatcher("WEB-INF/jsp/editeur.jsp").forward(request, response);
     }
 

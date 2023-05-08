@@ -1,6 +1,8 @@
 package connexion;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 	/**
 	 * Identifiant de l'utilisateur
 	 */
@@ -115,6 +117,12 @@ public class User {
 		this.password = mdp;
 		position = 0;
 		guest = false;
+	}
+
+
+	public User(int idt, String p, String mdp, boolean guest) {
+		this(idt, p, mdp);
+		this.guest = guest;
 	}
 
 	/**
