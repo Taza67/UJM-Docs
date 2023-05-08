@@ -85,6 +85,15 @@ public class Manager implements IConfig {
 	}
 	
 	/**
+	 * Déconnecte l'application au serveur de données
+	 */
+	synchronized public void disconnectApplication() {
+		communication.interrupt();
+		client.disconnect();
+	}
+	
+	
+	/**
 	 * Débute l'échange de données entre le serveur et le client
 	 */
 	synchronized public void beginCommunication() {
@@ -99,10 +108,15 @@ public class Manager implements IConfig {
 	synchronized public void askNewDocument(String newDocument, boolean isOnline) {
 		if (isOnline) {
 			actions.addAction(NEW_DOCUMENT_REQUEST_CODE);
-			// Récupération du document ///////////////////////////////////////////
-			//
-			//
+			
+			beginCommunication();
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+		
 		currentDocumentName = newDocument;
 		currentDocument = new Document(newDocument);
 		currentDocument.addPage(0, "");

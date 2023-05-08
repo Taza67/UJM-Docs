@@ -44,7 +44,15 @@ public class TCommunication extends Thread implements IConfig {
 	 * Exécute le thread
 	 */
 	public void run() {		
-		while (!Thread.currentThread().isInterrupted()) {			
+		while (!Thread.currentThread().isInterrupted()) {
+			int actionCode = actions.getHeadAction();
+			
+			// Action à envoyer
+			if (actions.getSize() != 0)
+				// S'il y a une action à envoyer
+				sendFirstAction();
+			else sendNoAction();
+			
 			// On attend un code de continuation ou d'action du serveur
 			int codeServer = client.waitInt();
 			
@@ -52,13 +60,14 @@ public class TCommunication extends Thread implements IConfig {
 			if (codeServer == IMPOSSIBLE_CODE) return;
 			
 			// Une action a été demandée
-			if (codeServer != NO_ACTION_CODE) realiseAskedAction(codeServer);
+			if (codeServer != NO_ACTION_CODE); // realiseAskedAction(codeServer);
 			
-			// Action à envoyer
-			if (actions.getSize() != 0)
-				// S'il y a une action à envoyer
-				sendFirstAction();
-			else sendNoAction();
+			// S'il s'agit d'une création de document
+			if (actionCode == NEW_DOCUMENT_REQUEST_CODE) {
+				synchronized (manager) {
+					manager.notifyAll();
+				}
+			}
 		}
 	}
 	

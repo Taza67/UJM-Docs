@@ -41,12 +41,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.undo.UndoManager;
-
 import inside.IConfig;
 import inside.Manager;
 import inside.utilities.ResearchUtilities;
-import inside.utilities.TextUtilities;
 
 /**
  * Classe représentant un panneau d'édition de texte personnalisé
@@ -523,6 +520,27 @@ public class JFramePerso extends JFrame implements IConfig {
 				
 				manager = new Manager(textEditorPane);
 				textEditorPane.setManager(manager);
+				
+				// Connection
+				if (!manager.connectApplication(pseudo.getText(), motDePasse.getText()))
+					return;
+				
+				// Demande du nom du fichier
+				String nomFichier = JOptionPane.showInputDialog(self, "Entrez le nom du fichier");
+				
+				// // Annulation
+				if (nomFichier == null) {
+					JOptionPane.showMessageDialog(self, "Vous avez décidé d'annuler. Fermeture de l'application","Fermeture", JOptionPane.WARNING_MESSAGE);  
+					manager.disconnectApplication();
+					self.dispose();
+				}
+				
+				// // Nom incorrect
+				while (nomFichier.isBlank() || nomFichier.isEmpty())
+					nomFichier = JOptionPane.showInputDialog(self, "Attention ! Vous n'avez entré un nom valide ! Entrez le nom du fichier");
+				
+				// Création du nouveau document
+				manager.askNewDocument(nomFichier, true);
 			}
 		});
 		
