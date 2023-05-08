@@ -1,6 +1,8 @@
 package fr.clientleger;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +22,9 @@ public class Editeur extends HttpServlet {
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        System.out.println("ok editeur servlet");
+
+
+
         if(session == null || session.getAttribute("user") == null) {
             session.setAttribute("error", "inaccessible");
             response.sendRedirect("index");
@@ -39,14 +43,28 @@ public class Editeur extends HttpServlet {
 
         Gson gson = new Gson();
         String userJson = gson.toJson(u);
+        String escapedUserJson = URLEncoder.encode(userJson, StandardCharsets.UTF_8.toString());
         System.out.println(userJson);
-        request.setAttribute("userJson", userJson);
+        System.out.println(escapedUserJson);
+        request.setAttribute("userJson", escapedUserJson);
         session.setAttribute("user", u);
         request.getRequestDispatcher("WEB-INF/jsp/editeur.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        String deconnexion = request.getParameter("deconnexion");
+        if(deconnexion != null) {
+            System.out.println("deconnexion");
+            session.invalidate();
+            response.sendRedirect("index");
+            return;
+        }
+        doGet(request, response);
+
+
 
     }
 }
