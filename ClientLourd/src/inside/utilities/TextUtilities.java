@@ -41,4 +41,21 @@ public class TextUtilities {
         return text.length();
     }
     
+    /**
+     * Récupère le numéro de ligne du curseur
+     * @param text Texte dans lequel on recherche le numéro de ligne
+     * @param carretPosition Position du curseur dans tout le texte
+     */
+    public static int getCarretLine(String text, int caretPosition) {
+		int begin = 0;
+		String[] lines = (text + "#").split("\n");
+		
+		for (int i = 0; i < lines.length; i++) {
+			if (caretPosition >= begin && caretPosition <= begin + lines[i].length())
+				return i + 1;
+			begin += lines[i].length() + 1;
+		}
+    	
+    	return 0;
+    }
 }

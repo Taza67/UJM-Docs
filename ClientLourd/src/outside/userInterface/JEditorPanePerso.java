@@ -1,18 +1,19 @@
 package outside.userInterface;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.undo.UndoManager;
@@ -61,6 +62,14 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 * JLabel indiquant le nombre de caractères sur la fenêtre
 	 */
 	private JLabel charIndicator;
+	/**
+	 * JLabel indiquant la position du curseur
+	 */
+	private JLabel cursorIndicator;
+	/**
+	 * Référence à l'éditeur lui-même
+	 */
+	private JEditorPanePerso self;
 	
 	 
 	/**
@@ -69,12 +78,15 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 * @param wi Référence au JLabel indiquant le nombre de mots
 	 * @param ci Référence au JLabel indiquant le nombre de caractères
 	 */
-	public JEditorPanePerso(JLabel li, JLabel wi, JLabel ci) {
+	public JEditorPanePerso(JLabel li, JLabel wi, JLabel ci, JLabel curi) {
 		super("text/plain", "");
 		// Dimmensions du panneau
-		this.setPreferredSize(textPaneDimensions);
-		this.setMinimumSize(textPaneDimensions);
-		this.setMargin(new Insets(50, 50, 50, 50));
+		this.setSize(DEFAULT_EDITOR_PANE_DIMENSIONS);
+		this.setMinimumSize(DEFAULT_EDITOR_PANE_DIMENSIONS);
+		this.setMargin(new Insets(
+				DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE
+			)	
+		);
 		
 		// Gestionnaire de undo/redo
 		undoManager = new UndoManager();
@@ -84,9 +96,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
         lineIndicator = li;
         wordIndicator = wi;
         charIndicator = ci;
+        cursorIndicator = curi;
         
-        // Gestion d'événements
-        initEventManagement();
+        self = this;
 	}
 	
 	
@@ -99,8 +111,17 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	}
 	
 	/**
+	 * Modifie la référence au undomanager de l'application
+	 * @param undomanager Nouvelle référence à un undomanager
+	 */
+	public void setUndoManager(UndoManager uma) {
+		undoManager = uma;
+		this.getDocument().addUndoableEditListener(undoManager);
+	}
+	
+	/**
 	 * Modifie la référence au manager de l'application
-	 * @param manager Nouvelle référence à un manager
+	 * @param ma Nouvelle référence à un manager
 	 */
 	public void setManager(Manager ma) {
 		manager = ma;
@@ -109,8 +130,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	
 	/**
 	 * Initialisate la gestion d'événements
+	 * @param isOnline true si l'utilisateur est connecté, false sinon
 	 */
-	public void initEventManagement() {
+	public void initEventManagement(boolean isOnline) {
 		// Undo/Redo
         this.addKeyListener((KeyListener)new KeyAdapter() {
             @Override
@@ -119,6 +141,8 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
                     if (undoManager.canUndo()) {
                     	// Annuler
                     	undoManager.undo();
+                    	
+                    	if (!isOnline) return;
                     	// manager.faisQuelqueChose() //////////////////////////////
                         //
                         //
@@ -127,26 +151,44 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
                     if (undoManager.canRedo()) {
                     	// Refaire
                     	undoManager.redo();
+                    	
+                    	if (!isOnline) return;
                     	// manager.faisQuelqueChose() //////////////////////////////
                     	//
                     	//
                     }
-                }
+                } 
             }
         });
         
-        // Modification du texte
         JEditorPanePerso epp = this;
+        
+        // Déplacement de curseur
+        this.addCaretListener(new CaretListener() {
+			
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				int lineNumber = TextUtilities.getCarretLine(epp.getText(), e.getDot());
+				
+				cursorIndicator.setText(e.getDot() + " / " + charCount + "c      " + 
+					lineNumber + " / " + lineCount + "l");
+			}
+		});
+        
+        // Modification du texte
         this.getDocument().addDocumentListener((DocumentListener)new DocumentListener() {
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				
+				updateSize();
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
+				updateSize();
                 updateCounts(epp.getText());
+                
+                if (!isOnline) return;
                 // manager.faisQuelqueChose() //////////////////////////////
                 //
                 //
@@ -154,7 +196,10 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
+				updateSize();
                 updateCounts(epp.getText());
+                
+                if (!isOnline) return;
                 // manager.faisQuelqueChose() //////////////////////////////
                 //
                 //
@@ -172,9 +217,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
                 charCount = TextUtilities.countChars(text);
                 
                 // Modification des labels
-                lineIndicator.setText("1 / " + lineCount + " lignes");
-                wordIndicator.setText("0 / " + wordCount + " mots");
-                charIndicator.setText("0 / " + charCount + " caractères");
+                lineIndicator.setText(lineCount + " lignes");
+                wordIndicator.setText(wordCount + " mots");
+                charIndicator.setText(charCount + " caractères");
             }
         });
 	}
@@ -189,53 +234,50 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
         Font newFont = currentFont.deriveFont(newFontSize);
 
         this.setFont(newFont);
+        
+        updateSize();
 	}
 	
-	/**
-	 * Coupe le texte sélectionné dans l'éditeur et le stocke dans le presse-papiers système
-	 */
-    public void cutSelectedText() {
-        String selectedText = this.getSelectedText();
-        if (selectedText != null) {
-        	// Copie du texte sélectionné dans le presse-papiers
-            StringSelection stringSelection = new StringSelection(selectedText);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
-
-            // On retire le texte sélectionné
-            this.replaceSelection("");
-            // manager.faisQuelqueChose() //////////////////////////////
-            //
-            //
-        }
-    }
-	
-	/**
-	 * Copie le texte sélectionné dans l'éditeur dans le presse-papiers système
-	 */
-    public void copySelectedText() {
-        String selectedText = this.getSelectedText();
-        if (selectedText != null) {
-        	// Copie du texte sélectionné dans le presse-papiers
-            StringSelection stringSelection = new StringSelection(selectedText);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
-        }
-    }
-    
     /**
-     * Colle le texte qui est dans le presse-papiers système à l'emplacement du curseur
+     * Met à jour les dimensions de l'éditeur et de son conteneur
+     * en fonction des dimensions adaptées au texte
      */
-    public void pasteText() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        try {
-            String clipboardText = (String) clipboard.getData(DataFlavor.stringFlavor);
-            this.replaceSelection(clipboardText);
-            // manager.faisQuelqueChose() //////////////////////////////
-            //
-            // 
-        } catch (IOException | UnsupportedFlavorException e) {
-            e.printStackTrace();
-        }
+	private int size = 1;
+    private void updateSize() {
+    	boolean needMoreSpace, haveMoreSpace;
+    	
+    	// Revalidation préalable
+    	self.revalidate();
+    	
+    	// Récupération des dimensions adéquates pour l'éditeur
+    	Dimension preferredDimensions = self.getPreferredSize();
+    	
+    	// Gestion de la taille de la page
+		size = (preferredDimensions.height + 500) / DEFAULT_EDITOR_PANE_DIMENSIONS.height + 1;
+    	
+		// Vérification de la situation du document (trop/pas assez d'espace)
+		needMoreSpace = preferredDimensions.height > DEFAULT_EDITOR_PANE_DIMENSIONS.height * size - 500;
+		haveMoreSpace = preferredDimensions.height < DEFAULT_EDITOR_PANE_DIMENSIONS.height * (size - 1) - 500;
+		
+		// Aucun besoin de changement
+		if (!needMoreSpace && !haveMoreSpace) return;
+
+		// Mise à jour des dimensions
+		self.setSize(
+			new Dimension(
+				DEFAULT_EDITOR_PANE_DIMENSIONS.width,
+				DEFAULT_EDITOR_PANE_DIMENSIONS.height * size
+			)
+		);
+		self.getParent().setPreferredSize(
+			new Dimension(
+				DEFAULT_EDITOR_PANE_DIMENSIONS.width,
+				DEFAULT_EDITOR_PANE_DIMENSIONS.height * size
+			)
+		);
+		
+		// Revalidation
+		self.revalidate();
+		((JPanel)self.getParent()).revalidate();
     }
 }
