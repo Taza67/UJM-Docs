@@ -14,7 +14,7 @@ import java.net.Socket;
 
 
 
-public class HeavyServer {
+public class HeavyServer extends Thread{
 
 	/**
 	 * Port de connexion
@@ -37,7 +37,15 @@ public class HeavyServer {
 	 */
 	private DataOutputStream out;
 
+	/*
+	 * Utilisateur qui essaye de se connecter
+	 */
+	private User u;
 
+	/**
+	 * Instancie un objet représentant un serveur
+	 *
+	 */
 	public HeavyServer() {
 		try {
 			servSoc = new ServerSocket(PORT);
@@ -47,6 +55,20 @@ public class HeavyServer {
 			e.printStackTrace();
 		}
 	}
+
+
+	/**
+	 * Retourne l'utilisateur qui essaie de se connecter
+	 * @return l'utilisateur qui essaie de s'identifier
+	 */
+	public User getUser() {return u;}
+
+	/**
+	 * Modifie l'utilisateur qui essaie de se connecter
+	 */
+	public void setU(User u) {this.u = u;}
+
+
 
 	public void disconnectClient() {
 		try {
@@ -60,9 +82,12 @@ public class HeavyServer {
 		}
 	}
 
-
+	/*
+	 * Methode qui gère le thread de communication
+	 */
 	public void listen() {
-		while(true) {
+		DbManager.init();
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				cliSoc = servSoc.accept();
 				System.err.println("S : un client vient de se connecter depuis " + cliSoc.getInetAddress());
@@ -74,16 +99,24 @@ public class HeavyServer {
 				String pseudo = in.readUTF();
 				String pw = in.readUTF();
 
-				User u = new User(-1, pseudo, pw);
+				u = new User(-1, pseudo, pw);
 				boolean accept = DbManager.IsUserValid(u);
 				if(!accept) {
 					out.writeUTF("Identification impossible. Erreur dans le pseudo ou mot de passe");
+					out.writeInt(0);
 				}
 				else {
 					System.out.println("Communication établie. Bienvenue " + u.getPseudo());
-					out.writeUTF("Communication établie. Bienvenue " + u.getPseudo());
+					u.getId();
+					//out.writeUTF("Communication établie. Bienvenue " + u.getPseudo());
 					out.writeInt(1);
 				}
+
+				// création du thread intermédiaire
+				System.err.println("Je vais crée le DocStatusThread");
+				DocStatusThread docThread = new DocStatusThread(servSoc, cliSoc,u);
+				docThread.start();
+
 			}
 			catch (IOException e) {
 				e.getStackTrace();
@@ -91,9 +124,19 @@ public class HeavyServer {
 		}
 	}
 
+	/*
+	 * Thread qui assure la connexion et
+	 * l'acceptation de la demande de
+	 * connexion du client
+	 */
+	@Override
+	public void run() {
+		listen();
+	}
+
 	public static void main(String[] args) {
 		HeavyServer s = new HeavyServer();
-		s.listen();
+		s.start();
 
 	}
 

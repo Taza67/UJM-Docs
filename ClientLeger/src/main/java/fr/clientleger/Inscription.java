@@ -53,7 +53,7 @@ public class Inscription extends HttpServlet {
 
         request.getSession().setAttribute("inscrit", "true");
 
-        response.sendRedirect("");
+        response.sendRedirect("index");
 
     }
 }

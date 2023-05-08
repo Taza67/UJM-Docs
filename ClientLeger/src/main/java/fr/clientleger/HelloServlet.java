@@ -13,7 +13,8 @@ import connexion.DbManager;
 import connexion.ParamBD;
 import connexion.User;
 
-@WebServlet(name = "helloServlet")
+
+@WebServlet(name = "helloServlet", value="/index")
 public class HelloServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -35,7 +36,8 @@ public class HelloServlet extends HttpServlet {
         String invite = req.getParameter("invite");
 
         if(invite != null && invite.equals("true")) {
-            User u = new User(1, "invité", "");
+            User u = new User(1, "invité", "ok");
+            u.setGuest(true);
 
             HttpSession ses = req.getSession();
             ses.setAttribute("user", u);
@@ -43,8 +45,8 @@ public class HelloServlet extends HttpServlet {
             return;
         }
         // test validité utilisateur
-        User u;
-        if((u = DbManager.IsUserValid(pseudo, mdp)) == null) {
+        User u = new User(1, pseudo, mdp);
+        if(!(DbManager.IsUserValid(u))) {
             req.setAttribute("error", "pseudo");
             doGet(req, resp);
             return;
@@ -52,10 +54,7 @@ public class HelloServlet extends HttpServlet {
 
         HttpSession ses = req.getSession();
         ses.setAttribute("user", u);
-        resp.sendRedirect("editeur");
-    }
 
-    @Override
-	public void destroy() {
+        resp.sendRedirect("editeur");
     }
 }
