@@ -1,10 +1,6 @@
 package connexion;
 
-
-import java.net.ServerSocket;
-import java.net.Socket;
-
-public class CommunicationThread {
+public class CommunicationThread extends Thread{
 
 /**
  * Module implémentant le thread responsable de la communication entre
@@ -13,16 +9,26 @@ public class CommunicationThread {
  */
 
 	/*
-	 * Socket client qui recevra les modifications
+	 * Server contenant les flux d'entrées et sorties
 	 */
-	private Socket Clisoc;
+	private HeavyServer server;
 
 	/*
-	 * Socket Server qui recevra les modifications
-	 * de la part du client
+	 * Gestionnaire des documents
 	 */
-	private ServerSocket ServSock;
+	private DocManager manager;
 
 
+	public CommunicationThread(HeavyServer s, DocManager m) {
+		this.server = s;
+		this.manager = m;
+	}
 
+	@Override
+	public void run() {
+		while(!Thread.currentThread().isInterrupted()) {
+
+		}
+
+	}
 }

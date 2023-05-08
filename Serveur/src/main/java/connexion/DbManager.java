@@ -20,9 +20,28 @@ public class DbManager extends ParamBD {
 		init();
 	}
 
-	public static Connection getConnection() {
-		return connection;
-	}
+
+    public static void init() {
+        ParamBD.init("src/main/webapp/WEB-INF/web.xml");
+        String jdbcDriver = "com.mysql.cj.jdbc.Driver";
+        String jdbcUrl = ParamBD.bdURL;
+        String jdbcLogin = ParamBD.bdLogin;
+        String jdbcPassword = ParamBD.bdPassword;
+
+        System.out.println("JDBC_DRIVER: " + "com.mysql.cj.jdbc.Driver");
+        System.out.println("JDBC_URL: " + bdURL);
+        System.out.println("JDBC_LOGIN: " + bdLogin);
+        System.out.println("JDBC_PASSWORD: " + bdPassword);
+
+        try {
+            Class.forName(jdbcDriver);
+            connection = DriverManager.getConnection(jdbcUrl, jdbcLogin, jdbcPassword);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Connection getConnection() {return connection;}
 
 	public static User IsUserValid(String p, String pw) {
 		int uid = -1;
@@ -52,35 +71,6 @@ public class DbManager extends ParamBD {
 
 		System.out.println("Utilisateur trouvé.");
 		return new User(uid, p, pw);
-	}
-
-	public static void AddUser(User u) {
-		int ligne = -1;
-		try {
-			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
-			String sql = "INSERT utilisateur "
-				+ "(pseudo,mot_de_passe) " +
-				"VALUES (?,?);";
-			PreparedStatement requete = c.prepareStatement(sql);
-			if(u.getPseudo() == null || u.getPassword() == null) {
-				System.out.println("Le pseudo et le mot de passe sont nul (fichier DbManager).");
-				requete.close();
-				c.close();
-				return;
-			} else {
-				requete.setString(1, u.getPseudo());
-				requete.setString(2, u.getPassword());
-			}
-			ligne = requete.executeUpdate();
-			requete.close();
-			c.close();
-
-			if(ligne == -1) {
-				System.out.println("ERREUR INSERTION");
-			}
-		} catch(SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -135,31 +125,11 @@ public class DbManager extends ParamBD {
         }
     }
 
-	private void init() {
-		ParamBD.init("src/main/webapp/WEB-INF/web.xml");
-		String jdbcDriver = "com.mysql.cj.jdbc.Driver";
-		String jdbcUrl = ParamBD.bdURL;
-		String jdbcLogin = ParamBD.bdLogin;
-		String jdbcPassword = ParamBD.bdPassword;
-
-		System.out.println("JDBC_DRIVER: " + "com.mysql.cj.jdbc.Driver");
-		System.out.println("JDBC_URL: " + bdURL);
-		System.out.println("JDBC_LOGIN: " + bdLogin);
-		System.out.println("JDBC_PASSWORD: " + bdPassword);
-
-		try {
-			Class.forName(jdbcDriver);
-			connection = DriverManager.getConnection(jdbcUrl, jdbcLogin, jdbcPassword);
-		} catch(ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public HashMap<Integer, User> getUserList() {
 		return UserList;
 	}
 
-	public boolean IsUserValid(User u) {
+	public static boolean IsUserValid(User u) {
 		int uid = -1;
 		try {
 			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
@@ -185,8 +155,79 @@ public class DbManager extends ParamBD {
 			return false;
 		}
 
-		System.out.println("Utilisateur trouvé.");
-		return true;
-	}
+        System.out.println("Utilisateur trouvé.");
+        u.setId(uid);
+        return true;
+    }
+
+
+    public static void AddUser(User u) {
+        int ligne = -1;
+        try {
+            Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
+            String sql = "INSERT INTO utilisateur "
+                    + "(pseudo,mot_de_passe) "+
+                    "VALUES (?,?);";
+            PreparedStatement requete = c.prepareStatement(sql);
+            if(u.getPseudo() == null || u.getPassword() == null) {
+                System.out.println("Le pseudo et le mot de passe sont nuls (fichier DbManager).");
+                requete.close();
+                c.close();
+                return;
+            }
+            else {
+                requete.setString(1,u.getPseudo());
+                requete.setString(2,u.getPassword());
+            }
+            ligne = requete.executeUpdate();
+            requete.close();
+            c.close();
+
+            if(ligne==-1) {
+                System.out.println("ERREUR INSERTION");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void addDocument(User u, Document d) {
+    	int ligne = -1;
+        try {
+            Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
+            String sql = "INSERT INTO documents "
+                    + "(id_utilisateur,date_de_modification,chemin) "+
+                    "VALUES (?,?,?);";
+            PreparedStatement requete = c.prepareStatement(sql);
+            if(u.getPseudo() == null || u.getPassword() == null) {
+                System.out.println("Le pseudo et le mot de passe sont nuls (DbManager(addDocument)).");
+                requete.close();
+                c.close();
+                return;
+            }
+            else {
+            	requete.setInt(1,u.getId());
+                requete.setDate(2, d.getLastModifDate());
+                requete.setString(3,u.getPassword());
+            }
+            ligne = requete.executeUpdate();
+            requete.close();
+            c.close();
+
+            if(ligne==-1) {
+                System.out.println("ERREUR INSERTION");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
 
 }
