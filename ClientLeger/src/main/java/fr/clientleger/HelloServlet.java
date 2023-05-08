@@ -1,41 +1,52 @@
 package fr.clientleger;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import connexion.DbManager;
 import connexion.ParamBD;
 import connexion.User;
 
-import java.io.*;
-import javax.servlet.ServletException;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
 
-@WebServlet(name = "helloServlet")
+@WebServlet(name = "helloServlet", value="/index")
 public class HelloServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
+
+	@Override
 	public void init() {
         ParamBD.init(this.getServletContext());
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    @Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.getRequestDispatcher("WEB-INF/jsp/index.jsp").forward(request, response);
     }
 
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pseudo = req.getParameter("pseudo");
         String mdp = req.getParameter("mot_de_passe");
         String invite = req.getParameter("invite");
 
         if(invite != null && invite.equals("true")) {
+            User u = new User(1, "invité", "ok");
+            u.setGuest(true);
 
-            req.setAttribute("invite", "true");
-
-            doGet(req, resp);
+            HttpSession ses = req.getSession();
+            ses.setAttribute("user", u);
+            resp.sendRedirect("editeur");
             return;
         }
         // test validité utilisateur
-        User u;
-        if((u = DbManager.IsUserValid(pseudo, mdp)) == null) {
+        User u = new User(1, pseudo, mdp);
+        if(!(DbManager.IsUserValid(u))) {
             req.setAttribute("error", "pseudo");
             doGet(req, resp);
             return;
@@ -43,8 +54,7 @@ public class HelloServlet extends HttpServlet {
 
         HttpSession ses = req.getSession();
         ses.setAttribute("user", u);
+
         resp.sendRedirect("editeur");
-    }
-    public void destroy() {
     }
 }

@@ -1,13 +1,16 @@
 package connexion;
 
-import javax.servlet.ServletContext;
 import java.io.File;
+
+import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 
 public class ParamBD {
 
@@ -21,12 +24,12 @@ public class ParamBD {
 			bdURL = context.getInitParameter("JDBC_URL");
 			bdLogin = context.getInitParameter("JDBC_LOGIN");
 			bdPassword = context.getInitParameter("JDBC_PASSWORD");
-		} 
+		}
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void init(String xmlFileName) {
 	    try {
 	        File inputFile = new File(xmlFileName);

@@ -1,6 +1,7 @@
 package connexion.document;
 
 import java.util.LinkedList;
+
 import connexion.User;
 
 /**
