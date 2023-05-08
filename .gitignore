@@ -40,6 +40,8 @@ hs_err_pid*
 
 # intellij
 */.idea/
+.idea/
 *.iml
 */target/
 */build/
+target/

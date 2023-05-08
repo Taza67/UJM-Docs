@@ -12,12 +12,13 @@ import javax.servlet.annotation.*;
 @WebServlet(name = "helloServlet")
 public class HelloServlet extends HttpServlet {
 
-    public void init() {
+    private static final long serialVersionUID = 1L;
+	public void init() {
         ParamBD.init(this.getServletContext());
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("WEB-INF/index.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/index.jsp").forward(request, response);
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

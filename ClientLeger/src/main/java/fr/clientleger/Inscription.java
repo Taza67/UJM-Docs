@@ -12,13 +12,15 @@ import java.io.IOException;
 @WebServlet(name = "Inscription", value = "/inscription")
 public class Inscription extends HttpServlet {
 
-    public void init(){
+    private static final long serialVersionUID = 1L;
+
+	public void init(){
         ParamBD.init(this.getServletContext());
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("WEB-INF/inscription.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/jsp/inscription.jsp").forward(request, response);
 
     }
 
