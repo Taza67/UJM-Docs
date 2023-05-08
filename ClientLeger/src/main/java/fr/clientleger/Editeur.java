@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.google.gson.Gson;
 
 import connexion.DbManager;
 import connexion.User;
@@ -36,7 +37,10 @@ public class Editeur extends HttpServlet {
             return;
         }
 
-
+        Gson gson = new Gson();
+        String userJson = gson.toJson(u);
+        System.out.println(userJson);
+        request.setAttribute("userJson", userJson);
         session.setAttribute("user", u);
         request.getRequestDispatcher("WEB-INF/jsp/editeur.jsp").forward(request, response);
     }
