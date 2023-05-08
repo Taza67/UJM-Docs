@@ -12,8 +12,15 @@ public interface IConfig {
 	/**
 	 * Dimensions par défaut du panneau d'édition de texte
 	 */
-	Dimension textPaneDimensions = new Dimension(100, 1000);
-	
+	Dimension DEFAULT_EDITOR_PANE_DIMENSIONS = new Dimension(100, 2000);
+	/**
+	 * Dimensions minimales par défaut du panneau d'édition de texte
+	 */
+	Dimension DEFAUTL_EDITOR_PANE_MIN_DIMENSIONS = new Dimension(100, 2000);
+	/**
+	 * Marge par défaut de l'éditeur
+	 */
+	int DEFAULT_EDITOR_MARGE = 200;
 	// Document ///////////////////////////////////////
 	/**
 	 * Marge par défaut du document

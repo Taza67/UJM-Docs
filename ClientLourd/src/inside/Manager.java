@@ -1,5 +1,10 @@
 package inside;
 
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.undo.UndoManager;
+
 import inside.communication.Client;
 import inside.communication.TCommunication;
 import inside.utilities.PDFUtilities;
@@ -41,6 +46,14 @@ public class Manager implements IConfig {
 	 * Nom du document ouvert
 	 */
 	private String currentDocumentName;
+	/**
+	 * Document ouvert
+	 */
+	private Document currentDocument;
+	/**
+	 * Numéro de la page ouverte
+	 */
+	private int currentPageNumber;
 	
 	
 	/**
@@ -80,16 +93,27 @@ public class Manager implements IConfig {
 	
 	/**
 	 * Demande la création d'un nouveau document
-	 * @param documentName Nom du nouveau document
+	 * @param newDocument Nom à donner au nouveau document
+	 * @param isOnline true si l'utilisateur est connecte, false sinon
 	 */
-	synchronized public void askNewDocument(String documentName) {
-		actions.addAction(NEW_DOCUMENT_REQUEST_CODE);
-		// Récupération du document ///////////////////////////////////////////
-		//
-		//
-		currentDocumentName = documentName;
+	synchronized public void askNewDocument(String newDocument, boolean isOnline) {
+		if (isOnline) {
+			actions.addAction(NEW_DOCUMENT_REQUEST_CODE);
+			// Récupération du document ///////////////////////////////////////////
+			//
+			//
+		}
+		currentDocumentName = newDocument;
+		currentDocument = new Document(newDocument);
+		currentDocument.addPage(0, "");
+		currentPageNumber = 0;
+		editor.setText("");
+		editor.setUndoManager(new UndoManager());
+		
 		System.err.println("- Nom du document : " + currentDocumentName);
 	}
+	
+	
 	
 	/**
 	 * Demande l'ouverture d'un document
@@ -101,6 +125,9 @@ public class Manager implements IConfig {
 		//
 		//
 		currentDocumentName = documentName;
+		// ATTENTION
+		currentDocument = null;		// IL FAUDRA RÉCUPÉRER LE DOCUMENT D'UNE CERTAINE MANIÈRE
+		
 		System.err.println("- Nom du document : " + currentDocumentName);
 	}
 	
@@ -123,14 +150,72 @@ public class Manager implements IConfig {
 	 * @param text Contenu à mettre dans l'éditeur
 	 */
 	synchronized public void putModification(String text) {
-		editor.setText(text);
+		editor.setText(text); // NE MARCHE PAS
+		// ATTENTION, GESTION DU DOCUMENT SOUS FORME DE PAGES
 	}
 	
 	/**
 	 * Exporte le document sous format pdf
-	 * @param filePath Chemin du fichier pdf
 	 */
-	synchronized public void exportDocument(String filePath) {
-		PDFUtilities.exportToPDF(editor.getText(), filePath);
+	synchronized public void exportDocument() {
+		// Application des modifications
+		currentDocument.setPage(currentPageNumber, editor.getText());
+		
+		// Récupération du document en un seul morceau
+		String allInOne = currentDocument.getAllDocument();
+		
+		// Création du sélecteur de fichier
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Spécifiez un fichier pour sauvegarder");
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+        	// Attente du choix de l'utilisateur
+            File fileToSave = fileChooser.getSelectedFile();
+            
+            // Sauvegarde
+            PDFUtilities.exportToPDF(allInOne, fileToSave.getAbsolutePath());
+        }
+	}
+	
+	/**
+	 * Ajoute une nouvelle page au document
+	 */
+	synchronized public void addNewPage() {
+		// Application des modifications
+		currentDocument.setPage(currentPageNumber, editor.getText());
+		
+		currentPageNumber++;
+		currentDocument.addPage(currentPageNumber, "");
+		editor.setText("");
+	}
+	
+	/**
+	 * Déplace l'éditeur vers la page associé au numéro
+	 * @param pageNumber Numéro de page
+	 */
+	synchronized public void goToPage(int pageNumber) {
+		if (pageNumber < 0 || pageNumber >= currentDocument.getPageCount()) return;
+		
+		// Application des modifications
+		currentDocument.setPage(currentPageNumber, editor.getText());
+		
+		// Déplacement
+		currentPageNumber = pageNumber;
+		editor.setText(currentDocument.getPage(pageNumber));
+	}
+	
+	/**
+	 * Avance d'une page
+	 */
+	synchronized public void moveForward() {
+		goToPage(currentPageNumber + 1);
+	}
+	
+	/**
+	 * Recule d'une page
+	 */
+	synchronized public void moveBackward() {
+		goToPage(currentPageNumber - 1);
 	}
 }
