@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import connexion.document.Document;
 
 public class DbManager extends ParamBD {
