@@ -48,13 +48,11 @@ public class TCommunication extends Thread implements IConfig {
 	@Override
 	public void run() {
 		while (!Thread.currentThread().isInterrupted()) {
-			int actionCode = actions.getHeadAction().getCode();
-
 			// Action à envoyer
-			if (actions.getSize() != 0)
+			if (actions.getSize() != 0) {
 				// S'il y a une action à envoyer
 				sendFirstAction();
-			else
+			} else
 				sendNoAction();
 
 			// On attend un code de continuation ou d'action du serveur
@@ -99,8 +97,10 @@ public class TCommunication extends Thread implements IConfig {
 			int pageCount = client.waitInt();
 			String content = client.waitString();
 			
+			System.err.println(pageNumber + " " + pageCount + " " + content);
+			
 			// Ajout des pages dans le document
-			manager.getCurrentDocument().addPages(pageCount, 0);
+			manager.getCurrentDocument().addPages(0, pageCount);
 			
 			// Application dans l'éditeur
 			manager.putModification(content, pageNumber, pageCount);
@@ -121,7 +121,8 @@ public class TCommunication extends Thread implements IConfig {
 			}
 			
 			return;
-		case MODIFY_DOCUMENT_REQUEST_CODE:
+		case DELETE_REQUEST_CODE:
+			String content = client.waitString();
 			// Récupération du texte depuis le serveur
 			// String text = ""; // À CHANGER
 

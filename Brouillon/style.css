@@ -73,11 +73,6 @@ body {
     cursor: alias;
 }
 
-.menu-bar-submenu-title:hover {
-    /* Décorations */
-    background-color: #111;
-}
-
 .menu-bar-submenu-items {
     /* Box */
     display: flex;
