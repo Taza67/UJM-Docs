@@ -24,7 +24,6 @@ public class Editeur extends HttpServlet {
         HttpSession session = request.getSession();
 
 
-
         if(session == null || session.getAttribute("user") == null) {
             session.setAttribute("error", "inaccessible");
             response.sendRedirect("index");

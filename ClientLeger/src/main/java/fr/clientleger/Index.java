@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
-@WebServlet(name = "helloServlet", value="/index")
-public class HelloServlet extends HttpServlet {
+@WebServlet(name = "Index", value="/index")
+public class Index extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,13 +28,22 @@ public class HelloServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession ses = request.getSession();
 
-        String inscrit = (String)ses.getAttribute("inscrit");
+        Object inscritObj = ses.getAttribute("inscrit");
 
-        if(inscrit != null && inscrit.equals("true")) {
+        Object errorRedirectObj = ses.getAttribute("error");
+
+        ses.invalidate();
+
+        if(inscritObj != null) {
             System.out.println("inscrit ! ");
             request.setAttribute("inscrit", "true");
         }
-        ses.invalidate();
+
+        if(errorRedirectObj != null) {
+            System.out.println("redirection");
+            String errorRedirect = errorRedirectObj.toString();
+            request.setAttribute("errorRedirect", errorRedirect);
+        }
         request.getRequestDispatcher("WEB-INF/jsp/index.jsp").forward(request, response);
     }
 
