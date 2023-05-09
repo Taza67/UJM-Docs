@@ -1,8 +1,8 @@
 package outside.application;
 
 import java.awt.EventQueue;
+
 import outside.userInterface.JFramePerso;
-import inside.Manager;
 
 public class UJMDocs {
 	/**
@@ -10,6 +10,7 @@ public class UJMDocs {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				JFramePerso window = new JFramePerso();
 			}

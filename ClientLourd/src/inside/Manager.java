@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.undo.UndoManager;
 import javax.swing.JLabel;
+import javax.swing.undo.UndoManager;
 
 import inside.communication.Client;
 import inside.communication.TCommunication;
@@ -15,9 +15,10 @@ import inside.utilities.Tuple;
 import outside.userInterface.JEditorPanePerso;
 
 /**
- * Classe représentant le module qui gère toute l'application
- * C'est-à-dire qu'elle contient toutes les méthodes principales
- * qui appellent les autres méthodes
+ * Classe représentant le module qui gère toute l'application C'est-à-dire
+ * qu'elle contient toutes les méthodes principales qui appellent les autres
+ * méthodes
+ *
  * @author mourtaza
  *
  */
@@ -51,6 +52,10 @@ public class Manager implements IConfig {
 	 */
 	private String currentDocumentName;
 	/**
+	 * Identifiant du document ouvert
+	 */
+	private int currentDocumentId;
+	/**
 	 * Document ouvert
 	 */
 	private Document currentDocument;
@@ -75,9 +80,9 @@ public class Manager implements IConfig {
 	 */
 	private List<Tuple> listDocuments;
 
-	
 	/**
 	 * Instancie un objet représentant le module de gestion
+	 *
 	 * @param ed Référence au JPanelEditor contenant le document édité
 	 */
 	public Manager(JEditorPanePerso ed, JLabel pi, JLabel pni) {
@@ -87,11 +92,20 @@ public class Manager implements IConfig {
 		editor = ed;
 		pageIndicator = pi;
 		pageNumberIndicator = pni;
-		listDocuments = new ArrayList<Tuple>();
+		listDocuments = new ArrayList<>();
+	}
+
+	
+	/**
+	 * Retourne le document actuellement ouvert
+	 */
+	synchronized public Document getCurrentDocument() {
+		return currentDocument;
 	}
 	
 	/**
 	 * Retourne la liste des documents <id, nom>
+	 *
 	 * @return Liste des documents
 	 */
 	synchronized public List<Tuple> getListDocuments() {
@@ -99,26 +113,46 @@ public class Manager implements IConfig {
 	}
 	
 	/**
+	 * Modifie la valeur de l'identifiant du document courant
+	 * @param did Valeur à affecter
+	 */
+	synchronized public void setCurrentDocumentId(int did) {
+		currentDocumentId = did;
+		if (currentDocument != null)
+			currentDocument.setDocumentId(did);
+	}
+	
+	/**
+	 * Réinitialise le gestionnaire refaire/défaire de l'éditeur
+	 */
+	synchronized public void reinitUndoManager() {
+		editor.setUndoManager(new UndoManager());
+	}
+
+	
+	/**
 	 * Connecte l'application au serveur de données
-	 * @param ps Pseudo à communiquer pour l'authentification
-	 * @param pass Mot de passe à communiquer pour l'authentification
+	 *
+	 * @param ps    Pseudo à communiquer pour l'authentification
+	 * @param pass  Mot de passe à communiquer pour l'authentification
 	 * @param isNew true si c'est un nouvel utilisateur, false sinon
 	 */
 	synchronized public boolean connectApplication(String ps, String pass, boolean isNew) {
 		// Connexion refusée
-		if (!client.connect(ps, pass, isNew)) return false;
-		
+		if (!client.connect(ps, pass, isNew))
+			return false;
+
 		// Connexion accordée
 		pseudo = ps;
 		password = pass;
-		
+
 		// Récupération des documents
 		if (!isNew)
 			loadListDocuments();
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Déconnecte l'application au serveur de données
 	 */
@@ -126,16 +160,22 @@ public class Manager implements IConfig {
 		communication.interrupt();
 		client.disconnect();
 	}
-	
+
 	/**
 	 * Récupère tous les documents de l'utilisateur sur le serveur
 	 */
 	synchronized public void loadListDocuments() {
 		String listDocumentsString = client.waitString();
-		String[] listDocumentsSplit = listDocumentsString.split("\0");
+		String[] listDocumentsSplit = listDocumentsString.split("\b");
+
+		for (String doc : listDocumentsSplit) {
+
+			
+			System.err.println("- " + doc);
+		}
 		
-		System.out.println(listDocumentsString);
-		
+		System.out.println("- " + listDocumentsString + " " + listDocumentsSplit.length);
+
 		// Parcours de la liste récupérée depuis le serveur
 		for (int i = 0; i < listDocumentsSplit.length; i += 2) {
 			int id = Integer.parseInt(listDocumentsSplit[i]);
@@ -143,159 +183,196 @@ public class Manager implements IConfig {
 			listDocuments.add(new Tuple(id, name));
 		}
 	}
-	
+
 	/**
 	 * Débute l'échange de données entre le serveur et le client
 	 */
 	synchronized public void beginCommunication() {
 		communication.start();
 	}
-	
+
 	/**
 	 * Demande la création d'un nouveau document
+	 *
 	 * @param newDocument Nom à donner au nouveau document
-	 * @param isOnline true si l'utilisateur est connecte, false sinon
+	 * @param isOnline    true si l'utilisateur est connecte, false sinon
 	 */
 	synchronized public void askNewDocument(String newDocument, boolean isOnline) {
 		if (isOnline) {
 			actions.addAction(NEW_DOCUMENT_REQUEST_CODE, newDocument);
 			
+			// Représentation du document
+			currentDocumentName = newDocument;
+			currentDocument = new Document(currentDocumentName);
+			
+			// S'il s'agit du premier document,
+			// la communication n'aura pas encore démarré
 			if (!firstDocumentOpen) {
 				beginCommunication();
-				try {
-					this.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				firstDocumentOpen = true;
 			}
-		}
-		
-		currentDocumentName = newDocument;
-		currentDocument = new Document(newDocument);
-		currentDocument.addPage(0, "");
-		currentPageNumber = 0;
-		editor.setText("");
-		editor.setUndoManager(new UndoManager());
-		
-		System.err.println("- Nom du document : " + currentDocumentName);
-	}
-	
-	
-	
-	/**
-	 * Demande l'ouverture d'un document
-	 * @param documentName Nom du document à ouvrir
-	 */
-	synchronized public void askLoadDocument(String documentName) {
-		actions.addAction(LOAD_DOCUMENT_REQUEST_CODE, documentName);
-		if (!firstDocumentOpen) {
-			beginCommunication();
+			
+			// On bloque le manager et donc tout l'éditeur
+			// lorsqu'on attend la réponse du serveur
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		} else {
+			currentDocument = new Document(currentDocumentName);
+			currentPageNumber = 0;
+			
+			// Initialisation de l'éditeur
+			editor.setText("");
+		}
+		
+		// Gestionnaire refaire/défaire
+		editor.setUndoManager(new UndoManager());
+
+		System.err.println("- Nom du document : " + currentDocumentName);
+	}
+
+	/**
+	 * Demande l'ouverture d'un document
+	 *
+	 * @param doc Couple (id du document, nom du document)
+	 */
+	synchronized public void askLoadDocument(Tuple doc) {
+		actions.addAction(LOAD_DOCUMENT_REQUEST_CODE, Integer.toString((int)doc.getFIRST()));
+		
+		// Représentation du document
+		currentDocumentId = (int)doc.getFIRST();
+		currentDocumentName = (String)doc.getSECOND();
+		currentDocument = new Document(currentDocumentId, currentDocumentName);
+		
+		// S'il s'agit du premier document,
+		// la communication n'aura pas encore démarré
+		if (!firstDocumentOpen) {
+			beginCommunication();
 			firstDocumentOpen = true;
 		}
-		currentDocumentName = documentName;
-		// ATTENTION
-		currentDocument = null;		// IL FAUDRA RÉCUPÉRER LE DOCUMENT D'UNE CERTAINE MANIÈRE
-		pageIndicator.setText("1 page");
-		pageNumberIndicator.setText("1 / 1 page");
+		
+		// On bloque le manager et donc tout l'éditeur
+		// lorsqu'on attend la réponse du serveur
+		try {
+			this.wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		System.err.println("- Nom du document : " + currentDocumentName);
 	}
-	
+
 	/**
 	 * Demande la sauvegarde du document
 	 */
 	synchronized public void askSaveDocument() {
-		actions.addAction(SAVE_DOCUMENT_REQUEST_CODE, "sauvegarde");
+		actions.addAction(SAVE_DOCUMENT_REQUEST_CODE, "SAVE\b" + currentDocumentId);
+		
+		// On se met en attente de la réponse
+		// du serveur
+		try {
+			this.wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	/**
-	 * Demande l'application de la modification du document réalisée par l'utilisateur
+	 * Demande l'application de la modification du document réalisée par
+	 * l'utilisateur
+	 * @param
 	 */
-	synchronized public void askModifyDocument() {
+	synchronized public void askModifyDocument(boolean isAhead) {
 		actions.addAction(MODIFY_DOCUMENT_REQUEST_CODE, "modification");
+		/// COMPLEXE
 	}
-	
+
 	/**
 	 * Applique la modification du document reçue depuis le serveur
+	 *
 	 * @param text Contenu à mettre dans l'éditeur
 	 */
-	synchronized public void putModification(String text) {
-		editor.setText(text); // NE MARCHE PAS
-		// ATTENTION, GESTION DU DOCUMENT SOUS FORME DE PAGES
-		pageIndicator.setText("1 page");
-		pageNumberIndicator.setText("1 / 1p");
+	synchronized public void putModification(String text, int pageNumber, int pageCount) {
+		// Document
+		currentPageNumber = pageNumber;
+		currentDocument.setPage(pageNumber, text);
+		
+		// Éditeur
+		editor.setText(text);
+		pageIndicator.setText(pageNumber + " page" + (pageNumber > 1 ? "s" : ""));
+		pageNumberIndicator.setText(pageNumber + " / " + pageCount + "p");
 	}
-	
+
 	/**
 	 * Exporte le document sous format pdf
 	 */
 	synchronized public void exportDocument() {
 		// Application des modifications
 		currentDocument.setPage(currentPageNumber, editor.getText());
-		
+
 		// Récupération du document en un seul morceau
 		String allInOne = currentDocument.getAllDocument();
-		
-		// Création du sélecteur de fichier
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Spécifiez un fichier pour sauvegarder");
-        int userSelection = fileChooser.showSaveDialog(null);
 
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-        	// Attente du choix de l'utilisateur
-            File fileToSave = fileChooser.getSelectedFile();
-            
-            // Sauvegarde
-            PDFUtilities.exportToPDF(allInOne, fileToSave.getAbsolutePath());
-        }
+		// Création du sélecteur de fichier
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Spécifiez un fichier pour sauvegarder");
+		int userSelection = fileChooser.showSaveDialog(null);
+
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			// Attente du choix de l'utilisateur
+			File fileToSave = fileChooser.getSelectedFile();
+
+			// Sauvegarde
+			PDFUtilities.exportToPDF(allInOne, fileToSave.getAbsolutePath());
+		}
 	}
-	
+
 	/**
 	 * Ajoute une nouvelle page au document
 	 */
 	synchronized public void addNewPage() {
 		// Application des modifications
 		currentDocument.setPage(currentPageNumber, editor.getText());
-		
+
 		currentPageNumber++;
 		currentDocument.addPage(currentPageNumber, "");
 		editor.setText("");
-		
-		pageIndicator.setText(currentDocument.getPageCount() + " page" + (currentDocument.getPageCount() > 1 ? "s" : ""));
+
+		pageIndicator
+				.setText(currentDocument.getPageCount() + " page" + (currentDocument.getPageCount() > 1 ? "s" : ""));
 		pageNumberIndicator.setText((currentPageNumber + 1) + " / " + currentDocument.getPageCount() + "p");
 	}
-	
+
 	/**
 	 * Déplace l'éditeur vers la page associé au numéro
+	 *
 	 * @param pageNumber Numéro de page
 	 */
 	synchronized public void goToPage(int pageNumber) {
-		if (pageNumber < 0 || pageNumber >= currentDocument.getPageCount()) return;
-		
+		if (pageNumber < 0 || pageNumber >= currentDocument.getPageCount())
+			return;
+
 		// Application des modifications
 		currentDocument.setPage(currentPageNumber, editor.getText());
-		
+
 		// Déplacement
 		currentPageNumber = pageNumber;
 		editor.setText(currentDocument.getPage(pageNumber));
-		
-		pageIndicator.setText(currentDocument.getPageCount() + " page" + (currentDocument.getPageCount() > 1 ? "s" : ""));
+
+		pageIndicator
+				.setText(currentDocument.getPageCount() + " page" + (currentDocument.getPageCount() > 1 ? "s" : ""));
 		pageNumberIndicator.setText((currentPageNumber + 1) + " / " + currentDocument.getPageCount() + "p");
 	}
-	
+
 	/**
 	 * Avance d'une page
 	 */
 	synchronized public void moveForward() {
 		goToPage(currentPageNumber + 1);
 	}
-	
+
 	/**
 	 * Recule d'une page
 	 */
