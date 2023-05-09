@@ -18,10 +18,11 @@
                     Fichier
                 </span>
                 <ul class="menu-bar-submenu-items">
-                    <li>Nouveau</li>
-                    <li>Charger</li>
+                    <li id="new-document">Nouveau</li>
+                    <li>Ouvrir</li>
                     <li>Sauvegarder</li>
-                    <li>Quitter</li>
+                    <li>Télécharger</li>
+                    <li>Se&nbspdéconnecter</li>
                 </ul>
             </li>
             <li class="menu-bar-submenu-item">
@@ -56,7 +57,7 @@
     <!-- Barre d'outils -->
     <nav class="tools-bar">
         <div class="bar-section">
-            <button class="bar-button">Nouveau</button>
+            <button class="bar-button" id="new-document">Nouveau</button>
             <button class="bar-button">Charger</button>
             <button class="bar-button">Sauvegarder</button>
         </div>
@@ -110,6 +111,7 @@
     <script src="https://cdn.jsdelivr.net/npm/nouislider@14.7.0/distribute/nouislider.min.js"></script>
     <script type="module" src="./zoomScript.js"></script>
     <script type="module" src="./editorScript.js"></script>
+    <script type="module" src="./newDocumentScript.js"></script>
     <script type="module" src="./mainScript.js"></script>
 </body>
 </html>

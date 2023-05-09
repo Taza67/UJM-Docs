@@ -1,6 +1,7 @@
 // IMPORTS ////////////////////////////////////////////////
 
 import { initEditor } from "./editorScript.js";
+import { initNewDocument } from "./newDocumentScript.js";
 import { initZoomSlider } from "./zoomScript.js";
 
 
@@ -19,6 +20,10 @@ function init() {
 
     // Initialisation de l'éditeur
     initEditor();
+
+    // Initialisation de la fonctionnalité de création
+    // de document
+    initNewDocument();
 }
 
 
