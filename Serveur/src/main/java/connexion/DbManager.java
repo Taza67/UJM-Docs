@@ -123,10 +123,12 @@ public class DbManager extends ParamBD {
 			ResultSet rs = request.executeQuery();
 			while(rs.next()) {
 				Document doc = new Document(rs.getString("chemin"));
+				System.err.println("\n\nLe chemin du document est " + rs.getString("chemin") + "\n\n");
 				doc.setName(rs.getString("nom"));
 				doc.setLasModifDate(rs.getDate("date_de_modification"));
 				doc.setID(rs.getInt("id"));
 				library.add(doc);
+				System.err.println(doc);
 			}
 			rs.close();
 			c.close();

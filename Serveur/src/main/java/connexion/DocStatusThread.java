@@ -81,23 +81,24 @@ public class DocStatusThread extends Thread{
 					System.err.println("Envoie du N° de page en cours..");
 					out.writeInt(0);
 					System.err.println("TAILLE DE LA BIBLIOTHEQUE " + library.size());
-					System.err.println("Contenu du doc 1 :" + library.get(0).getPages().get(0));
+					System.err.println("SIZE OF doc 1 :" + library.get(0).getPages().size());
 					System.err.println("Envoie du N° total de page en cours.." + library.get(idoc-1).getPages().size());
-					out.writeInt(library.get(idoc).getPages().size());
+					out.writeInt(library.get(idoc-1).getPages().size());
 					System.err.println("Envoie du contenu en cours..");
 					LinkedList<Word> Listecontenu = new LinkedList<>();
 					String contenu = "";
-					for(Page p :library.get(idoc).getPages()) {
+					for(Page p :library.get(idoc-1).getPages()) {
 						Listecontenu.addAll(p.getContent());
 					}
 					for(int i = 0; i< Listecontenu.size();i++) {
-						contenu += Listecontenu.get(i) + "\b";
+						contenu += Listecontenu.get(i);
+						System.err.println("JE RECUP LE MOT " + Listecontenu.get(i));
 					}
 					System.err.println("Contenu = " + contenu);
 					out.writeUTF(contenu);
 					System.err.println("Contenu envoyé");
 					//Envoie de l'identifiant du document ajouté
-					manager = new DocManager(library.get(idoc));
+					manager = new DocManager(library.get(idoc-1));
 				}
 				else {
 					System.err.println("J'ai rien reçu");
