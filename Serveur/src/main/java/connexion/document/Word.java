@@ -16,6 +16,7 @@ public class Word {
 	private User modifying;
 
 	public Word(String word) {
+		content = new LinkedList<>();
 		for(char c: word.toCharArray()) {
 			this.content.add(c);
 		}
