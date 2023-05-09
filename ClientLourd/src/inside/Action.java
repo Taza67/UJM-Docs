@@ -2,6 +2,7 @@ package inside;
 
 /**
  * Classe permettant de représenter une action de l'utilisateur
+ *
  * @author mourtaza
  *
  */
@@ -14,10 +15,10 @@ public class Action {
 	 * Message associé à l'action
 	 */
 	private String message;
-	
-	
+
 	/**
 	 * Instancie une action
+	 *
 	 * @param c Code associé à l'action
 	 * @param m Message associé à l'action
 	 */
@@ -25,17 +26,22 @@ public class Action {
 		code = c;
 		message = m;
 	}
-	
-	
+
 	/**
 	 * Retourne le code associé à l'action
+	 *
 	 * @return Code de l'action
 	 */
-	public int getCode() { return code; }
-	
+	public int getCode() {
+		return code;
+	}
+
 	/**
 	 * Retourne le message associé à l'action
+	 *
 	 * @return Message de l'action
 	 */
-	public String getMessage() { return message; }
+	public String getMessage() {
+		return message;
+	}
 }

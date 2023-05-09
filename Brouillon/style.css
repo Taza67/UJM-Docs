@@ -54,6 +54,9 @@ body {
     /* Box */
     margin: 0.5%;
     float: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .menu-bar-submenu-title {
@@ -73,7 +76,23 @@ body {
 
 .menu-bar-submenu-items {
     /* Box */
+    width: calc(max(max(1vw, 1vh) * 17, 500px) );
+    padding: 1vh 1vw;
     display: none;
+    flex-direction: row;
+    justify-content: space-around;
+    /* Décorations */
+    background-color: #636060;
+}
+
+.menu-bar-submenu-items * {
+    height: 100%;
+    list-style: none;
+}
+
+.menu-bar-submenu-item:hover .menu-bar-submenu-items {
+    /* Box */
+    display: flex;
 }
 
 /* ***Barre d'outils/statut******************************** */
@@ -94,6 +113,11 @@ body {
 .tools-bar .bar-section {
     /* Box */
     margin-left: 1vh;
+}
+
+.tools-bar > .bar-section:last-child {
+    /* Box */
+    margin-right: 1vh;
 }
 
 .status-bar {
@@ -151,11 +175,35 @@ body {
     border-radius: 3px;
 }
 
-.bar-button {
+.bar-button, #pseudo {
     /* Box */
-    width: 30%;
+    width: fit-content;
+    max-width: 30%;
     padding: 1vh 1vw;
     margin: 1.25vh 1.25vh;
+    overflow: hidden;
+    /* Texte */
+    font-size: 0.75em;
+}
+
+#pseudo {
+    /* Box */
+    width: 30%;
+    /* Texte */
+    color: black;
+    /* Décorations */
+    background-color: azure;
+}
+
+.bar-section > form {
+    /* Box */
+    width: 40%;
+}
+
+.bar-section > form > .bar-button {
+    /* Box */
+    width: 100%;
+    max-width: 100%;
 }
 
 .zoom-slider {
