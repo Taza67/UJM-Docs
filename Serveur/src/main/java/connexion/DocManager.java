@@ -8,7 +8,7 @@ import connexion.document.Document;
  */
 
 
-public class DocManager extends Thread{
+public class DocManager {
 	/**
 	 * Document à modifier
 	 */
@@ -20,10 +20,6 @@ public class DocManager extends Thread{
 		d = doc;
 	}
 
-	@Override
-	public void run() {
-
-	}
 
 	public static void main(String[] args) {
 

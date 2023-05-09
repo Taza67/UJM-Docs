@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
+import connexion.DbManager;
 import connexion.User;
 
 /**
@@ -43,17 +44,26 @@ public class Document {
 	 * @author Bruno ROMAIN
 	 */
 	public Document(String path) throws FileNotFoundException {
+		System.out.println("SALUT JE RENTRE DANS LA METHODE Document(Strung)" );
 		File file = FileUtils.getFile(path);
 		if (file == null) {
 			throw new FileNotFoundException("Le fichier spécifié : " + path + " est introuvable");
 		}
+		System.err.println("ON PASSE DANS DOCUMENT( " + path + ")");
 		this.path = path;
-		String fileContent;
+		this.name = file.getName();
+		this.authorizedUser = new ArrayList<>();
+		this.content = new LinkedList<>();
+		// this.authorizedUser = DbManager.;  Faire une méthode qui récupère la liste des utilisateurs qui ont accès au fichier
+		this.lastModifDate = new Date(System.currentTimeMillis());
+		
+		String fileContent = "ADD\b1\b";
 		try {
-			fileContent = FileUtils.readFileToString(file, "UTF-8");
+			fileContent += FileUtils.readFileToString(file, "UTF-8");
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
+		System.out.println("LE CONTENU DE FICHIER EST " + fileContent);
 		updatePages(fileContent);
 	}
 
@@ -65,7 +75,7 @@ public class Document {
 		if (str == null) {
 			return;
 		}
-		StringTokenizer token = new StringTokenizer(str, "" + "\b");
+		StringTokenizer token = new StringTokenizer(str, "\b");
 		String cmd, content;
 		int page, idUser, pos;
 		if (token.hasMoreTokens()) {
