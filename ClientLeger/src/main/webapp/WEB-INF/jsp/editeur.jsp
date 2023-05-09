@@ -17,6 +17,8 @@
 
 <!-- Récupération des attributs -->
 
+<!-- Utilisé pour pouvoir accéder aux données de l'utilisateur en JS -->
+<div id="user-data" data-user="${userJson}" style="display:none;"></div>
 
 <!-- Barre de navigation -->
 <nav class="menu-bar">
@@ -78,6 +80,12 @@
     <span class="bar-section-legend">Collaborateur</span>
     <button class="bar-button">+</button>
     <button class="bar-button">-</button>
+  </div>
+  <div class="bar-section">
+    <span class="bar-section-legend">Actions</span>
+    <form method="post">
+      <button class="bar-button" type="submit" name="deconnexion">Se déconnecter</button>
+    </form>
   </div>
 </nav>
 

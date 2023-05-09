@@ -4,11 +4,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Accueil</title>
+	<title>Accueil</title>
+	<link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
 </head>
 <body>
 
-	<c:if var="error" test="${error != null}" scope="session">
+	<c:if test="${error != null}" >
 		<div id="error">
 		<c:choose>
 
@@ -35,7 +36,7 @@
 		</div>
 	</c:if>
 
-	<c:if var="inscrit" test="${inscrit != null}" scope="session">
+	<c:if test="${inscrit != null}">
 		<div class="info">
 			<p>Nouvel inscrit</p>
 			<p>Vous pouvez vous connecter</p>

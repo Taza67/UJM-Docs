@@ -43,6 +43,4 @@ function initZoomSlider() {
 
 // CHARGEMENT /////////////////////////////////////////////
 
-$(document).ready(function () {
-    initZoomSlider();
-});
+initZoomSlider()

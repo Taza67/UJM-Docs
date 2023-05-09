@@ -44,13 +44,13 @@ body {
 .title {
     /* Box */
     width: 50%;
+    max-width: 50%;
     height: 100%;
-    min-height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
     /* Texte */
-    font-size: 3em;
+    font-size: 100%;
     color: orangered;
     /* Décoration */
     background-image: linear-gradient(to bottom, rgb(220, 222, 212), rgb(12, 12, 12));
@@ -64,7 +64,10 @@ body {
 
 .title > h1 {
     /* Box */
+    max-height: 90%;
+    max-width: 90%;
     padding: 5%;
+    overflow: scroll;
     /* Décoration */
     background-color: rgba(0, 0, 0, 0.508);
     border-radius: 3px;
@@ -74,27 +77,26 @@ body {
 form {
     /* Box */
     box-sizing: border-box;
-    width: 20%;
-    min-width: 400px;
-    height: 40%;
-    min-height: 400px;
+    width: 30%;
+    height: fit-content;
+    max-height: 90%;
     padding: 2%;
-    margin-left: 15%;
+    margin-left: 10%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
+    overflow-y: scroll;
     /* Décorations */
     background-color: rgba(222, 225, 217, 0.508);
     border-radius: 3px;
     box-shadow: 2px 2px #636060;
 }
 
-form > input, form > span {
+form > input, form > span, form > a {
     /* Box */
     box-sizing: border-box;
     width: 99%;
-    height: 40%;
     margin-bottom: 5%;
     padding: 5%;
     display: flex;
@@ -103,11 +105,17 @@ form > input, form > span {
     /* Texte */
     font-size: 1.25em;
     border-radius: 3px;
+    border: none;
 }
 
 form > input:hover {
     /* Décorations */
     box-shadow: 2px 2px #636060;
+}
+
+form > a:hover {
+    /* Décorations */
+    box-shadow: 2px 2px #ddd3d3;
 }
 
 form > span {
@@ -121,7 +129,43 @@ form > span {
     border-radius: 0;
 }
 
+form > a {
+    /* Texte */
+    color: white;
+    text-decoration: none;
+    /* Décorations */
+    background-color: #322f2f;
+}
+
 form > *:last-child {
     /* Box */
     margin-bottom: 0;
+}
+
+@media screen and (orientation: portrait) {
+    body {
+        /* Box */
+        flex-direction: column;
+    }
+
+    .title {
+        /* Box */
+        width: 100%;
+        max-width: 100%;
+        max-height: 30%;
+        height: 30%;
+    }
+
+    form {
+        /* Box */
+        width: 80%;
+        max-height: 60%;
+        margin: 0;
+        margin-top: 10%;
+    }
+
+    form > input, form > span, form > a {
+        /* Texte */
+        font-size: 1em;
+    }
 }

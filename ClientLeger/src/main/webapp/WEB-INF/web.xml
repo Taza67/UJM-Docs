@@ -59,7 +59,7 @@
 	</servlet-mapping>
 	
 	<welcome-file-list>
-		<welcome-file>helloServletp</welcome-file>
+		<welcome-file>helloServlet</welcome-file>
 	</welcome-file-list>
 
 </web-app>

@@ -1,6 +1,8 @@
 package inside;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.undo.UndoManager;
@@ -9,6 +11,7 @@ import javax.swing.JLabel;
 import inside.communication.Client;
 import inside.communication.TCommunication;
 import inside.utilities.PDFUtilities;
+import inside.utilities.Tuple;
 import outside.userInterface.JEditorPanePerso;
 
 /**
@@ -63,7 +66,15 @@ public class Manager implements IConfig {
 	 * Référence au JLabel indiquant le numéro de page
 	 */
 	private JLabel pageNumberIndicator;
-	
+	/**
+	 * Variable qui indique si un premier document a déjà été ouvert
+	 */
+	private boolean firstDocumentOpen = false;
+	/**
+	 * Listes des identifiants et noms des documents de l'utilisateur
+	 */
+	private List<Tuple> listDocuments;
+
 	
 	/**
 	 * Instancie un objet représentant le module de gestion
@@ -76,21 +87,34 @@ public class Manager implements IConfig {
 		editor = ed;
 		pageIndicator = pi;
 		pageNumberIndicator = pni;
+		listDocuments = new ArrayList<Tuple>();
 	}
 	
+	/**
+	 * Retourne la liste des documents <id, nom>
+	 * @return Liste des documents
+	 */
+	synchronized public List<Tuple> getListDocuments() {
+		return listDocuments;
+	}
 	
 	/**
 	 * Connecte l'application au serveur de données
 	 * @param ps Pseudo à communiquer pour l'authentification
 	 * @param pass Mot de passe à communiquer pour l'authentification
+	 * @param isNew true si c'est un nouvel utilisateur, false sinon
 	 */
-	synchronized public boolean connectApplication(String ps, String pass) {
+	synchronized public boolean connectApplication(String ps, String pass, boolean isNew) {
 		// Connexion refusée
-		if (!client.connect(ps, pass)) return false;
+		if (!client.connect(ps, pass, isNew)) return false;
 		
 		// Connexion accordée
 		pseudo = ps;
 		password = pass;
+		
+		// Récupération des documents
+		if (!isNew)
+			loadListDocuments();
 		
 		return true;
 	}
@@ -103,6 +127,22 @@ public class Manager implements IConfig {
 		client.disconnect();
 	}
 	
+	/**
+	 * Récupère tous les documents de l'utilisateur sur le serveur
+	 */
+	synchronized public void loadListDocuments() {
+		String listDocumentsString = client.waitString();
+		String[] listDocumentsSplit = listDocumentsString.split("\0");
+		
+		System.out.println(listDocumentsString);
+		
+		// Parcours de la liste récupérée depuis le serveur
+		for (int i = 0; i < listDocumentsSplit.length; i += 2) {
+			int id = Integer.parseInt(listDocumentsSplit[i]);
+			String name = listDocumentsSplit[i + 1];
+			listDocuments.add(new Tuple(id, name));
+		}
+	}
 	
 	/**
 	 * Débute l'échange de données entre le serveur et le client
@@ -120,11 +160,14 @@ public class Manager implements IConfig {
 		if (isOnline) {
 			actions.addAction(NEW_DOCUMENT_REQUEST_CODE, newDocument);
 			
-			beginCommunication();
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if (!firstDocumentOpen) {
+				beginCommunication();
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				firstDocumentOpen = true;
 			}
 		}
 		
@@ -146,9 +189,15 @@ public class Manager implements IConfig {
 	 */
 	synchronized public void askLoadDocument(String documentName) {
 		actions.addAction(LOAD_DOCUMENT_REQUEST_CODE, documentName);
-		// Récupération du document ///////////////////////////////////////////
-		//
-		//
+		if (!firstDocumentOpen) {
+			beginCommunication();
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			firstDocumentOpen = true;
+		}
 		currentDocumentName = documentName;
 		// ATTENTION
 		currentDocument = null;		// IL FAUDRA RÉCUPÉRER LE DOCUMENT D'UNE CERTAINE MANIÈRE

@@ -1,3 +1,8 @@
+.attach*
+
+pom.xml
+*/pom.xml
+
 # Compiled class file
 *.class
 

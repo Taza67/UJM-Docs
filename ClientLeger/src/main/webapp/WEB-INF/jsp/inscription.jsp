@@ -3,7 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>Inscription</title>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
+
 </head>
 <body>
 
@@ -35,6 +37,17 @@
     <input type="submit" value="S'inscrire">
 </form>
 
-<a href="">Connexion</a>
+<button id="bouton-retour" type="button">Connexion</button>
+
+<script async>
+    let cheminAccueil = window.location.pathname.split('/').slice(0, -1).join('/') + '/index';
+
+    // Ajouter un gestionnaire d'événement au bouton
+    var boutonRetour = document.getElementById('bouton-retour');
+    boutonRetour.addEventListener('click', function() {
+        // Rediriger l'utilisateur vers la page d'accueil
+        window.location.href = cheminAccueil;
+    });
+</script>
 </body>
 </html>
