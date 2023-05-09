@@ -14,7 +14,7 @@ public class DocManager extends Thread{
 	 */
 	private Document d;
 
-// un doc manager sera crée quand un gars va essayer de crée ou de prendre accès d'un document
+	// un doc manager sera crée quand un gars va essayer de crée ou de prendre accès d'un document
 
 	public DocManager(Document doc) {
 		d = doc;

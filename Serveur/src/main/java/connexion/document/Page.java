@@ -47,6 +47,7 @@ public class Page {
 		return this.authorizedModification.get(0);
 	}
 
+	@Override
 	public String toString() {
 		String result = "";
 		for (Word w: this.content) {

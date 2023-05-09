@@ -65,7 +65,7 @@ public class Document {
 		if (str == null) {
 			return;
 		}
-		StringTokenizer token = new StringTokenizer(str, "" + '\0');
+		StringTokenizer token = new StringTokenizer(str, "" + "\b");
 		String cmd, content;
 		int page, idUser, pos;
 		if (token.hasMoreTokens()) {
@@ -240,6 +240,6 @@ public class Document {
 	}
 
 	public String toString(int pageNum) {
-		return this.name + '\0' + pageNum + '\0' + this.content.size() + '\0' + this.content.get(pageNum).toString();
+		return this.name + "\b" + pageNum + "\b" + this.content.size() + "\b" + this.content.get(pageNum).toString();
 	}
 }

@@ -1,14 +1,12 @@
 package connexion;
 
 import java.io.FileNotFoundException;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import connexion.document.Document;
@@ -16,10 +14,9 @@ import connexion.document.Document;
 public class DbManager extends ParamBD {
 
 	private static Connection connection;
-	private volatile HashMap<Integer, User> UserList;
+
 
 	public DbManager() {
-		UserList = new HashMap();
 		init();
 	}
 
@@ -86,7 +83,7 @@ public class DbManager extends ParamBD {
 		LinkedList<Document> library = new LinkedList<>();
 		try {
 			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
-			String sql = "SELECT * FROM documents LEFT JOIN collaborateurs ON documents.id=collaborateurs.DOC"
+			String sql = "SELECT * FROM documents LEFT JOIN collaborateurs ON documents.id=collaborateurs.DOC "
 				+ "LEFT JOIN utilisateur ON collaborateurs.USER=utilisateur.id WHERE documents.id_utilisateur=? OR collaborateurs.USER=?";
 			PreparedStatement request = c.prepareStatement(sql);
 			request.setInt(1, u.getId());
@@ -97,6 +94,7 @@ public class DbManager extends ParamBD {
 				doc.setName(rs.getString("nom"));
 				doc.setLasModifDate(rs.getDate("date_de_modification"));
 				doc.setID(rs.getInt("id"));
+				library.add(doc);
 			}
 			rs.close();
 			c.close();
@@ -128,9 +126,6 @@ public class DbManager extends ParamBD {
         }
     }
 
-	public HashMap<Integer, User> getUserList() {
-		return UserList;
-	}
 
 	public static ArrayList<User> getUserListFromDB() {
 		ArrayList<User> users = new ArrayList<>();

@@ -35,6 +35,7 @@ public class Word {
 		this.content.add(pos, c);
 	}
 
+	@Override
 	public String toString() {
 		String res = "";
 		for (char c: content) {
