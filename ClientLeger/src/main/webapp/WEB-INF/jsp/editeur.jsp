@@ -69,7 +69,7 @@
     <button class="bar-button">Nouveau</button>
     <button class="bar-button">Charger</button>
     <button class="bar-button">Sauvegarder</button>
-    <button class="bar-button"><%= user.getPseudo()%></button>
+    <button class="bar-button">${user.pseudo}</button>
   </div>
   <div class="bar-section">
     <button class="bar-button">Couper</button>
