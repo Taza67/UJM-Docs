@@ -129,7 +129,8 @@ public class Page {
 
 	public void updateCurseur(int Id, int pos) {
 
-		this.curseurs.get(this.content.indexOf(Id)); // avec cet ID user, update le curseur à pos
+		//this.curseurs.get(this.content.indexOf(Id)); // avec cet ID user, update le curseur à pos
+		//TODO 
 	}
 
 	public void deleteCharFromPos(int pos) {
@@ -171,7 +172,7 @@ public class Page {
 					content.addFirst(new Word(word));
 			}
 		}
-		if (pos >= content.size()) {
+		if (pos >= content.size()-1) {
 			switch(word.charAt(0)) {
 				case '.':
 					content.addLast(POINT);

@@ -43,13 +43,11 @@ public class Document {
 	 * @param path le chemin d'accès
 	 * @author Bruno ROMAIN
 	 */
-	public Document(String path) throws FileNotFoundException {
-		System.out.println("SALUT JE RENTRE DANS LA METHODE Document(Strung)" );
+	public Document(String path,User u) throws FileNotFoundException {
 		File file = FileUtils.getFile(path);
 		if (file == null) {
 			throw new FileNotFoundException("Le fichier spécifié : " + path + " est introuvable");
 		}
-		System.err.println("ON PASSE DANS DOCUMENT( " + path + ")");
 		this.path = path;
 		this.name = file.getName();
 		this.authorizedUser = new ArrayList<>();
@@ -57,13 +55,12 @@ public class Document {
 		// this.authorizedUser = DbManager.;  Faire une méthode qui récupère la liste des utilisateurs qui ont accès au fichier
 		this.lastModifDate = new Date(System.currentTimeMillis());
 		
-		String fileContent = "ADD\b1\b";
+		String fileContent = "ADD\b0\b" + u.getId() + "\b0\b";
 		try {
 			fileContent += FileUtils.readFileToString(file, "UTF-8");
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
-		System.out.println("LE CONTENU DE FICHIER EST " + fileContent);
 		updatePages(fileContent);
 	}
 
@@ -103,11 +100,15 @@ public class Document {
 		} else {
 			return;
 		}
-		Page toModify = this.content.get(page);
+		Page toModify = new Page();
+		if(this.content != null && this.content.size() > 0) {
+			toModify = this.content.get(page);
+		}
 		if (cmd.equalsIgnoreCase("ADD")) {
 			StringTokenizer token2 = new StringTokenizer(content, " ");
 			while (token2.hasMoreTokens()) {
 				String word = token2.nextToken();
+				System.err.println("Je lis le mot " + word);
 				toModify.addWord(pos, word);
 				pos += word.length();
 				toModify.updateCurseur(idUser, pos);

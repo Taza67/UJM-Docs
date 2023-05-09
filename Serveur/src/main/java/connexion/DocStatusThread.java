@@ -75,27 +75,23 @@ public class DocStatusThread extends Thread{
 					int idoc = Integer.parseInt(in.readUTF());	 // RECUPERATION DE L'ID DU FICHIER A CHARGER (sent as string).
 					System.err.println("ID DU DOC = " + idoc);
 					LinkedList<Document> library = new LinkedList<>();
-					library = DbManager.loadAllDocuments();
+					library = DbManager.loadAllDocuments(owner);
 					System.err.println("Confirmation du chargement de document au client..");
 					out.writeInt(3);
 					System.err.println("Envoie du N° de page en cours..");
 					out.writeInt(0);
 					System.err.println("TAILLE DE LA BIBLIOTHEQUE " + library.size());
-					System.err.println("SIZE OF doc 1 :" + library.get(0).getPages().size());
-					System.err.println("Envoie du N° total de page en cours.." + library.get(idoc-1).getPages().size());
-					out.writeInt(library.get(idoc-1).getPages().size());
+					Document res = new Document(owner);
+					for(Document d :library) {
+						if(d.getID() == idoc) {
+							res = d;
+							System.err.println("Envoie du N° total de page en cours.." + d.getPages().size());
+							out.writeInt(res.getPages().size());
+							break;
+						}
+					}
 					System.err.println("Envoie du contenu en cours..");
-					LinkedList<Word> Listecontenu = new LinkedList<>();
-					String contenu = "";
-					for(Page p :library.get(idoc-1).getPages()) {
-						Listecontenu.addAll(p.getContent());
-					}
-					for(int i = 0; i< Listecontenu.size();i++) {
-						contenu += Listecontenu.get(i);
-						System.err.println("JE RECUP LE MOT " + Listecontenu.get(i));
-					}
-					System.err.println("Contenu = " + contenu);
-					out.writeUTF(contenu);
+					out.writeUTF(res.getPageAtIndex(0).toString());
 					System.err.println("Contenu envoyé");
 					//Envoie de l'identifiant du document ajouté
 					manager = new DocManager(library.get(idoc-1));
