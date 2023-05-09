@@ -5,8 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
 
 import connexion.document.Document;
+import connexion.document.Page;
+import connexion.document.Word;
 
 public class DocStatusThread extends Thread{
 	/**
@@ -60,10 +63,41 @@ public class DocStatusThread extends Thread{
 					String nomDocument = in.readUTF();
 					System.err.println("Nom du document recu " + nomDocument);
 					Document d = new Document(owner, nomDocument);
-					DbManager.addDocument(owner, d);
+					int idDoc = DbManager.addDocument(owner, d);
 					System.err.println("Ajout confirmé");
+					//Envoie de l'identifiant du document ajouté
+					out.writeInt(idDoc);
+					System.err.println("Identifiant du document envoyé");
 					manager = new DocManager(d);
-					manager.start();
+				}
+				else if (type == 3) { // CHARGEMENT D'UN DOC
+					System.err.println("Type reçu : Chargement du fichier confirmée");
+					int idoc = Integer.parseInt(in.readUTF());	 // RECUPERATION DE L'ID DU FICHIER A CHARGER (sent as string).
+					System.err.println("ID DU DOC = " + idoc);
+					LinkedList<Document> library = new LinkedList<>();
+					library = DbManager.loadAllDocuments();
+					System.err.println("Confirmation du chargement de document au client..");
+					out.writeInt(3);
+					System.err.println("Envoie du N° de page en cours..");
+					out.writeInt(0);
+					System.err.println("TAILLE DE LA BIBLIOTHEQUE " + library.size());
+					System.err.println("Contenu du doc 1 :" + library.get(0).getPages().get(0));
+					System.err.println("Envoie du N° total de page en cours.." + library.get(idoc-1).getPages().size());
+					out.writeInt(library.get(idoc).getPages().size());
+					System.err.println("Envoie du contenu en cours..");
+					LinkedList<Word> Listecontenu = new LinkedList<>();
+					String contenu = "";
+					for(Page p :library.get(idoc).getPages()) {
+						Listecontenu.addAll(p.getContent());
+					}
+					for(int i = 0; i< Listecontenu.size();i++) {
+						contenu += Listecontenu.get(i) + "\b";
+					}
+					System.err.println("Contenu = " + contenu);
+					out.writeUTF(contenu);
+					System.err.println("Contenu envoyé");
+					//Envoie de l'identifiant du document ajouté
+					manager = new DocManager(library.get(idoc));
 				}
 				else {
 					System.err.println("J'ai rien reçu");

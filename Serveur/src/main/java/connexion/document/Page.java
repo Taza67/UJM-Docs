@@ -46,6 +46,9 @@ public class Page {
 		}
 		return this.authorizedModification.get(0);
 	}
+	
+
+	public LinkedList<Word> getContent() {return content;}
 
 	@Override
 	public String toString() {
