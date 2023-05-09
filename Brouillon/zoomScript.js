@@ -41,8 +41,9 @@ function initZoomSlider() {
 }
 
 
-// CHARGEMENT /////////////////////////////////////////////
+// EXPORTS ////////////////////////////////////////////////
 
-$(document).ready(function () {
-    initZoomSlider();
-});
+export {
+    initZoomSlider
+};
+
