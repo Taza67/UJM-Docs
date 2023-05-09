@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
-import connexion.DbManager;
 import connexion.User;
 
 /**
@@ -26,15 +25,15 @@ public class Document {
 	private String name;
 	private Date lastModifDate;
 	private int ID;
-	private ArrayList<User> authorizedUser;
+	private ArrayList<User> collaborators;
 	private LinkedList<Page> content;
 	private String path;
 
 	public Document(User creator, String name) {
 		this.name = name;
-		this.authorizedUser = new ArrayList<>();
+		this.collaborators = new ArrayList<>();
 		this.content = new LinkedList<>();
-		this.authorizedUser.add(creator);
+		this.collaborators.add(creator);
 		this.lastModifDate = new Date(System.currentTimeMillis());
 	}
 
@@ -50,7 +49,7 @@ public class Document {
 		}
 		this.path = path;
 		this.name = file.getName();
-		this.authorizedUser = new ArrayList<>();
+		this.collaborators = new ArrayList<>();
 		this.content = new LinkedList<>();
 		// this.authorizedUser = DbManager.;  Faire une méthode qui récupère la liste des utilisateurs qui ont accès au fichier
 		this.lastModifDate = new Date(System.currentTimeMillis());
@@ -68,7 +67,10 @@ public class Document {
 		this(creator, "Nouveau document");
 	}
 
-	public void updatePages(String str) {
+	public void updatePages(String str) { /* pas fini, pages multiples non prises en compte, p'tet à boucler à certains endroits, soit dans
+	 cette fonction, soit avant d'appeler cette fonction, donc en gros appeler cette fonction en splitant (ou string tokenizer) sur le contenu
+	 lu dans le fichier
+	 */
 		if (str == null) {
 			return;
 		}
@@ -108,17 +110,18 @@ public class Document {
 			StringTokenizer token2 = new StringTokenizer(content, " ");
 			while (token2.hasMoreTokens()) {
 				String word = token2.nextToken();
-				System.err.println("Je lis le mot " + word);
 				toModify.addWord(pos, word);
-				pos += word.length();
+				pos += word.length()+1; // on compte l'espace entre les mots
 				toModify.updateCurseur(idUser, pos);
 			}
+			this.content.add(toModify);
 		} else if (cmd.equalsIgnoreCase("DEL")) {
 			for (int i=0; i<Integer.valueOf(content); i++) {
 				toModify.deleteCharFromPos(pos);
 				pos--;
 				toModify.updateCurseur(idUser, pos);
 			}
+			this.content.add(toModify);
 		}
 
 	}
@@ -127,7 +130,7 @@ public class Document {
 		this.lastModifDate = new Date(System.currentTimeMillis());
 	}
 	public User getCreator() {
-		return this.authorizedUser.get(0);
+		return this.collaborators.get(0);
 	}
 
 	/**
@@ -149,6 +152,10 @@ public class Document {
 		return this.content;
 	}
 
+	/**
+	 * Méthode pour ajouter une nouvelle page vide
+	 * @author Bruno ROMAIN
+	 */
 	public void addPage() {
 		this.content.add(new Page(this.getCreator()));
 		this.updateLastModifiedDate();
@@ -186,32 +193,32 @@ public class Document {
 		this.updateLastModifiedDate();
 	}
 
-	public void addAuthorized(User u) {
+	public void addCollaborator(User u) {
 		if (u == null) {
 			return;
 		}
-		this.authorizedUser.add(u);
+		this.collaborators.add(u);
 	}
 
-	public ArrayList<User> getAuthorizedModification() {
-		return (ArrayList<User>) authorizedUser.stream().distinct().collect(Collectors.toList());
+	public ArrayList<User> getCollaborators() {
+		return (ArrayList<User>) collaborators.stream().distinct().collect(Collectors.toList());
 	}
 
 	public void deleteAuthorized(User u) {
-		this.authorizedUser.remove(u);
+		this.collaborators.remove(u);
 	}
 
 	/**
 	 * Fonction permettant de vider la liste des personnes autorisée, tout en laissant le créateur du document
 	 */
-	public void emptyAuthorized() {
+	public void emptyCollaborators() {
 		User user = this.getCreator();
-		this.authorizedUser= new ArrayList<>();
-		this.authorizedUser.add(user);
+		this.collaborators = new ArrayList<>();
+		this.collaborators.add(user);
 	}
 
-	public boolean isAuthorized(User u) {
-		return this.authorizedUser.contains(u);
+	public boolean isCollaborator(User u) {
+		return this.collaborators.contains(u);
 	}
 
 	public Date getLastModifDate() {
@@ -227,7 +234,9 @@ public class Document {
 	}
 
 	public void saveDocument(String path) {
-
+		/*
+		TODO sauvegarder dans la BDD
+		 */
 	}
 
 	public void setLasModifDate(Date date) {
