@@ -105,11 +105,18 @@ public class Manager implements IConfig {
 	
 	/**
 	 * Retourne la liste des documents <id, nom>
-	 *
 	 * @return Liste des documents
 	 */
 	synchronized public List<Tuple> getListDocuments() {
 		return listDocuments;
+	}
+	
+	/**
+	 * Retourne le numéro de page
+	 * @return Numéro de page
+	 */
+	synchronized public int getCurrentPageNumber() {
+		return currentPageNumber;
 	}
 	
 	/**
@@ -282,11 +289,11 @@ public class Manager implements IConfig {
 	/**
 	 * Demande l'application de la modification du document réalisée par
 	 * l'utilisateur
-	 * @param
+	 * @param actionCode Code de l'action (DEL, ADD)
+	 * @param message Message à envoyer
 	 */
-	synchronized public void askModifyDocument(boolean isAhead) {
-		actions.addAction(MODIFY_DOCUMENT_REQUEST_CODE, "modification");
-		/// COMPLEXE
+	synchronized public void askModifyDocument(int actionCode, String message) {
+		actions.addAction(actionCode, message);
 	}
 
 	/**

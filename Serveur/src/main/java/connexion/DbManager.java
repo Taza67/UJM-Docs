@@ -94,9 +94,9 @@ public class DbManager extends ParamBD {
 			ResultSet rs = request.executeQuery();
 			while(rs.next()) {
 				Document doc = new Document(rs.getString("chemin"),u);
-				doc.setName(rs.getString("nom"));
-				doc.setLasModifDate(rs.getDate("date_de_modification"));
-				doc.setID(rs.getInt("id"));
+				doc.setNom(rs.getString("nom"));
+				doc.setDerniereModification(rs.getDate("date_de_modification"));
+				doc.setId(rs.getInt("id"));
 				library.add(doc);
 			}
 			rs.close();
@@ -149,9 +149,9 @@ public class DbManager extends ParamBD {
 			String sql = "INSERT INTO documents (id_utilisateur, date_de_modification, chemin, nom) VALUES (?, ?, ?, ?)";
 			PreparedStatement request = c.prepareStatement(sql);
 			request.setInt(1, document.getCreator().getId());
-			request.setDate(2, document.getLastModifDate());
-			request.setString(3, document.getPath());
-			request.setString(4, document.getName());
+			request.setDate(2, document.getDerniereModification());
+			request.setString(3, document.getChemin());
+			request.setString(4, document.getNom());
 			ResultSet rs = request.executeQuery();
 			rs.last();
 			return rs.getRow() >= 1;
@@ -296,7 +296,7 @@ public class DbManager extends ParamBD {
 	            return id;
 	        } else {
 	            requete.setInt(1, u.getId());
-	            requete.setDate(2, d.getLastModifDate());
+	            requete.setDate(2, d.getDerniereModification());
 	            requete.setString(3, u.getPassword());
 	        }
 	        int rowsAffected = requete.executeUpdate();

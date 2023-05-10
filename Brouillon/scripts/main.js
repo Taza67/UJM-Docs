@@ -36,9 +36,6 @@ function init() {
     // Initialisation de la fonctionnalité d'export
     initExportDocument();
 
-    // Initialisation du gestionnaire d'historique de la textarea
-    // initHistoryManager();
-
     // Initialisation des raccourcis
     // initEditionShortcuts();
 }

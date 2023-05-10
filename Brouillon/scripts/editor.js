@@ -38,24 +38,21 @@ function initEditor() {
 function handleEditorEvent() {
     // Récupération des infos sur le curseur
     const cursorPos = editor.getCursorPosition();
+    const textBeforeCursor = editor.session.getTextRange({start: {row: 0, column: 0}, end: cursorPos});
 
     // Position du curseur
     // // Numéro de ligne
     const lineNumber = cursorPos.row + 1;
     // // Numéro de mot
-    const text = editor.getValue();
-    const words = text.split(/\s+/).filter(word => word.length > 0);
-    const wordNumber = words.findIndex((word, index) => {
-        const wordPosition = editor.session.getDocument().positionToIndex({row: cursorPos.row, column: cursorPos.column - word.length});
-        return editor.session.getDocument().getTextRange({start: {row: cursorPos.row, column: wordPosition}, end: cursorPos}).split(/\s+/).length - 1 === index;
-    }) + 1;
+    const wordNumber = textBeforeCursor.split(/\s+/).length;
     // // Numéro de caractère
-    const charNumber = cursorPos.column + 1;
+    const charNumber = textBeforeCursor.length;
+
 
     // Compteurs
     const lineCount = editor.session.getLength();
-    const wordCount = words.length;
-    const charCount = text.length;
+    const wordCount = editor.getValue().split(/\s+/).filter(word => word.length > 0).length;
+    const charCount = editor.getValue().length;
 
     // Modification des indicateurs
     lineIndicator.innerText = lineNumber + " / " + lineCount + " ligne" + (lineCount > 1 ? "s": "");
