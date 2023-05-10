@@ -47,7 +47,7 @@ public class CommunicationThread extends Thread{
 					DataOutputStream out = new DataOutputStream(tmp.getOutputStream());
 					int action = in.readInt();
 					if(action == -1) { // NO_ACTION
-						System.err.println("NO_ACTION (communicationThread)");
+						//System.err.println("NO_ACTION (communicationThread)");
 						codeToSend = -1;
 					}
 					else if (action == 2) { // CREATION_DE_DOC
@@ -77,7 +77,7 @@ public class CommunicationThread extends Thread{
 						System.err.println("Réception du format => " + format);
 						System.err.println("Réception du format réussie..");
 						manager.processMessage(format);
-						codeToSend = 6;
+						codeToSend = 5;
 					}
 				}
 				catch (IOException e) {
@@ -90,7 +90,6 @@ public class CommunicationThread extends Thread{
 					DataInputStream in = new DataInputStream(tmp.getInputStream());
 					DataOutputStream out = new DataOutputStream(tmp.getOutputStream());
 					if(codeToSend == -1) {
-						System.err.println("J'ENVOIE RIIIEN");
 						out.writeInt(codeToSend);
 						continue;
 					}
