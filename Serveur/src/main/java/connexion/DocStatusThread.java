@@ -9,7 +9,6 @@ import java.util.LinkedList;
 
 import connexion.document.Document;
 import connexion.document.Page;
-import connexion.document.Word;
 
 public class DocStatusThread extends Thread{
 	/**
@@ -87,20 +86,25 @@ public class DocStatusThread extends Thread{
 					System.err.println("Envoie du N° de page en cours..");
 					out.writeInt(0);
 					System.err.println("TAILLE DE LA BIBLIOTHEQUE " + library.size());
-					Document res = new Document(owner);
+					Document res = null;
+					
 					for(Document d :library) {
-						if(d.getID() == idoc) {
+						if (d.getId() == idoc) {
 							res = d;
-							System.err.println("Envoie du N° total de page en cours.." + d.getPages().size());
-							out.writeInt(res.getPages().size());
+							System.err.println("Envoie du N° total de page en cours.." + d.getNombrePage());
+							out.writeInt(res.getNombrePage());
 							break;
 						}
 					}
+					
+					if (res == null)
+						System.err.println("- Erreur : res = null");
+					
 					System.err.println("Envoie du contenu en cours..");
-					out.writeUTF(res.getPageAtIndex(0).toString());
+					out.writeUTF(res.toString());
 					System.err.println("Contenu envoyé");
 					//Envoie de l'identifiant du document ajouté
-					manager = new DocManager(res,serv);
+					manager = new DocManager(res, serv);
 					System.err.println("Je rentre après la création du DocManager");
 					manager.startCommunication();
 					System.err.println("Le thread a commencé");

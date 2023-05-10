@@ -47,7 +47,7 @@ public class DocManager {
 	 * Methode qui gère l'ajout ou la suppression de contenu dans le document
 	 */
 	public synchronized void processMessage(String message) {
-		d.updatePages(message);
+		d.appliquerModification(message);
 	}
 
 }

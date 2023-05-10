@@ -58,7 +58,11 @@ public class CommunicationThread extends Thread{
 						Document d = new Document(users.get(i), nomDocument);
 						DbManager.addDocument(users.get(i), d);
 						System.err.println("Ajout confirmé (CommunicationThread)");
-						manager = new DocManager(d,server);
+						
+						// manager.removeCollaborateur();
+						
+						DocManager newManager = new DocManager(d, server);
+						newManager.startCommunication();
 					}
 					else if (action == 5) { // AJOUT DE CONTENU
 						//On attend le format pour ajouter du contenu
@@ -102,12 +106,12 @@ public class CommunicationThread extends Thread{
 					System.err.println("Envoie du N° de page " + server.getUser().getPageNum());
 					//Envoie du n° de page de l'utilisateur
 					out.writeInt(server.getUser().getPageNum());
-					System.err.println("Envoie du nombre de pages " + manager.getD().getPages().size());
+					System.err.println("Envoie du nombre de pages " + manager.getD().getNombrePage());
 					//Envoie du nombre total de pages
-					out.writeInt(manager.getD().getPages().size());
+					out.writeInt(manager.getD().getNombrePage());
 					System.err.println("Envoie du contenu ");
 					//Envoie du contenu
-					out.writeUTF(manager.getD().getPages().toString());
+					out.writeUTF(manager.getD().getPage(server.getUser().getPageNum()).toString());
 				}
 				catch (IOException e) {
 					e.printStackTrace();

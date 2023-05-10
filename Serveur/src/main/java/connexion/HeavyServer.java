@@ -118,7 +118,7 @@ public class HeavyServer extends Thread{
 						System.err.println(docList.size());
 						String s= "";
 						for(Document doc : docList)
-							s+=doc.getID() + "\b" + doc.getName() + "\b";
+							s += doc.getId() + "\b" + doc.getNom() + "\b";
 						System.err.println("AFFICHAGE DE LA CHAINE " + s);
 						System.err.println("Envoie des noms des doc + leur id");
 						out.writeUTF(s);
