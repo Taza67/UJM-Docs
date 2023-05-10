@@ -55,9 +55,13 @@ public class TCommunication extends Thread implements IConfig {
 			} else
 				sendNoAction();
 
+			System.err.println("- ICI111");
+			
 			// On attend un code de continuation ou d'action du serveur
 			int codeServer = client.waitInt();
 
+			System.err.println("- ICIII233");
+			
 			// Vérification
 			if (codeServer == IMPOSSIBLE_CODE)
 				return;
@@ -71,6 +75,7 @@ public class TCommunication extends Thread implements IConfig {
 	 * Réalise une action demandée par le serveur
 	 */
 	private void realiseAskedAction(int codeActionServer) {
+		int userId;
 		switch (codeActionServer) {
 		case NEW_DOCUMENT_REQUEST_CODE:
 			// Chargement d'un doucument depuis le serveur
@@ -121,13 +126,15 @@ public class TCommunication extends Thread implements IConfig {
 			}
 			
 			return;
-		case DELETE_REQUEST_CODE:
-			String content = client.waitString();
-			// Récupération du texte depuis le serveur
-			// String text = ""; // À CHANGER
+		case MODIFY_DOCUMENT_REQUEST_CODE:
+			userId = client.waitInt();
+			pageNumber = client.waitInt();
+			pageCount = client.waitInt();
+			content = client.waitString();
 
-			// Application
-			// manager.putModification(text);
+			// Application dans l'éditeur
+			manager.putModification(content, pageNumber, pageCount);
+			
 			System.err.println("- Requête d'application de modification de " + "texte reçue depuis le serveur");
 			
 			return;

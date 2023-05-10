@@ -14,6 +14,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
 
 import inside.IConfig;
@@ -49,6 +50,10 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 * Nombre de caractères dans le document
 	 */
 	private int charCount = 0;
+	/**
+	 * Indice du curseur dans le document
+	 */
+	private int currentCursorPosition = 0;
 	/**
 	 * JLabel indiquant le nombre de lignes sur la fenêtre
 	 */
@@ -95,6 +100,10 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 		cursorIndicator = curi;
 
 		self = this;
+		
+		String c = "c";
+		for (String x : c.split(" "))
+			System.err.println("-" + x);
 	}
 
 	/**
@@ -170,9 +179,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				int lineNumber = TextUtilities.getCarretLine(epp.getText(), e.getDot());
-
-				cursorIndicator
-						.setText(e.getDot() + " / " + charCount + "c      " + lineNumber + " / " + lineCount + "l");
+				currentCursorPosition = e.getDot();
+				
+				cursorIndicator.setText(e.getDot() + " / " + charCount + "c      " + lineNumber + " / " + lineCount + "l");
 			}
 		});
 
@@ -188,12 +197,20 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 			public void insertUpdate(DocumentEvent e) {
 				updateSize();
 				updateCounts(epp.getText());
-
+				
 				if (!isOnline)
 					return;
-				// manager.faisQuelqueChose() //////////////////////////////
-				//
-				//
+				
+				String message = "";
+				try {
+					message = "ADD\b" + manager.getCurrentPageNumber() + "\b" + 3 + "\b" + e.getOffset() + "\b" + e.getDocument().getText(e.getOffset(), e.getLength());
+				} catch (BadLocationException e1) {
+					System.err.println("- JEditorPanePerso#initEventManagement()#insertUpdate() -> Attention ! Vous essayez d'aller au-delà des dimensions"
+						+ "de l'éditeur !");
+					e1.printStackTrace();
+				}
+				
+				manager.askModifyDocument(ADD_REQUEST_CODE, message);
 			}
 
 			@Override
@@ -203,9 +220,10 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 
 				if (!isOnline)
 					return;
-				// manager.faisQuelqueChose() //////////////////////////////
-				//
-				//
+				
+				String message = "DEL\b" + manager.getCurrentPageNumber() + "\b" + 3 + "\b" + e.getOffset() + "\b" + e.getLength();
+				
+				manager.askModifyDocument(DELETE_REQUEST_CODE, message);
 			}
 
 			/**

@@ -37,7 +37,7 @@ public interface IConfig {
 	/**
 	 * Hôte du serveur
 	 */
-	String COMMUNICATION_HOST = "192.168.1.46";
+	String COMMUNICATION_HOST = "192.168.1.80";
 	/**
 	 * Port de communication
 	 */
@@ -78,15 +78,20 @@ public interface IConfig {
 	 */
 	int SAVE_DOCUMENT_REQUEST_CODE = 4;
 	/**
-	 * Entier signifiant la demande de modification du document courant par
+	 * Entier signifiant l'ajout de modification du document courant par
 	 * l'application au serveur Client => REQUÊTE => Serveur
 	 */
-	int MODIFY_DOCUMENT_REQUEST_CODE = 5;
+	int ADD_REQUEST_CODE = 5;
+	/**
+	 * Entier signifiant l'ajout de modification du document courant par
+	 * l'application au serveur Client => REQUÊTE => Serveur
+	 */
+	int DELETE_REQUEST_CODE = 6;
 	/**
 	 * Entier signifiant la demande d'application de modification du document par le
 	 * serveur à l'application Client <= REQUÊTE <= Serveur
 	 */
-	int MODIFICATION_APPLICATION_REQUEST_CODE = 6;
+	int MODIFY_DOCUMENT_REQUEST_CODE = 5;
 	/**
 	 * Entier signifiant la demande d'application du déplacement d'un collaborateur
 	 * par le serveur à l'application Client <= REQUÊTE <= Serveur
