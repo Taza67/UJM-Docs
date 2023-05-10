@@ -46,7 +46,14 @@ public class Page {
 		}
 		return this.authorizedModification.get(0);
 	}
-	
+
+	public int getTotalChar() {
+		int res = 0;
+		for (Word w: content) {
+			res += w.toString().length();
+		}
+		return res;
+	}
 
 	public LinkedList<Word> getContent() {return content;}
 
@@ -58,7 +65,7 @@ public class Page {
 		}
 		ArrayList<User> users = DbManager.getUserListFromDB();
 		for(Integer curseur : this.curseurs) {
-			result += "" + users.get(curseur).getposition() + '\0';
+			result += "" + users.get(curseur).getposition() + '\b';
 		}
 		return result;
 	}
@@ -105,6 +112,10 @@ public class Page {
 		this.locked = true;
 	}
 
+	public void unlock() {
+		this.locked = false;
+	}
+
 	/**
 	 * Fonction qui permet d'obtenir le mot à la position donnée
 	 * @param pos la position
@@ -129,10 +140,12 @@ public class Page {
 
 	public void updateCurseur(int Id, int pos) {
 
-		this.curseurs.get(this.content.indexOf(Id)); // avec cet ID user, update le curseur à pos
+		//this.curseurs.get(this.content.indexOf(Id)); // avec cet ID user, update le curseur à pos
+		//TODO 
 	}
 
-	public void deleteCharFromPos(int pos) {
+	public void deleteCharFromPos(int pos) { /* Regarder le fonctionement si on est à après un espace, si on suppr l'espace ou le dernier
+	char du mot précédent */
 		Word toModify = getWordAtPos(pos);
 		toModify.deleteCharFromPos(pos);
 	}
@@ -164,14 +177,13 @@ public class Page {
 				case '\n':
 					content.addFirst(RETOUR_CHARIOT);
 					break;
-				case '\0':
+				case '\b':
 					content.addFirst(FIN_DE_PAGE);
 					break;
 				default:
 					content.addFirst(new Word(word));
 			}
-		}
-		if (pos >= content.size()) {
+		} else if (pos+1 >= getTotalChar()) {
 			switch(word.charAt(0)) {
 				case '.':
 					content.addLast(POINT);
@@ -191,38 +203,38 @@ public class Page {
 				case '\n':
 					content.addLast(RETOUR_CHARIOT);
 					break;
-				case '\0':
+				case '\b':
 					content.addLast(FIN_DE_PAGE);
 				default:
 					content.addLast(new Word(word));
 			}
+		} else {
+			switch(word.charAt(0)) {
+				case '.':
+					content.add(pos, POINT);
+					break;
+				case ',':
+					content.add(pos, VIRGULE);
+					break;
+				case ';':
+					content.add(pos, POINT_VIRGULE);
+					break;
+				case ':':
+					content.add(pos, DEUX_POINTS);
+					break;
+				case '!':
+					content.add(pos, POINT_D_EXCLAMATION);
+					break;
+				case '\n':
+					content.add(pos, RETOUR_CHARIOT);
+					break;
+				case '\b':
+					content.add(pos, FIN_DE_PAGE);
+					break;
+				default:
+					content.add(pos, new Word(word));
+			}
 		}
-		switch(word.charAt(0)) {
-			case '.':
-				content.add(pos, POINT);
-				break;
-			case ',':
-				content.add(pos, VIRGULE);
-				break;
-			case ';':
-				content.add(pos, POINT_VIRGULE);
-				break;
-			case ':':
-				content.add(pos, DEUX_POINTS);
-				break;
-			case '!':
-				content.add(pos, POINT_D_EXCLAMATION);
-				break;
-			case '\n':
-				content.add(pos, RETOUR_CHARIOT);
-				break;
-			case '\0':
-				content.add(pos, FIN_DE_PAGE);
-				break;
-			default:
-				content.add(pos, new Word(word));
-		}
-
 	}
 
 	public boolean isLocked() {

@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="../../css/style.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@14.7.0/distribute/nouislider.min.css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    </head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.19.0/ace.min.js" integrity="sha512-7ar5DoGr5xiRstr9B0e9BkQAc42juvRXosAEAXuOKZSL/4C93WpIFthgzZibRAau0kB0NJszECL02exq3IPc/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    </head>
 <body>
     <!-- Barre de navigation -->
     <nav class="menu-bar">
@@ -19,10 +19,10 @@
                 </span>
                 <ul class="menu-bar-submenu-items">
                     <li id="new-document">Nouveau</li>
-                    <li>Ouvrir</li>
-                    <li>Sauvegarder</li>
-                    <li>Télécharger</li>
-                    <li>Se&nbspdéconnecter</li>
+                    <li id="open-document">Ouvrir</li>
+                    <li id="save-document">Sauvegarder</li>
+                    <li id="export-document">Exporter</li>
+                    <li id="disconnect">Se&nbspdéconnecter</li>
                 </ul>
             </li>
             <li class="menu-bar-submenu-item">
@@ -30,11 +30,11 @@
                     Édition
                 </span>
                 <ul class="menu-bar-submenu-items">
-                    <li>Annuler</li>
-                    <li>Refaire</li>
-                    <li>Couper</li>
-                    <li>Copier</li>
-                    <li>Coller</li>
+                    <li id="undo-action">Annuler</li>
+                    <li id="redo-action">Refaire</li>
+                    <li id="cut-text">Couper</li>
+                    <li id="copy-text">Copier</li>
+                    <li id="paste-text">Coller</li>
                 </ul>
             </li>
             <li class="menu-bar-submenu-item">
@@ -58,17 +58,13 @@
     <nav class="tools-bar">
         <div class="bar-section">
             <button class="bar-button" id="new-document">Nouveau</button>
-            <button class="bar-button">Charger</button>
-            <button class="bar-button">Sauvegarder</button>
+            <button class="bar-button" id="open-document">Ouvrir</button>
+            <button class="bar-button" id="save-document">Sauvegarder</button>
         </div>
         <div class="bar-section">
-            <span class="bar-section-legend">Collaborateur</span>
-            <span class="bar-section-legend" id="pseudo">Toto</span>
-        </div>
-        <div class="bar-section">
-            <button class="bar-button">Couper</button>
-            <button class="bar-button">Copier</button>
-            <button class="bar-button">Coller</button>
+            <button class="bar-button" id="cut-text">Couper</button>
+            <button class="bar-button" id="copy-text">Copier</button>
+            <button class="bar-button" id="paste-text">Coller</button>
         </div>
         <div class="bar-section">
             <span class="bar-section-legend">Collaborateur</span>
@@ -78,14 +74,14 @@
         <div class="bar-section">
             <span class="bar-section-legend">Actions</span>
             <form method="post">
-                <button class="bar-button" type="submit" name="deconnexion">Se déconnecter</button>
+                <button class="bar-button" id="disconnect" type="submit" name="deconnexion">Se déconnecter</button>
             </form>
         </div>
     </nav>
 
     <div class="editor-container">
         <div class="editor-subcontainer" id="editor-subcontainer">
-            <textarea class="editor" id="editor"></textarea>
+            <div class="editor" id="editor"></div>
         </div>
     </div>
 
@@ -113,5 +109,6 @@
     <script type="module" src="../../js/editorScript.js"></script>
     <script type="module" src="../../js/newDocumentScript.js"></script>
     <script type="module" src="../../js/mainScript.js"></script>
+
 </body>
 </html>

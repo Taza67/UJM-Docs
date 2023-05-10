@@ -29,6 +29,10 @@ public class User implements Serializable {
 	 */
 
 	private boolean guest;
+	
+	/**
+	 * Variable indiquant le numéro de page sur lequel se trouve un utilisateur
+	 */
 	private int pageNum;
 
 
@@ -66,6 +70,15 @@ public class User implements Serializable {
 	 * @see User#password
 	 */
 	public String getPassword() {return password;}
+	
+	/**
+	 * Retourne le n° de page de l'utilisateur
+	 * @return le n° de page  de l'utilisateur
+	 *
+	 * @see User#pageNum
+	 */
+	public int getPageNum() {return pageNum;}
+
 
 	// Setters
 
@@ -109,10 +122,22 @@ public class User implements Serializable {
 	 */
 	public void setGuest(boolean state) {this.guest = state;}
 
+	/**
+	 * Modifie le numéro de page l'uitilisateur
+	 * @param le nouveau numéro de page de l'utilisateur
+	 *
+	 * @see User#pageNum
+	 */
+	public void setPageNum(int pageNum) {this.pageNum = pageNum;}
+	
+	/**
+	 * Constructeur vide assurant le fonctionnement correcte des javaBean
+	 */
 	public User() {
 
 	}
-
+	
+	
 	public User(int idt, String p, String mdp) {
 		this.pageNum = 0;
 		this.id = idt;
@@ -138,11 +163,5 @@ public class User implements Serializable {
 
 	}
 
-	public int getPageNum() {
-		return pageNum;
-	}
 
-	public void setPageNum(int pageNum) {
-		this.pageNum = pageNum;
-	}
 }
