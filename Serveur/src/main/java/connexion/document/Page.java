@@ -24,6 +24,7 @@ public class Page {
 		collaborateurs = new ArrayList<>();
 	}
 	public Page(User createur) {
+		this();
 		collaborateurs.add(createur);
 	}
 
