@@ -37,7 +37,7 @@ public class HeavyServer extends Thread{
 	/*
 	 * Liste des sockets identifiées par l'identifiant des utilisateurs
 	 */
-	private volatile HashMap<Integer, Socket> SocketList = new HashMap<>();
+	private volatile HashMap<User, Socket> SocketList = new HashMap<>();
 	
 
 	/**
@@ -70,7 +70,7 @@ public class HeavyServer extends Thread{
 	 * socket et l'identifiant de chaque utilisateur
 	 */
 
-	public HashMap<Integer, Socket> getSocketList() {return SocketList;}
+	public HashMap<User, Socket> getSocketList() {return SocketList;}
 
 
 	/**
@@ -112,7 +112,7 @@ public class HeavyServer extends Thread{
 					}
 					else {
 						System.out.println("Communication établie. Bienvenue " + u.getPseudo());
-						SocketList.put(u.getId(), cliSoc);
+						SocketList.put(u, cliSoc);
 						out.writeInt(1);
 						LinkedList<Document> docList = DbManager.loadAllDocuments(u);
 						System.err.println(docList.size());

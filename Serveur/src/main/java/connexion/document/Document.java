@@ -179,6 +179,8 @@ public class Document {
 		// Récupèration de la page à modifier
 		Page pageAModifier = pages.get(numeroPage);
 		
+		System.err.println("- " + pageAModifier.toString());
+		
 		// Application de la modification
 		if (estBonFormat = typeModification.equalsIgnoreCase("ADD"))
 			pageAModifier.insererChaine(modificationPos, modificationAAppliquer);

@@ -38,10 +38,10 @@ public class CommunicationThread extends Thread{
 	@Override
 	public void run() {
 		while(!Thread.currentThread().isInterrupted()) {
-			HashMap<Integer, Socket> cliList = server.getSocketList();
+			HashMap<User, Socket> cliList = server.getSocketList();
 			int codeToSend = 0;
-			for(Integer i : cliList.keySet()) {
-				Socket tmp = cliList.get(i);
+			for(User u : cliList.keySet()) {
+				Socket tmp = cliList.get(u);
 				try {
 					DataInputStream in = new DataInputStream(tmp.getInputStream());
 					DataOutputStream out = new DataOutputStream(tmp.getOutputStream());
@@ -55,8 +55,8 @@ public class CommunicationThread extends Thread{
 						System.err.println("DOCUMENT_CREATION(communicationThread)");
 						String nomDocument = in.readUTF();
 						System.err.println("Nom du document recu " + nomDocument);
-						Document d = new Document(users.get(i), nomDocument);
-						DbManager.addDocument(users.get(i), d);
+						Document d = new Document(u, nomDocument);
+						DbManager.addDocument(u, d);
 						System.err.println("Ajout confirmé (CommunicationThread)");
 						
 						// manager.removeCollaborateur();
@@ -84,8 +84,8 @@ public class CommunicationThread extends Thread{
 					e.printStackTrace();
 				}
 			}
-			for(Integer i : cliList.keySet()) {
-				Socket tmp = cliList.get(i);
+			for(User u : cliList.keySet()) {
+				Socket tmp = cliList.get(u);
 				try {
 					DataInputStream in = new DataInputStream(tmp.getInputStream());
 					DataOutputStream out = new DataOutputStream(tmp.getOutputStream());
@@ -100,17 +100,20 @@ public class CommunicationThread extends Thread{
 					System.err.println("Envoie du code " + codeToSend);
 					out.writeInt(codeToSend);
 					//Envoie de l'identifiant de l'utilisateur
-					System.err.println("Envoie de l'identifiant de l'utilisateur " + i);
-					out.writeInt(i);
-					System.err.println("Envoie du N° de page " + server.getUser().getPageNum());
+					System.err.println("Envoie de l'identifiant de l'utilisateur " + u.getId());
+					out.writeInt(u.getId());
+					System.err.println("Envoie du N° de page " + u.getPageNum());
 					//Envoie du n° de page de l'utilisateur
-					out.writeInt(server.getUser().getPageNum());
+					out.writeInt(u.getPageNum());
 					System.err.println("Envoie du nombre de pages " + manager.getD().getNombrePage());
 					//Envoie du nombre total de pages
 					out.writeInt(manager.getD().getNombrePage());
-					System.err.println("Envoie du contenu ");
+					System.err.println("Envoie du contenu " + manager.getD().getPage(u.getPageNum()).toString());
 					//Envoie du contenu
-					out.writeUTF(manager.getD().getPage(server.getUser().getPageNum()).toString());
+					out.writeUTF(manager.getD().getPage(u.getPageNum()).toString());
+					//Envoie du curseur
+					System.err.println("Envoie de la position du curseur => " + u.getposition());
+					out.writeInt(u.getposition());
 				}
 				catch (IOException e) {
 					e.printStackTrace();

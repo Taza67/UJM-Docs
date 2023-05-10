@@ -75,6 +75,8 @@ public class Page {
         String fin = contenu.substring(posModification);
         contenu = debut + chaineAInserer + fin;
         
+        System.err.println("\"" + debut + "\" - \"" + chaineAInserer + "\" - \"" + fin + "\"");
+        
         // Mise à jour des curseurs
         majCurseurs(posModification, chaineAInserer.length(), true);
 	}
@@ -109,14 +111,14 @@ public class Page {
 	 */
 	public void majCurseurs(int posModification, int longueur, boolean estUnAjout) {
         for (User utilisateur : collaborateurs) {
-        	int curseurPosition = utilisateur.getposition();
+        	int curseurPosition = posModification;
         	
         	if (estUnAjout) {
-        		// Du contenu a été ajouté, le curseur doit peut-être avancé
+        		// Du contenu a été ajouté, le curseur doit peut-être avancer
 	        	if (curseurPosition >= posModification)
 	        		utilisateur.setPosition(curseurPosition + longueur);
         	} else {
-        		// Du contenu a été retiré, le curseur doit peut-être reculé
+        		// Du contenu a été retiré, le curseur doit peut-être reculer
         		if (curseurPosition >= posModification) {
         			int newPosition = curseurPosition - longueur;
         			utilisateur.setPosition(Math.max(posModification, newPosition));
@@ -126,6 +128,7 @@ public class Page {
 	}
 	
 	public String toString() {
+		System.err.println(contenu);
 		return contenu;
 	}
 }
