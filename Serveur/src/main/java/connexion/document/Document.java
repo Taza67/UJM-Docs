@@ -3,6 +3,7 @@ package connexion.document;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,7 +22,7 @@ import connexion.User;
  * une liste d'utilisateurs représentant les utilisateurs autorisés à modifier le document, et une liste de pages.
  * @author Bruno ROMAIN
  */
-public class Document {
+public class Document implements Serializable {
 
 	private String name;
 	private Date lastModifDate;

@@ -13,11 +13,11 @@
 	</context-param>
 	<context-param>
 		<param-name>JDBC_URL</param-name>
-		<param-value>jdbc:mysql://localhost:3306/docs</param-value>
+		<param-value>jdbc:mysql://localhost:3306/udoc</param-value>
 	</context-param>
 	<context-param>
 		<param-name>JDBC_LOGIN</param-name>
-		<param-value>utilisateur</param-value>
+		<param-value>valentin</param-value>
 	</context-param>
 	<context-param>
 		<param-name>JDBC_PASSWORD</param-name>

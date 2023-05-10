@@ -52,7 +52,7 @@ public class Editeur extends HttpServlet {
         String escapedUserJson = URLEncoder.encode(userJson, StandardCharsets.UTF_8.toString());
         System.out.println(userJson);
         System.out.println(escapedUserJson);
-        request.setAttribute("userJson", escapedUserJson);
+        session.setAttribute("userJson", escapedUserJson);
         session.setAttribute("user", u);
         request.getRequestDispatcher("WEB-INF/jsp/editeur.jsp").forward(request, response);
     }

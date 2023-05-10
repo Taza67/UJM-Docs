@@ -1,8 +1,8 @@
 // IMPORTS ////////////////////////////////////////////////
 
-import { initEditor } from "./editorScript.js";
-import { initNewDocument } from "./newDocumentScript.js";
-import { initZoomSlider } from "./zoomScript.js";
+import { initEditor } from "./editorScript";
+import { initNewDocument } from "newDocumentScript.js";
+import { initZoomSlider } from "zoomScript.js";
 
 
 // VARIABLES GLOBALES /////////////////////////////////////

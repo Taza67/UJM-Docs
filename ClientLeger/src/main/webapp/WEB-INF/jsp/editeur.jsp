@@ -21,6 +21,8 @@
 <div id="user-data" data-user="${userJson}" style="display:none;"></div>
 
 <!-- Barre de navigation -->
+<body>
+<!-- Barre de navigation -->
 <nav class="menu-bar">
   <ul class="menu-bar-list">
     <li class="menu-bar-submenu-item">
@@ -28,10 +30,11 @@
                     Fichier
                 </span>
       <ul class="menu-bar-submenu-items">
-        <li>Nouveau</li>
-        <li>Charger</li>
+        <li id="new-document">Nouveau</li>
+        <li>Ouvrir</li>
         <li>Sauvegarder</li>
-        <li>Quitter</li>
+        <li>Télécharger</li>
+        <li>Se&nbspdéconnecter</li>
       </ul>
     </li>
     <li class="menu-bar-submenu-item">
@@ -66,10 +69,13 @@
 <!-- Barre d'outils -->
 <nav class="tools-bar">
   <div class="bar-section">
-    <button class="bar-button">Nouveau</button>
+    <button class="bar-button" id="new-document">Nouveau</button>
     <button class="bar-button">Charger</button>
     <button class="bar-button">Sauvegarder</button>
-    <button class="bar-button">${user.pseudo}</button>
+  </div>
+  <div class="bar-section">
+    <span class="bar-section-legend">Collaborateur</span>
+    <span class="bar-section-legend" id="pseudo">${user.pseudo}</span>
   </div>
   <div class="bar-section">
     <button class="bar-button">Couper</button>
@@ -91,23 +97,23 @@
 
 <div class="editor-container">
   <div class="editor-subcontainer" id="editor-subcontainer">
-            <textarea class="editor" id="editor">
-            </textarea>
+    <textarea class="editor" id="editor"></textarea>
   </div>
 </div>
 
 <!-- Barre de statut -->
 <nav class="status-bar">
   <div class="bar-section">
-    <span class="bar-section-legend">0 / 0 lignes</span>
-    <span class="bar-section-legend">0 / 0 mots</span>
-    <span class="bar-section-legend">0 / 0 caractères</span>
+    <span class="bar-section-legend" id="page-indicator">1 / 1 page</span>
+    <span class="bar-section-legend" id="line-indicator">1 / 1 ligne</span>
+    <span class="bar-section-legend" id="word-indicator">0 / 0 mot</span>
+    <span class="bar-section-legend" id="char-indicator">0 / 0 caractère</span>
   </div>
   <div class="bar-section">
-    <span class="bar-section-legend">0 collaborateurs</span>
+    <span class="bar-section-legend" id="collaborator-indicator">0 collaborateur</span>
   </div>
   <div class="bar-section">
-    <div id="zoom-slider" class="zoom-slider"></div>
+    <div class="zoom-slider" id="zoom-slider"></div>
   </div>
 </nav>
 
@@ -115,7 +121,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/nouislider@14.7.0/distribute/nouislider.min.js"></script>
-<script src="<c:url value='/js/script.js'/>"></script>
-<script src="<c:url value='/js/collabo.js'/>"></script>
+<script src="<c:url value='/js/mainScript.js'/>"></script>
+
 </body>
 </html>
