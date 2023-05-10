@@ -65,7 +65,7 @@ public class Page {
 		}
 		ArrayList<User> users = DbManager.getUserListFromDB();
 		for(Integer curseur : this.curseurs) {
-			result += "" + users.get(curseur).getposition() + '\0';
+			result += "" + users.get(curseur).getposition() + '\b';
 		}
 		return result;
 	}
@@ -177,7 +177,7 @@ public class Page {
 				case '\n':
 					content.addFirst(RETOUR_CHARIOT);
 					break;
-				case '\0':
+				case '\b':
 					content.addFirst(FIN_DE_PAGE);
 					break;
 				default:
@@ -203,7 +203,7 @@ public class Page {
 				case '\n':
 					content.addLast(RETOUR_CHARIOT);
 					break;
-				case '\0':
+				case '\b':
 					content.addLast(FIN_DE_PAGE);
 				default:
 					content.addLast(new Word(word));
@@ -228,7 +228,7 @@ public class Page {
 				case '\n':
 					content.add(pos, RETOUR_CHARIOT);
 					break;
-				case '\0':
+				case '\b':
 					content.add(pos, FIN_DE_PAGE);
 					break;
 				default:

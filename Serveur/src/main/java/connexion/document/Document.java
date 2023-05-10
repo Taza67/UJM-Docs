@@ -116,7 +116,8 @@ public class Document {
 			}
 			this.content.add(toModify);
 		} else if (cmd.equalsIgnoreCase("DEL")) {
-			for (int i=0; i<Integer.valueOf(content); i++) {
+			int longueur = Integer.parseInt(content);
+			for (int i = 0; i < longueur; i++) {
 				toModify.deleteCharFromPos(pos);
 				pos--;
 				toModify.updateCurseur(idUser, pos);
