@@ -55,12 +55,12 @@ public class TCommunication extends Thread implements IConfig {
 			} else
 				sendNoAction();
 
-			System.err.println("- ICI111");
+			System.err.println("- Envoi du code au serveur");
 			
 			// On attend un code de continuation ou d'action du serveur
 			int codeServer = client.waitInt();
 
-			System.err.println("- ICIII233");
+			System.err.println("- Réception d'un code du serveur");
 			
 			// Vérification
 			if (codeServer == IMPOSSIBLE_CODE)
