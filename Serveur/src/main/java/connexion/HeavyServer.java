@@ -124,7 +124,7 @@ public class HeavyServer extends Thread{
 						out.writeUTF(s);
 						System.err.println("Je vais crée le DocStatusThread");
 						// création du thread intermédiaire
-						DocStatusThread docThread = new DocStatusThread(servSoc, cliSoc,u);
+						DocStatusThread docThread = new DocStatusThread(servSoc, cliSoc,u,this);
 						docThread.start();
 					}
 

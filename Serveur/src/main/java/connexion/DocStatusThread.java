@@ -33,6 +33,10 @@ public class DocStatusThread extends Thread{
 	 */
 	private DataOutputStream out;
 
+	/**
+	 * Server lourd 
+	 */
+	private HeavyServer serv;
 	/*
 	 * Utilisateur possédant le document
 	 */
@@ -43,14 +47,15 @@ public class DocStatusThread extends Thread{
 	 */
 	private DocManager manager;
 
-	DocStatusThread(ServerSocket s, Socket client, User u){
+	DocStatusThread(ServerSocket s, Socket client, User u,HeavyServer serveur){
 		this.servSoc = s;
 		this.cliSoc = client;
 		owner = u;
+		serv = serveur;
 	}
 
 	public void connect() {
-		while(!Thread.currentThread().isInterrupted()) {
+		if(!Thread.currentThread().isInterrupted()) {
 			try {
 				// Lecture du type de la requête
 				// type = Création d'un nouveau doc/Edition d'un doc
@@ -68,7 +73,8 @@ public class DocStatusThread extends Thread{
 					//Envoie de l'identifiant du document ajouté
 					out.writeInt(idDoc);
 					System.err.println("Identifiant du document envoyé");
-					manager = new DocManager(d);
+					manager = new DocManager(d, manager.getHeavyServer());
+					manager.startCommunication();
 				}
 				else if (type == 3) { // CHARGEMENT D'UN DOC
 					System.err.println("Type reçu : Chargement du fichier confirmée");
@@ -94,7 +100,10 @@ public class DocStatusThread extends Thread{
 					out.writeUTF(res.getPageAtIndex(0).toString());
 					System.err.println("Contenu envoyé");
 					//Envoie de l'identifiant du document ajouté
-					manager = new DocManager(library.get(idoc-1));
+					manager = new DocManager(res,serv);
+					System.err.println("Je rentre après la création du DocManager");
+					manager.startCommunication();
+					System.err.println("Le thread a commencé");
 				}
 				else {
 					System.err.println("J'ai rien reçu");
