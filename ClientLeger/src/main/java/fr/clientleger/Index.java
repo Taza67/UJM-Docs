@@ -26,24 +26,7 @@ public class Index extends HttpServlet {
 
     @Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpSession ses = request.getSession();
 
-        Object inscritObj = ses.getAttribute("inscrit");
-
-        Object errorRedirectObj = ses.getAttribute("error");
-
-        ses.invalidate();
-
-        if(inscritObj != null) {
-            System.out.println("inscrit ! ");
-            request.setAttribute("inscrit", "true");
-        }
-
-        if(errorRedirectObj != null) {
-            System.out.println("redirection");
-            String errorRedirect = errorRedirectObj.toString();
-            request.setAttribute("errorRedirect", errorRedirect);
-        }
         request.getRequestDispatcher("WEB-INF/jsp/index.jsp").forward(request, response);
     }
 

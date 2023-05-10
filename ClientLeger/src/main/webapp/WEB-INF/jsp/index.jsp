@@ -16,13 +16,13 @@
 	<div class="title">
 		<h1>UJM<br>DOCS</h1>
 	</div>
-	<c:if test="${requestScope['inscrit']== 'true'}">
+	<c:if test="${sessionScope['inscrit']== 'true'}">
 
 		<span class="error"> Nouvel Inscrit ! <br/>
 			Merci de vous connecter.
 		</span>
 		<%
-			request.removeAttribute("inscrit");
+			session.removeAttribute("inscrit");
 		%>
 	</c:if>
 	<form method="post">
@@ -36,7 +36,7 @@
 			%>
 		</c:if>
 
-		<c:if test="${requestScope['errorRedirect'] eq 'inaccessible'}">
+		<c:if test="${sessionScope['errorRedirect'] eq 'inaccessible'}">
             <span class="error">
                 Vous ne pouvez pas accéder à cette page.
                 <br/>
@@ -44,17 +44,17 @@
             </span>
 
 			<%
-				request.removeAttribute("errorRedirect");
+				session.removeAttribute("errorRedirect");
 			%>
 		</c:if>
 
-		<c:if test="${requestScope['errorRedirect'] eq 'weird'}">
+		<c:if test="${sessionScope['errorRedirect'] eq 'weird'}">
             <span class="error">
                 Ce compte n'est pas valide.
             </span>
 
 			<%
-				request.removeAttribute("weird");
+				session.removeAttribute("weird");
 			%>
 		</c:if>
 

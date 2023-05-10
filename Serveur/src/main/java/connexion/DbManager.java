@@ -93,7 +93,7 @@ public class DbManager extends ParamBD {
 			request.setInt(2, u.getId());
 			ResultSet rs = request.executeQuery();
 			while(rs.next()) {
-				Document doc = new Document(rs.getString("chemin"));
+				Document doc = new Document(rs.getString("chemin"),u);
 				doc.setName(rs.getString("nom"));
 				doc.setLasModifDate(rs.getDate("date_de_modification"));
 				doc.setID(rs.getInt("id"));
@@ -113,7 +113,7 @@ public class DbManager extends ParamBD {
 	 * @author Bruno ROMAIN
 	 */
 
-	public static LinkedList<Document> loadAllDocuments() {
+	/*public static LinkedList<Document> loadAllDocuments() {
 		LinkedList<Document> library = new LinkedList<>();
 		try {
 			Connection c = DriverManager.getConnection(bdURL, bdLogin, bdPassword);
@@ -136,7 +136,7 @@ public class DbManager extends ParamBD {
 			throw new RuntimeException(e);
 		}
 		return library;
-	}
+	}*/
 
 	/**
 	 * Fonction qui sauvegarde un document dans la base de donnée
