@@ -923,7 +923,6 @@ public class JFramePerso extends JFrame implements IConfig {
 				// Ouverture
 				else if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0)) {
 					if (isOnline) {
-						String document = "default";
 						// ///////////// ATTENTION
 						// manager.askLoadDocument(document);
 					}
