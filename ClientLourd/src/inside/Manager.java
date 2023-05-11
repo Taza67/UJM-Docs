@@ -3,13 +3,16 @@ package inside;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.undo.UndoManager;
 
 import inside.communication.Client;
-import inside.communication.TCommunication;
+import inside.communication.TReceiver;
+import inside.communication.TSender;
 import inside.utilities.PDFUtilities;
 import inside.utilities.Tuple;
 import outside.userInterface.JEditorPanePerso;
@@ -24,25 +27,14 @@ import outside.userInterface.JEditorPanePerso;
  */
 public class Manager implements IConfig {
 	/**
-	 * Thread de communication avec le serveur de données
+	 * Threads de communication avec le serveur de données
 	 */
-	private TCommunication communication;
-	/**
-	 * Pseudo de l'utilisateur
-	 */
-	private String pseudo;
-	/**
-	 * Mot de passe de l'utilisateur
-	 */
-	private String password;
+	private TSender sending;
+	private TReceiver receiving;
 	/**
 	 * Client représentant l'utilisateur sur la communication TCP
 	 */
 	private Client client;
-	/**
-	 * Ensemble d'actions réalisées par l'utilisateur et à transmettre au serveur
-	 */
-	private Actions actions;
 	/**
 	 * Éditeur de texte
 	 */
@@ -79,16 +71,26 @@ public class Manager implements IConfig {
 	 * Listes des identifiants et noms des documents de l'utilisateur
 	 */
 	private List<Tuple> listDocuments;
+	/**
+	 * Queue qui permet de stocker les modifications 
+	 * apportées par l'utilisateur
+	 */
+	private BlockingQueue<Action> modificationBuffer;
+	
 
 	/**
 	 * Instancie un objet représentant le module de gestion
 	 *
 	 * @param ed Référence au JPanelEditor contenant le document édité
+	 * @param pi Référence au JLabel indiquant le nombre de pages
+	 * @param pni Référence au JLabel indiquant le numéro de page
+	 * @param eb Référence à un objet que l'éditeur attend à chaque fois qu'il envoie une action
 	 */
 	public Manager(JEditorPanePerso ed, JLabel pi, JLabel pni) {
 		client = new Client(COMMUNICATION_PORT);
-		actions = new Actions();
-		communication = new TCommunication(client, actions, this);
+		modificationBuffer = new LinkedBlockingQueue<Action>();
+		receiving = new TReceiver(client, this);
+		sending = new TSender(this);
 		editor = ed;
 		pageIndicator = pi;
 		pageNumberIndicator = pni;
@@ -130,12 +132,33 @@ public class Manager implements IConfig {
 	}
 	
 	/**
+	 * Envoie la première action du buffer de modification au serveur s'il y en a
+	 * Un code NO_ACTION sinon
+	 */
+	synchronized public void sendAction() {
+		if (modificationBuffer.isEmpty())
+			client.sendInt(NO_ACTION_CODE);
+		else {
+			try {
+				Action a = modificationBuffer.take();
+				
+				System.err.println("- Action " + a.getCode() + " - " + a.getMessage());
+				client.sendInt(a.getCode());
+				client.sendString(a.getMessage());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+			
+	}
+	
+	
+	/**
 	 * Réinitialise le gestionnaire refaire/défaire de l'éditeur
 	 */
 	synchronized public void reinitUndoManager() {
 		editor.setUndoManager(new UndoManager());
 	}
-
 	
 	/**
 	 * Connecte l'application au serveur de données
@@ -149,10 +172,6 @@ public class Manager implements IConfig {
 		if (!client.connect(ps, pass, isNew))
 			return false;
 
-		// Connexion accordée
-		pseudo = ps;
-		password = pass;
-
 		// Récupération des documents
 		if (!isNew)
 			loadListDocuments();
@@ -164,7 +183,8 @@ public class Manager implements IConfig {
 	 * Déconnecte l'application au serveur de données
 	 */
 	synchronized public void disconnectApplication() {
-		communication.interrupt();
+		sending.interrupt();
+		receiving.interrupt();
 		client.disconnect();
 	}
 
@@ -174,14 +194,6 @@ public class Manager implements IConfig {
 	synchronized public void loadListDocuments() {
 		String listDocumentsString = client.waitString();
 		String[] listDocumentsSplit = listDocumentsString.split("\b");
-
-		for (String doc : listDocumentsSplit) {
-
-			
-			System.err.println("- " + doc);
-		}
-		
-		System.out.println("- " + listDocumentsString + " " + listDocumentsSplit.length);
 
 		// Parcours de la liste récupérée depuis le serveur
 		for (int i = 0; i < listDocumentsSplit.length; i += 2) {
@@ -195,9 +207,24 @@ public class Manager implements IConfig {
 	 * Débute l'échange de données entre le serveur et le client
 	 */
 	synchronized public void beginCommunication() {
-		communication.start();
+		sending.start();
+		receiving.start();
 	}
 
+	/**
+	 * Ajoute le gestionnaire de modification à l'editeur
+	 */
+	synchronized public void addModificationListenerToEditor() {
+		editor.addDocumentListener();
+	}
+	
+	/**
+	 * Retire le gestionnaire de modification de l'éditeur
+	 */
+	synchronized public void removeModificationListenerFromEditor() {
+		editor.removeDocumentListener();
+	}
+	
 	/**
 	 * Demande la création d'un nouveau document
 	 *
@@ -206,7 +233,14 @@ public class Manager implements IConfig {
 	 */
 	synchronized public void askNewDocument(String newDocument, boolean isOnline) {
 		if (isOnline) {
-			actions.addAction(NEW_DOCUMENT_REQUEST_CODE, newDocument);
+			Action a = new Action(NEW_DOCUMENT_REQUEST_CODE, newDocument);
+			
+			// Ajout de l'action
+			try {
+				modificationBuffer.put(a);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
 			// Représentation du document
 			currentDocumentName = newDocument;
@@ -230,14 +264,14 @@ public class Manager implements IConfig {
 			currentDocument = new Document(currentDocumentName);
 			currentPageNumber = 0;
 			
+			currentDocument.addPages(0, 1);
+			
 			// Initialisation de l'éditeur
 			editor.setText("");
 		}
 		
 		// Gestionnaire refaire/défaire
 		editor.setUndoManager(new UndoManager());
-
-		System.err.println("- Nom du document : " + currentDocumentName);
 	}
 
 	/**
@@ -246,7 +280,14 @@ public class Manager implements IConfig {
 	 * @param doc Couple (id du document, nom du document)
 	 */
 	synchronized public void askLoadDocument(Tuple doc) {
-		actions.addAction(LOAD_DOCUMENT_REQUEST_CODE, Integer.toString((int)doc.getFIRST()));
+		Action a = new Action(LOAD_DOCUMENT_REQUEST_CODE, Integer.toString((int)doc.getFIRST()));
+		
+		// Ajout de l'action
+		try {
+			modificationBuffer.put(a);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		// Représentation du document
 		currentDocumentId = (int)doc.getFIRST();
@@ -267,18 +308,18 @@ public class Manager implements IConfig {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		System.err.println("- Nom du document : " + currentDocumentName);
 	}
 
 	/**
 	 * Demande la sauvegarde du document
 	 */
 	synchronized public void askSaveDocument() {
-		actions.addAction(SAVE_DOCUMENT_REQUEST_CODE, "SAVE\b" + currentDocumentId);
+		Action a = new Action(SAVE_DOCUMENT_REQUEST_CODE, "SAVE\b" + currentDocumentId);
 		
-		// On se met en attente de la réponse
-		// du serveur
+		// Ajout de l'action
+		modificationBuffer.add(a);
+		
+		// On se met en attente de la réponse du serveur
 		try {
 			this.wait();
 		} catch (InterruptedException e) {
@@ -293,7 +334,14 @@ public class Manager implements IConfig {
 	 * @param message Message à envoyer
 	 */
 	synchronized public void askModifyDocument(int actionCode, String message) {
-		actions.addAction(actionCode, message);
+		Action a = new Action(actionCode, message);
+		
+		// Ajout de l'action
+		try {
+			modificationBuffer.put(a);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -301,15 +349,20 @@ public class Manager implements IConfig {
 	 *
 	 * @param text Contenu à mettre dans l'éditeur
 	 */
-	synchronized public void putModification(String text, int pageNumber, int pageCount) {
+	synchronized public void putModification(String text, int pageNumber, int pageCount, int cursorPosition) {
 		// Document
 		currentPageNumber = pageNumber;
 		currentDocument.setPage(pageNumber, text);
 		
 		// Éditeur
+		removeModificationListenerFromEditor();
+		
 		editor.setText(text);
+		editor.setCaretPosition(cursorPosition);
 		pageIndicator.setText(pageNumber + " page" + (pageNumber > 1 ? "s" : ""));
 		pageNumberIndicator.setText(pageNumber + " / " + pageCount + "p");
+		
+        addModificationListenerToEditor();
 	}
 
 	/**

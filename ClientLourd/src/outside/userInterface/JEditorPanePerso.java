@@ -51,9 +51,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 */
 	private int charCount = 0;
 	/**
-	 * Indice du curseur dans le document
+	 * Position du curseur
 	 */
-	private int currentCursorPosition = 0;
+	private int currentCursorPosition;
 	/**
 	 * JLabel indiquant le nombre de lignes sur la fenêtre
 	 */
@@ -74,6 +74,11 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 * Référence à l'éditeur lui-même
 	 */
 	private JEditorPanePerso self;
+	/**
+	 * Gestionnaire d'événément du document de l'éditeur
+	 */
+    private DocumentListener documentListener;
+	
 
 	/**
 	 * Instancie un panneau d'édition de texte personnalisé
@@ -89,6 +94,9 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 		this.setMinimumSize(DEFAULT_EDITOR_PANE_DIMENSIONS);
 		this.setMargin(new Insets(DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE, DEFAULT_PAGE_MARGE));
 
+		// Queue des modifications
+		documentListener = createDocumentListener();
+		
 		// Gestionnaire de undo/redo
 		undoManager = new UndoManager();
 		this.getDocument().addUndoableEditListener(undoManager);
@@ -114,7 +122,7 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	public UndoManager getUndoManager() {
 		return undoManager;
 	}
-
+	
 	/**
 	 * Modifie la référence au undomanager de l'application
 	 *
@@ -145,40 +153,23 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if ((e.getKeyCode() == KeyEvent.VK_Z) && ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)) {
-					if (undoManager.canUndo()) {
+					if (undoManager.canUndo())
 						// Annuler
 						undoManager.undo();
-
-						if (!isOnline)
-							return;
-						// manager.faisQuelqueChose() //////////////////////////////
-						//
-						//
-					}
-				} else if ((e.getKeyCode() == KeyEvent.VK_Y)
-						&& ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)) {
-					if (undoManager.canRedo()) {
+				} else if ((e.getKeyCode() == KeyEvent.VK_Y) && ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)) {
+					if (undoManager.canRedo())
 						// Refaire
 						undoManager.redo();
-
-						if (!isOnline)
-							return;
-						// manager.faisQuelqueChose() //////////////////////////////
-						//
-						//
-					}
 				}
 			}
 		});
-
-		JEditorPanePerso epp = this;
 
 		// Déplacement de curseur
 		this.addCaretListener(new CaretListener() {
 
 			@Override
 			public void caretUpdate(CaretEvent e) {
-				int lineNumber = TextUtilities.getCarretLine(epp.getText(), e.getDot());
+				int lineNumber = TextUtilities.getCarretLine(self.getText(), e.getDot());
 				currentCursorPosition = e.getDot();
 				
 				cursorIndicator.setText(e.getDot() + " / " + charCount + "c      " + lineNumber + " / " + lineCount + "l");
@@ -196,34 +187,13 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				updateSize();
-				updateCounts(epp.getText());
-				
-				if (!isOnline)
-					return;
-				
-				String message = "";
-				try {
-					message = "ADD\b" + manager.getCurrentPageNumber() + "\b" + 3 + "\b" + e.getOffset() + "\b" + e.getDocument().getText(e.getOffset(), e.getLength());
-				} catch (BadLocationException e1) {
-					System.err.println("- JEditorPanePerso#initEventManagement()#insertUpdate() -> Attention ! Vous essayez d'aller au-delà des dimensions"
-						+ "de l'éditeur !");
-					e1.printStackTrace();
-				}
-				
-				manager.askModifyDocument(ADD_REQUEST_CODE, message);
+				updateCounts(self.getText());
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				updateSize();
-				updateCounts(epp.getText());
-
-				if (!isOnline)
-					return;
-				
-				String message = "DEL\b" + manager.getCurrentPageNumber() + "\b" + 3 + "\b" + e.getOffset() + "\b" + e.getLength();
-				
-				manager.askModifyDocument(DELETE_REQUEST_CODE, message);
+				updateCounts(self.getText());
 			}
 
 			/**
@@ -247,6 +217,56 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	}
 
 	/**
+	 * Retourne le DocumentListener de l'éditeur
+	 * @return DocumentListener de l'éditeur
+	 */
+    private DocumentListener createDocumentListener() {
+        return new DocumentListener() {
+
+        	@Override
+            public void insertUpdate(DocumentEvent e) {
+                String message = "";
+                
+				try {
+					message = "ADD\b" + manager.getCurrentPageNumber() + "\b" + 3 + "\b" + e.getOffset() + "\b" + e.getDocument().getText(e.getOffset(), e.getLength());
+				} catch (BadLocationException e1) {
+					System.err.println("- JEditorPanePerso#initEventManagement()#insertUpdate() -> Attention ! Vous essayez d'aller au-delà des dimensions"
+						+ "de l'éditeur !");
+					e1.printStackTrace();
+				}
+				
+				manager.askModifyDocument(ADD_REQUEST_CODE, message);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String message = "DEL\b" + manager.getCurrentPageNumber() + "\b" + 3 + "\b" + e.getOffset() + "\b" + e.getLength();
+				
+				manager.askModifyDocument(DELETE_REQUEST_CODE, message);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	
+            }
+        };
+    }
+	
+    /**
+     * Retire le documentListener lié à la communication TCP
+     */
+    public void removeDocumentListener() {
+        this.getDocument().removeDocumentListener(documentListener);
+    }
+
+    /**
+     * Remet le documentListener lié à la communication TCP
+     */
+    public void addDocumentListener() {
+        this.getDocument().addDocumentListener(documentListener);
+    }
+    
+	/**
 	 * Met à une certaine échelle le panneau
 	 *
 	 * @param newScale Nouveau facteur d'échelle
@@ -266,7 +286,6 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	 * dimensions adaptées au texte
 	 */
 	private int size = 1;
-
 	private void updateSize() {
 		boolean needMoreSpace, haveMoreSpace;
 
