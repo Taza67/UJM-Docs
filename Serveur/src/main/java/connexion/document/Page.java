@@ -4,215 +4,131 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import connexion.DbManager;
 import connexion.User;
 
 /**
  * Cette classe représente une page dans note modèle de données.
- * Une page est composée d'une liste chainée de mots, est verrouillable, et sera accessible par les utilisateur whitelisté
+ * Une page est représentée par une chaîne de caractères
  * @author Bruno ROMAIN
  */
 public class Page {
-
-	private final Word POINT = new Word(".");
-	private final Word VIRGULE = new Word(",");
-	private final Word POINT_VIRGULE = new Word(";");
-	private final Word DEUX_POINTS = new Word(":");
-	private final Word POINT_D_EXCLAMATION = new Word("!");
-	private final Word RETOUR_CHARIOT = new Word("\n");
-	private final Word FIN_DE_PAGE = new Word("\f");
-
-	private LinkedList<Word> content;
-	private ArrayList<User> authorizedModification;
-	private ArrayList<Integer> curseurs;
-	private boolean locked;
-
+	private String contenu;
+	private ArrayList<User> collaborateurs;
+	
+	/**
+	 * Instancie une page
+	 */
 	public Page() {
-		this.content = new LinkedList<>();
-		this.authorizedModification = new ArrayList<>();
-		this.locked = false;
-		this.curseurs = new ArrayList<>();
+		contenu = "";
+		collaborateurs = new ArrayList<>();
 	}
-
-	public Page(User creator) {
+	public Page(User createur) {
 		this();
-		this.authorizedModification.add(creator);
-		this.curseurs.add(creator.getId());
+		collaborateurs.add(createur);
 	}
 
-	public User getCreator() {
-		if (this.authorizedModification.isEmpty()) {
-			return null;
-		}
-		return this.authorizedModification.get(0);
+	
+	/**
+	 * Retourne le nombre de caractères de la page
+	 * @return Nombre de caractères de la page
+	 */
+	public int getLongueur() {
+		return contenu.length();
 	}
 
 	/**
-	 * Fonction qui vide la liste des utilisateur en laissant le créateur, idem pour
-	 * @author Bruno ROMAIN
+	 * Retourne le contenu de la page
+	 * @return Contenu de la page
 	 */
-	public void emptyAuthorized() {
-		User creator = this.getCreator();
-		if (creator == null) {
-			return;
-		}
-		this.authorizedModification = new ArrayList<>();
-		this.curseurs = new ArrayList<>();
-		this.authorizedModification.add(creator);
-		this.curseurs.add(creator.getId());
+	public String getContent() { return contenu; }
+	
+	/**
+	 * Ajoute un collaborateur sur la page
+	 * Utilisé lorsqu'un collaborateur se déplace sur une autre page
+	 */
+	public void ajouterCollaborateur(User collaborateurAAjouter) {
+		collaborateurs.add(collaborateurAAjouter);
 	}
-
-	public void removeAuthorized(User u) {
-		if (u == null || u == this.getCreator()) {
-			return;
-		}
-		this.authorizedModification.remove(u);
-		this.curseurs.remove(u.getId());
+	
+	/**
+	 * Enlève un collaborateur de la page
+	 * Utilisé lorsqu'un collaborateu se déplace sur une autre page
+	 */
+	public void enleverCollaborateur(User collaborateurAEnlever) {
+		collaborateurs.remove(collaborateurAEnlever);
 	}
-
-	public boolean isAuthorized(User u) {
-		return this.authorizedModification.contains(u);
-	}
-
-	public void addAuthorized(User u) {
-		if (u == null) {
-			return;
-		}
-		this.authorizedModification.add(u);
-	}
-
-	public ArrayList<User> getAuthorizedModification() {
-		return (ArrayList<User>) authorizedModification.stream().distinct().collect(Collectors.toList());
-	}
-
-	public void lock() {
-		this.locked = true;
+	
+	/**
+	 * Insère une chaîne de caractères à une certaine position de la page
+	 * @param posModification Position où la chaine de caractères doit être ajoutée
+	 * @param chaineAInserer Chaîne de caractères à insérer
+	 */
+	public void insererChaine(int posModification, String chaineAInserer) {
+		// Vérifie si la position est valide
+        if (posModification < 0 || posModification > contenu.length()) {
+            throw new IllegalArgumentException("La position est hors des limites de la chaîne originale.");
+        }
+       
+        // Divise la chaîne originale et insère la nouvelle chaîne à la position souhaitée
+        String debut = contenu.substring(0, posModification);
+        String fin = contenu.substring(posModification);
+        contenu = debut + chaineAInserer + fin;
+        
+        System.err.println("\"" + debut + "\" - \"" + chaineAInserer + "\" - \"" + fin + "\"");
+        
+        // Mise à jour des curseurs
+        majCurseurs(posModification, chaineAInserer.length(), true);
 	}
 
 	/**
-	 * Fonction qui permet d'obtenir le mot à la position donnée
-	 * @param pos la position
-	 * @return le mot trouvé à l'indice pos, null sinon
+	 * Supprime une chaîne de caractères à une certaine position de la page
+	 * @param posModification Position où la chaine de caractères doit être ajoutée
+	 * @param longueurSuppression longueur de la chaîne à supprimer
 	 */
-	public Word getWordAtPos(int pos) {
-		int i=0;
-		for(Word w: content) {
-			for(char c: w.getContent()) {
-				if (i == pos) {
-					return w;
-				}
-				i++;
-			}
-			if (i == pos) {
-				return w;
-			}
-			i++;
-		}
-		return null;
+	public void supprimerChaine(int posModification, int longueurSuppression) {
+		// Vérifications
+        if (posModification < 0 || posModification > contenu.length())
+            throw new IllegalArgumentException("La position est hors des limites de la chaîne originale.");
+
+        if (posModification + longueurSuppression > contenu.length())
+            throw new IllegalArgumentException("La longueur spécifiée dépasse la fin de la chaîne originale.");
+        
+        // Suppression
+        String debut = contenu.substring(0, posModification);
+        String fin = contenu.substring(posModification + longueurSuppression);
+        contenu = debut + fin;
+        
+        // Mise à jour des curseurs
+        majCurseurs(posModification, longueurSuppression, false);
 	}
-
-	public void updateCurseur(int Id, int pos) {
-
-		this.curseurs.get(this.content.indexOf(Id)); // avec cet ID user, update le curseur à pos
-	}
-
-	public void deleteCharFromPos(int pos) {
-		Word toModify = getWordAtPos(pos);
-		toModify.deleteCharFromPos(pos);
-	}
-
+	
 	/**
-	 * Cette fonction permet d'ajouter un mot dans une page à une position donnée. Si la position est invalide, le mot sera soit rajouté
-	 * en début ou en fin de page
-	 * @param pos la position
-	 * @param word le mot
+	 * Met à jour les positions des curseurs des utilisateurs
+	 * @param posModification Position de départ de la modification
+	 * @param longueur Longueur de la modification
+	 * @param estUnAjout true s'il s'agit d'un ajout, false s'il s'agit d'une suppression
 	 */
-	public void addWord(int pos, String word) {
-		if (pos < 0) {
-			switch(word.charAt(0)) {
-				case '.':
-					content.addFirst(POINT);
-					break;
-				case ',':
-					content.addFirst(VIRGULE);
-					break;
-				case ';':
-					content.addFirst(POINT_VIRGULE);
-					break;
-				case ':':
-					content.addFirst(DEUX_POINTS);
-					break;
-				case '!':
-					content.addFirst(POINT_D_EXCLAMATION);
-					break;
-				case '\n':
-					content.addFirst(RETOUR_CHARIOT);
-					break;
-				case '\0':
-					content.addFirst(FIN_DE_PAGE);
-					break;
-				default:
-					content.addFirst(new Word(word));
-			}
-		}
-		if (pos >= content.size()) {
-			switch(word.charAt(0)) {
-				case '.':
-					content.addLast(POINT);
-					break;
-				case ',':
-					content.addLast(VIRGULE);
-					break;
-				case ';':
-					content.addLast(POINT_VIRGULE);
-					break;
-				case ':':
-					content.addLast(DEUX_POINTS);
-					break;
-				case '!':
-					content.addLast(POINT_D_EXCLAMATION);
-					break;
-				case '\n':
-					content.addLast(RETOUR_CHARIOT);
-					break;
-				case '\0':
-					content.addLast(FIN_DE_PAGE);
-				default:
-					content.addLast(new Word(word));
-			}
-		}
-		switch(word.charAt(0)) {
-			case '.':
-				content.add(pos, POINT);
-				break;
-			case ',':
-				content.add(pos, VIRGULE);
-				break;
-			case ';':
-				content.add(pos, POINT_VIRGULE);
-				break;
-			case ':':
-				content.add(pos, DEUX_POINTS);
-				break;
-			case '!':
-				content.add(pos, POINT_D_EXCLAMATION);
-				break;
-			case '\n':
-				content.add(pos, RETOUR_CHARIOT);
-				break;
-			case '\0':
-				content.add(pos, FIN_DE_PAGE);
-				break;
-			default:
-				content.add(pos, new Word(word));
-		}
-
+	public void majCurseurs(int posModification, int longueur, boolean estUnAjout) {
+        for (User utilisateur : collaborateurs) {
+        	int curseurPosition = posModification;
+        	
+        	if (estUnAjout) {
+        		// Du contenu a été ajouté, le curseur doit peut-être avancer
+	        	if (curseurPosition >= posModification)
+	        		utilisateur.setPosition(curseurPosition + longueur);
+        	} else {
+        		// Du contenu a été retiré, le curseur doit peut-être reculer
+        		if (curseurPosition >= posModification) {
+        			int newPosition = curseurPosition - longueur;
+        			utilisateur.setPosition(Math.max(posModification, newPosition));
+        		}
+        	}
+        }
 	}
-
-	public boolean isLocked() {
-		return locked;
-	}
-
-	public void setLocked(boolean locked) {
-		this.locked = locked;
+	
+	public String toString() {
+		System.err.println(contenu);
+		return contenu;
 	}
 }

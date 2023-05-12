@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>UJM-Docs</title>
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@14.7.0/distribute/nouislider.min.css">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.19.0/ace.min.js" integrity="sha512-7ar5DoGr5xiRstr9B0e9BkQAc42juvRXosAEAXuOKZSL/4C93WpIFthgzZibRAau0kB0NJszECL02exq3IPc/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    </head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="menu-bar">
+        <ul class="menu-bar-list">
+            <li class="menu-bar-submenu-item">
+                <span class="menu-bar-submenu-title">
+                    Fichier
+                </span>
+                <ul class="menu-bar-submenu-items">
+                    <li id="new-document">Nouveau</li>
+                    <li id="open-document">Ouvrir</li>
+                    <li id="save-document">Sauvegarder</li>
+                    <li id="export-document">Exporter</li>
+                    <li id="disconnect">Se&nbspdéconnecter</li>
+                </ul>
+            </li>
+            <li class="menu-bar-submenu-item">
+                <span class="menu-bar-submenu-title">
+                    Édition
+                </span>
+                <ul class="menu-bar-submenu-items">
+                    <li id="undo-action">Annuler</li>
+                    <li id="redo-action">Refaire</li>
+                    <li id="cut-text">Couper</li>
+                    <li id="copy-text">Copier</li>
+                    <li id="paste-text">Coller</li>
+                </ul>
+            </li>
+            <li class="menu-bar-submenu-item">
+                <span class="menu-bar-submenu-title">
+                    Affichage
+                </span>
+                <ul class="menu-bar-submenu-items">
+                    <li>Barre d'outils</li>
+                    <li>Barre de statut</li>
+                </ul>
+            </li>
+            <li class="menu-bar-submenu-item">
+                <span class="menu-bar-submenu-title">
+                    Aide
+                </span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Barre d'outils -->
+    <nav class="tools-bar">
+        <div class="bar-section">
+            <button class="bar-button" id="new-document">Nouveau</button>
+            <button class="bar-button" id="open-document">Ouvrir</button>
+            <button class="bar-button" id="save-document">Sauvegarder</button>
+        </div>
+        <div class="bar-section">
+            <button class="bar-button" id="cut-text">Couper</button>
+            <button class="bar-button" id="copy-text">Copier</button>
+            <button class="bar-button" id="paste-text">Coller</button>
+        </div>
+        <div class="bar-section">
+            <span class="bar-section-legend">Collaborateur</span>
+            <button class="bar-button">+</button>
+            <button class="bar-button">-</button>
+        </div>
+        <div class="bar-section">
+            <span class="bar-section-legend">Actions</span>
+            <form method="post">
+                <button class="bar-button" id="disconnect" type="submit" name="deconnexion">Se déconnecter</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="editor-container">
+        <div class="editor-subcontainer" id="editor-subcontainer">
+            <div class="editor" id="editor"></div>
+        </div>
+    </div>
+
+    <!-- Barre de statut -->
+    <nav class="status-bar">
+        <div class="bar-section">
+            <span class="bar-section-legend" id="page-indicator">1 / 1 page</span>
+            <span class="bar-section-legend" id="line-indicator">1 / 1 ligne</span>
+            <span class="bar-section-legend" id="word-indicator">0 / 0 mot</span>
+            <span class="bar-section-legend" id="char-indicator">0 / 0 caractère</span>
+        </div>
+        <div class="bar-section">
+            <span class="bar-section-legend" id="collaborator-indicator">0 collaborateur</span>
+        </div>
+        <div class="bar-section">
+            <div class="zoom-slider" id="zoom-slider"></div>
+        </div>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@14.7.0/distribute/nouislider.min.js"></script>
+    <script type="module" src="../../js/zoomScript.js"></script>
+    <script type="module" src="../../js/editorScript.js"></script>
+    <script type="module" src="../../js/newDocumentScript.js"></script>
+    <script type="module" src="../../js/mainScript.js"></script>
+
+</body>
+</html>

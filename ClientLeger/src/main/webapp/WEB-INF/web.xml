@@ -13,7 +13,7 @@
 	</context-param>
 	<context-param>
 		<param-name>JDBC_URL</param-name>
-		<param-value>jdbc:mysql://localhost:3306/docs</param-value>
+		<param-value>jdbc:mysql://localhost:3306/udoc</param-value>
 	</context-param>
 	<context-param>
 		<param-name>JDBC_LOGIN</param-name>
@@ -21,7 +21,7 @@
 	</context-param>
 	<context-param>
 		<param-name>JDBC_PASSWORD</param-name>
-		<param-value>Valentin1234@</param-value>
+		<param-value>1234</param-value>
 	</context-param>
 	
 	<servlet>
@@ -29,8 +29,8 @@
 		<servlet-class>fr.clientleger.Accueil</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>helloServlet</servlet-name>
-		<servlet-class>fr.clientleger.HelloServlet</servlet-class>
+		<servlet-name>Index</servlet-name>
+		<servlet-class>fr.clientleger.Index</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -49,7 +49,7 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>helloServlet</servlet-name>
+		<servlet-name>Index</servlet-name>
 		<url-pattern>/index</url-pattern>
 	</servlet-mapping>
 
@@ -58,8 +58,13 @@
 		<url-pattern>/inscription</url-pattern>
 	</servlet-mapping>
 	
+	<servlet-mapping>
+		<servlet-name>Editeur</servlet-name>
+		<url-pattern>/editeur</url-pattern>
+	</servlet-mapping>
+	
 	<welcome-file-list>
-		<welcome-file>helloServletp</welcome-file>
+		<welcome-file>helloServlet</welcome-file>
 	</welcome-file-list>
 
 </web-app>

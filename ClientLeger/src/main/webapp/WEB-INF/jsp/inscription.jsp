@@ -3,38 +3,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>Inscription</title>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/inscriptionConnexionStylesheet.css'/>" />
 </head>
+
+
 <body>
+    <div class="title">
 
-<c:choose>
-    <c:when test="${error == 'diff'}">
-        <p>Pas le même mdp</p>
-    </c:when>
-    <c:when test="${error == 'exists'}">
-        <p> Ce compte existe déjà.</p>
-        <a href="">Se connecter</a>
-        <c:remove var="error" scope="session"/>
-    </c:when>
-</c:choose>
+    <h1>UJM<br>DOCS</h1>
 
-<h1>Inscription</h1>
-<br/>
+    <form method="post">
+        <input type="text" id="pseudo" name="pseudo" placeholder="Pseudo..." required>
+        <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="Mot de passe, une fois..." required>
+        <input type="password" id="verification" name="verification" placeholder="Mot de passe, deux fois..." required>
+        <c:if test="${requestScope['error'] == 'diff'}">
+            <span class="error">Mots de passe différents</span>
+            <%
+                request.removeAttribute("error");
+            %>
+        </c:if>
+        <input type="submit" value="S'inscrire">
 
-<h2>Inscription</h2>
+        <c:if test="${requestScope['error'] == 'exists'}">
+            <span class="error">Compte déjà existant</span>
+            <%
+                request.removeAttribute("error");
+            %>
+        </c:if>
 
-<form method="post">
-    <label for="pseudo">Pseudo:</label>
-    <input type="text" id="pseudo" name="pseudo" required>
-    <br>
-    <label for="mot_de_passe">Mot de passe:</label>
-    <input type="password" id="mot_de_passe" name="mot_de_passe" required>
-    <label for="verification">Vérifier le mot de passe</label>
-    <input type="password" id="verification" name="verification" required>
-    <br>
-    <input type="submit" value="S'inscrire">
-</form>
-
-<a href="">Connexion</a>
+        <a href="${pageContext.request.contextPath}/index">Connexion</a>
+    </form>
+    </div>
 </body>
-</html>

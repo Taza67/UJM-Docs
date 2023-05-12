@@ -1,3 +1,11 @@
+.attach*
+
+pom.xml
+*/pom.xml
+
+./Serveur/src/main/webapp/WEB-INF/web.xml
+*/web.xml
+
 # Compiled class file
 *.class
 
@@ -46,3 +54,6 @@ hs_err_pid*
 */target/
 */build/
 target/
+
+# Mourtaza
+Archives/

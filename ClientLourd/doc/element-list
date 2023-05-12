@@ -1,0 +1,6 @@
+module:ClientLourd
+inside
+inside.communication
+inside.utilities
+outside.application
+outside.userInterface

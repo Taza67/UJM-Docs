@@ -1,10 +1,9 @@
-let utilisateur;
-
 function getUtilisateur() {
-    utilisateur = sessionStorage.getItem("user");
-    console.log(utilisateur);
+    let userDataElem = document.querySelector("#user-data");
+    let encodedUserJsonString = userDataElem.getAttribute('data-user');
+    console.log(encodedUserJsonString);
+    let userJsonString = decodeURIComponent(encodedUserJsonString);
+    console.log(userJsonString);
 }
 
-$(document).ready(function() {
-    getUtilisateur();
-})
+getUtilisateur();

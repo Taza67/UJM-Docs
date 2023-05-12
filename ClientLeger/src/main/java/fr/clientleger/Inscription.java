@@ -38,7 +38,6 @@ public class Inscription extends HttpServlet {
 
         if(!mdp.equals(verif)) {
             request.setAttribute("error", "diff");
-
             doGet(request, response);
             return;
         }

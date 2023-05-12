@@ -2,6 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Animations */
+    transition: background-color 0.5s, color 0.5s;
 }
 
 html {
@@ -54,6 +56,9 @@ body {
     /* Box */
     margin: 0.5%;
     float: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .menu-bar-submenu-title {
@@ -64,16 +69,54 @@ body {
     text-decoration: none;
     color: white;
     border-radius: 3px;
-}
-
-.menu-bar-submenu-title:hover {
     /* Décorations */
-    background-color: #111;
+    cursor: alias;
 }
 
 .menu-bar-submenu-items {
     /* Box */
-    display: none;
+    display: flex;
+    width: 0;
+    height: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    /* Texte */
+    text-indent: -1000px;
+    /* Décorations */
+    background-color: #636060;
+    opacity: 0;
+    cursor: pointer;
+    /* Animations */
+    transition: opacity 1s, width 1s, padding 1s, height 1s, text-indent 1s;
+}
+
+.menu-bar-submenu-items * {
+    /* Box */
+    height: 100%;
+    padding: 1vh 1vw;
+    /* Texte */
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    list-style: none;
+    cursor: pointer;
+    /* Décorations */
+    border-radius: 3px;
+}
+
+.menu-bar-submenu-items *:hover {
+    /* Décorations */
+    text-shadow: 2px 2px black;
+}
+
+.menu-bar-submenu-item:hover .menu-bar-submenu-items {
+    /* Box */
+    width: calc(max(max(1vw, 1vh) * 30, 700px));
+    height: fit-content;
+    /* Texte */
+    text-indent: 0;
+    /* Décorations */
+    opacity: 1;
 }
 
 /* ***Barre d'outils/statut******************************** */
@@ -94,6 +137,11 @@ body {
 .tools-bar .bar-section {
     /* Box */
     margin-left: 1vh;
+}
+
+.tools-bar > .bar-section:last-child {
+    /* Box */
+    margin-right: 1vh;
 }
 
 .status-bar {
@@ -151,11 +199,47 @@ body {
     border-radius: 3px;
 }
 
-.bar-button {
+.bar-button, #pseudo {
     /* Box */
-    width: 30%;
+    width: fit-content;
+    max-width: 30%;
     padding: 1vh 1vw;
     margin: 1.25vh 1.25vh;
+    overflow: hidden;
+    /* Texte */
+    font-size: 0.75em;
+    color: black;
+    /* Décorations */
+    border: none;
+    background-color: azure;
+    border-radius: 3px;
+}
+
+#pseudo {
+    /* Box */
+    width: 30%;
+    /* Texte */
+    color: black;
+    /* Décorations */
+    background-color: azure;
+}
+
+.bar-section > form {
+    /* Box */
+    width: 40%;
+}
+
+.bar-section > form > .bar-button {
+    /* Box */
+    width: 100%;
+    max-width: 100%;
+}
+
+.bar-button:hover, .bar-button:focus {
+    /* Texte */
+    color: azure;
+    /* Décorations */
+    background-color: black;
 }
 
 .zoom-slider {

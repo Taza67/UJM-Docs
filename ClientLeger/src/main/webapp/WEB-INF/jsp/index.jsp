@@ -4,63 +4,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Accueil</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>UJM Docs - Connexion</title>
+	<link rel="stylesheet" type="text/css" href="<c:url value='/css/inscriptionConnexionStylesheet.css'/>">
 </head>
+
+
 <body>
+	<div class="title">
+		<h1>UJM<br>DOCS</h1>
+	</div>
+	<c:if test="${sessionScope['inscrit']== 'true'}">
 
-	<c:if var="error" test="${error != null}" scope="session">
-		<div id="error">
-		<c:choose>
-
-			<c:when test="${error == 'pseudo'}">
-				<p>Pseudo incorrect.</p>
-				<br />
-
-				<c:remove var="error" scope="session"/>
-			</c:when>
-
-			<c:when test="${error == 'inaccessible'}">
-				<p>Vous ne pouvez pas accéder à cette page</p>
-				<p>Merci de vous connecter</p>
-				<c:remove var="error" scope="session"/>
-			</c:when>
-
-			<c:when test="${error == 'weird'}">
-				<p>Cet utilisateur n'est pas valide</p>
-				<p>Merci de vous connecter avec un utilisateur valide</p>
-
-				<c:remove var="error" scope="session"/>
-			</c:when>
-		</c:choose>
-		</div>
+		<span class="error"> Nouvel Inscrit ! <br/>
+			Merci de vous connecter.
+		</span>
+		<%
+			session.removeAttribute("inscrit");
+		%>
 	</c:if>
-
-	<c:if var="inscrit" test="${inscrit != null}" scope="session">
-		<div class="info">
-			<p>Nouvel inscrit</p>
-			<p>Vous pouvez vous connecter</p>
-			<br />
-		</div>
-		<c:remove var="inscrit" scope="session"/>
-	</c:if>
-
-	<h2>Connexion</h2>
-
 	<form method="post">
-		<label for="pseudo">Pseudo:</label> <input type="text" id="pseudo"
-			name="pseudo" required> <br> <label for="mot_de_passe">Mot
-			de passe:</label> <input type="password" id="mot_de_passe"
-			name="mot_de_passe" required> <br> <input type="submit"
-			value="Se connecter">
+		<input type="text" id="pseudo" name="pseudo" placeholder="Pseudo..." required>
+		<input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="Mot de passe..." required>
+		<input type="submit" value="Se connecter">
+		<c:if test="${requestScope['error'] eq 'pseudo'}">
+			<span class="error">Identifiant(s) incorrect(s)</span>
+			<%
+				request.removeAttribute("error");
+			%>
+		</c:if>
+
+		<c:if test="${sessionScope['errorRedirect'] eq 'inaccessible'}">
+            <span class="error">
+                Vous ne pouvez pas accéder à cette page.
+                <br/>
+                Veuillez vous connecter.
+            </span>
+
+			<%
+				session.removeAttribute("errorRedirect");
+			%>
+		</c:if>
+
+		<c:if test="${sessionScope['errorRedirect'] eq 'weird'}">
+            <span class="error">
+                Ce compte n'est pas valide.
+            </span>
+
+			<%
+				session.removeAttribute("weird");
+			%>
+		</c:if>
+
+		<a href="${pageContext.request.contextPath}/inscription">Inscription</a>
 	</form>
-	<a href="inscription">Inscription</a>
-
-	<form method="post" id="invite">
-
-		<input type="hidden" name="invite" value="true"> <input
-			type="submit" value="Connexion en tant qu'invité">
-
-	</form>
-
-</body>
+	</body>
 </html>
