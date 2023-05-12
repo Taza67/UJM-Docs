@@ -69,7 +69,7 @@ CREATE TABLE `documents` (
 
 LOCK TABLES `documents` WRITE;
 /*!40000 ALTER TABLE `documents` DISABLE KEYS */;
-INSERT INTO `documents` VALUES (1,1,'2023-05-05','/home/hany/FAC/L3/S6/Dev Web II/commentreussirsonannee1.txt','Rapport'),(2,1,'2023-05-06','/home/hany/FAC/L3/S6/Dev Web II/commentreussirsonannee2.txt','Readme'),(3,2,'2023-05-07','/home/hany/FAC/L3/S6/Dev Web II/commentreussirsonannee3.txt','Recipe'),(4,2,'2023-05-08','/home/hany/FAC/L3/S6/Dev Web II/commentreussirsonannee4.txt','Angular for noobs'),(5,3,'2023-05-08','/home/hany/FAC/L3/S6/Dev Web II/commentreussirsonannee.txt','commentreussirsonannee.txt');
+INSERT INTO `documents` VALUES (1,1,'2023-05-05','/home/hany/FAC/L3/S6/Dev Web II/TestsProjet/commentreussirsonannee1.txt','Rapport'),(2,1,'2023-05-06','/home/hany/FAC/L3/S6/Dev Web II/TestsProjet/commentreussirsonannee2.txt','Readme'),(3,2,'2023-05-07','/home/hany/FAC/L3/S6/Dev Web II/TestsProjet/commentreussirsonannee3.txt','Recipe'),(4,2,'2023-05-08','/home/hany/FAC/L3/S6/Dev Web II/TestsProjet/commentreussirsonannee4.txt','Angular for noobs'),(5,3,'2023-05-08','/home/hany/FAC/L3/S6/Dev Web II/TestsProjet/commentreussirsonannee.txt','commentreussirsonannee.txt');
 /*!40000 ALTER TABLE `documents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,4 +107,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-11 13:34:42
+-- Dump completed on 2023-05-09 17:47:46
