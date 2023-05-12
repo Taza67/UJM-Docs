@@ -17,11 +17,11 @@
 	</context-param>
 	<context-param>
 		<param-name>JDBC_LOGIN</param-name>
-		<param-value>valentin</param-value>
+		<param-value>utilisateur</param-value>
 	</context-param>
 	<context-param>
 		<param-name>JDBC_PASSWORD</param-name>
-		<param-value>Valentin1234@</param-value>
+		<param-value>1234</param-value>
 	</context-param>
 	
 	<servlet>
