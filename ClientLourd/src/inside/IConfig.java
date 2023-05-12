@@ -37,7 +37,7 @@ public interface IConfig {
 	/**
 	 * Hôte du serveur
 	 */
-	String COMMUNICATION_HOST = "192.168.1.80";
+	String COMMUNICATION_HOST = "192.168.1.46";
 	/**
 	 * Port de communication
 	 */

@@ -1,46 +1,38 @@
 package inside.communication;
 
-import javax.swing.undo.UndoManager;
-
-import inside.Actions;
+import javax.swing.*;
 import inside.IConfig;
 import inside.Manager;
 
 /**
- * Classe représentant le module qui permet la communication avec le serveurs Il
- * s'agit d'un thread qui communique en constamment avec le serveur sur des
- * modifications à envoyer/recevoir
+ * Classe représentant le module de réception de données depuis le serveur
+ * Il s'agit d'un thread qui attend en permanence des messages depuis le serveur sur des
+ * modifications à prendre en compte
  *
  * @author mourtaza
  *
  */
-public class TCommunication extends Thread implements IConfig {
+public class TReceiver extends Thread implements IConfig {
 	/**
 	 * Client représentant l'application sur la communication
 	 */
 	private Client client;
 	/**
-	 * Ensemble d'actions réalisées par l'utilisateur et à transmettre au serveur
-	 */
-	private Actions actions;
-	/**
 	 * Manager de l'application
 	 */
 	private Manager manager;
-
+	
+	
 	/**
-	 * Instancie un objet représentant le module de communication
-	 *
+	 * Instancie le module de réception de données
 	 * @param c  Référence au client représentant l'application sur la communication
-	 * @param ac Référence à un ensemble d'actions réalisées par l'utilisateur
 	 * @param ma Référence au manager de l'application
 	 */
-	public TCommunication(Client c, Actions ac, Manager ma) {
+	public TReceiver(Client c, Manager ma) {
 		client = c;
-		actions = ac;
 		manager = ma;
 	}
-
+	
 	/**
 	 * Fonction principale du thread
 	 * Exécute le thread
@@ -48,34 +40,21 @@ public class TCommunication extends Thread implements IConfig {
 	@Override
 	public void run() {
 		while (!Thread.currentThread().isInterrupted()) {
-			// Action à envoyer
-			if (actions.getSize() != 0) {
-				// S'il y a une action à envoyer
-				sendFirstAction();
-			} else
-				sendNoAction();
-
-			System.err.println("- Envoi du code au serveur");
-			
-			// On attend un code de continuation ou d'action du serveur
+			// Attente d'un code depuis le serveur
 			int codeServer = client.waitInt();
-
-			System.err.println("- Réception d'un code du serveur");
 			
-			// Vérification
-			if (codeServer == IMPOSSIBLE_CODE)
-				return;
-
-			// Une action a été demandée
+			// Réalisation d'une action
 			if (codeServer != NO_ACTION_CODE) realiseAskedAction(codeServer);
 		}
 	}
-
+	
 	/**
 	 * Réalise une action demandée par le serveur
 	 */
 	private void realiseAskedAction(int codeActionServer) {
-		int userId;
+		int userId, positionCursor;
+		
+		System.err.println("- Réception d'un code " + codeActionServer + " du serveur");
 		switch (codeActionServer) {
 		case NEW_DOCUMENT_REQUEST_CODE:
 			// Chargement d'un doucument depuis le serveur
@@ -88,7 +67,9 @@ public class TCommunication extends Thread implements IConfig {
 			manager.getCurrentDocument().addPage(0, "");
 			
 			// Application dans l'éditeur
-			manager.putModification("", 0, 1);
+            SwingUtilities.invokeLater(() -> {
+                manager.putModification("", 0, 1, 0);
+            });
 			
 			// On libère le blocus
 			synchronized (manager) {
@@ -108,10 +89,11 @@ public class TCommunication extends Thread implements IConfig {
 			manager.getCurrentDocument().addPages(0, pageCount);
 			
 			// Application dans l'éditeur
-			manager.putModification(content, pageNumber, pageCount);
-			
-			// Gestionnaire refaire/défaire
-			manager.reinitUndoManager();
+            SwingUtilities.invokeLater(() -> {
+                manager.putModification(content, pageNumber, pageCount, 0);
+                // Gestionnaire refaire/défaire
+    			manager.reinitUndoManager();
+            });
 			
 			// On libère le blocus
 			synchronized (manager) {
@@ -131,11 +113,16 @@ public class TCommunication extends Thread implements IConfig {
 			pageNumber = client.waitInt();
 			pageCount = client.waitInt();
 			content = client.waitString();
-
-			// Application dans l'éditeur
-			manager.putModification(content, pageNumber, pageCount);
+			positionCursor = client.waitInt();
 			
-			System.err.println("- Requête d'application de modification de " + "texte reçue depuis le serveur");
+			System.err.println(userId + " " + pageNumber + " " + pageCount + " \"" + content + "\" " + positionCursor);
+			
+			// Application dans l'éditeur
+            SwingUtilities.invokeLater(() -> {
+                manager.removeModificationListenerFromEditor();
+                manager.putModification(content, pageNumber, pageCount, positionCursor);
+                manager.addModificationListenerToEditor();
+            });
 			
 			return;
 		case COLLABORATOR_MOVEMENT_APPLICATION_REQUEST_CODE:
@@ -152,23 +139,5 @@ public class TCommunication extends Thread implements IConfig {
 			System.err.println("- TCommunication#realiseAskedAction() -> " + "Attention ! Un code inconnu "
 					+ codeActionServer + " a été récupéré ");
 		}
-	}
-
-	/**
-	 * Envoie la première action de l'ensemble d'actions
-	 */
-	private void sendFirstAction() {
-		System.err.println("- Envoi de l'action " + actions.getHeadAction().getCode() + " en tête de file au serveur");
-		client.sendInt(actions.getHeadAction().getCode());
-		client.sendString(actions.getHeadAction().getMessage());
-		actions.removeHeadAction();
-	}
-
-	/**
-	 * Envoie un code indiquant au serveur qu'il n'y a aucune action à réaliser
-	 */
-	private void sendNoAction() {
-		System.err.println("- Envoi d'un no action au serveur");
-		client.sendInt(NO_ACTION_CODE);
 	}
 }
