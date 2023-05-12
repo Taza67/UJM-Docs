@@ -181,7 +181,7 @@ public class Client implements IConfig {
 	/**
 	 * Envoie une chaine de caractères au serveur
 	 *
-	 * @param value Chaîne à envoyer
+	 * @param message value Chaîne à envoyer
 	 */
 	public void sendString(String message) {
 		try {

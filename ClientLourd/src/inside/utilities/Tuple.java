@@ -19,8 +19,8 @@ public class Tuple {
 	/**
 	 * Instancie un tuple
 	 *
-	 * @param Valeur du premier objet
-	 * @param Valeur du second objet
+	 * @param f Valeur du premier objet
+	 * @param s Valeur du second objet
 	 */
 	public Tuple(Object f, Object s) {
 		FIRST = f;

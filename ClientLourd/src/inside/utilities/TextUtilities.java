@@ -50,7 +50,7 @@ public class TextUtilities {
 	 * Récupère le numéro de ligne du curseur
 	 *
 	 * @param text           Texte dans lequel on recherche le numéro de ligne
-	 * @param carretPosition Position du curseur dans tout le texte
+	 * @param caretPosition Position du curseur dans tout le texte
 	 */
 	public static int getCarretLine(String text, int caretPosition) {
 		int begin = 0;

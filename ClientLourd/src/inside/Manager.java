@@ -104,7 +104,7 @@ public class Manager implements IConfig {
 	}
 	
 	/**
-	 * Retourne la liste des documents <id, nom>
+	 * Retourne la liste des documents par tuple (id,docuument)
 	 * @return Liste des documents
 	 */
 	synchronized public List<Tuple> getListDocuments() {

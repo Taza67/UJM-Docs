@@ -118,7 +118,7 @@ public class JEditorPanePerso extends JEditorPane implements IConfig {
 	/**
 	 * Modifie la référence au undomanager de l'application
 	 *
-	 * @param undomanager Nouvelle référence à un undomanager
+	 * @param uma undomanager Nouvelle référence à un undomanager
 	 */
 	public void setUndoManager(UndoManager uma) {
 		undoManager = uma;

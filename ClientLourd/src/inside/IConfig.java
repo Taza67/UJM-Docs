@@ -54,17 +54,15 @@ public interface IConfig {
 	int NO_ACTION_CODE = -1;
 	/**
 	 * Entier signifiant une demande de connexion d'utilisateur au serveur Client =>
-	 * REQUÊTE => Serveur
 	 */
 	int CONNECTION_REQUEST_CODE = 0;
 	/**
 	 * Entier signifiant une demande d'inscription d'utilisateur au serveur Client
-	 * => REQUÊTE => Serveur
 	 */
 	int SUBSCRIBTION_REQUEST_CODE = 1;
 	/**
 	 * Entier signifiant la demande de création d'un nouveau document par
-	 * l'application au serveur Client => REQUÊTE => Serveur
+	 * l'application au serveur
 	 */
 	int NEW_DOCUMENT_REQUEST_CODE = 2;
 	/**
@@ -74,27 +72,27 @@ public interface IConfig {
 	int LOAD_DOCUMENT_REQUEST_CODE = 3;
 	/**
 	 * Entier signifiant la demande de sauvegarde du document courant par
-	 * l'application au serveur Client => REQUÊTE => Serveur
+	 * l'application au serveur
 	 */
 	int SAVE_DOCUMENT_REQUEST_CODE = 4;
 	/**
 	 * Entier signifiant l'ajout de modification du document courant par
-	 * l'application au serveur Client => REQUÊTE => Serveur
+	 * l'application au serveur 
 	 */
 	int ADD_REQUEST_CODE = 5;
 	/**
 	 * Entier signifiant l'ajout de modification du document courant par
-	 * l'application au serveur Client => REQUÊTE => Serveur
+	 * l'application au serveur 
 	 */
 	int DELETE_REQUEST_CODE = 6;
 	/**
 	 * Entier signifiant la demande d'application de modification du document par le
-	 * serveur à l'application Client <= REQUÊTE <= Serveur
+	 * serveur à l'application Client
 	 */
 	int MODIFY_DOCUMENT_REQUEST_CODE = 5;
 	/**
 	 * Entier signifiant la demande d'application du déplacement d'un collaborateur
-	 * par le serveur à l'application Client <= REQUÊTE <= Serveur
+	 * par le serveur à l'application Client 
 	 */
 	int COLLABORATOR_MOVEMENT_APPLICATION_REQUEST_CODE = 7;
 

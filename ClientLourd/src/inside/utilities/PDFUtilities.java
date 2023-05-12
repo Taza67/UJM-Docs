@@ -3,10 +3,10 @@ package inside.utilities;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
+//import com.lowagie.text.Document;
+/*import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfWriter;*/
 
 /**
  * Classe implémentant des méthodes utiles au traitement du format pdf
