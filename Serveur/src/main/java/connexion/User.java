@@ -84,7 +84,7 @@ public class User implements Serializable {
 
 	/**
 	 * Change la valeur de l'identifiant de l'utilisateur
-	 * @param le nouvel identifiant de l'utilisateur
+	 * @param id le nouvel identifiant de l'utilisateur
 	 *
 	 * @see User#id
 	 */
@@ -92,7 +92,7 @@ public class User implements Serializable {
 
 	/**
 	 * Change la valeur de la position du curseur de l'utilisateur
-	 * @param la nouvelle position du curseur de l'utilisateur
+	 * @param position la nouvelle position du curseur de l'utilisateur
 	 *
 	 * @see User#position
 	 */
@@ -100,7 +100,7 @@ public class User implements Serializable {
 
 	/**
 	 * Change le pseudo de l'utilisateur
-	 * @param le nouveau pseudo de l'utilisateur
+	 * @param pseudo le nouveau pseudo de l'utilisateur
 	 *
 	 * @see User#pseudo
 	 */
@@ -108,7 +108,7 @@ public class User implements Serializable {
 
 	/**
 	 * Change le mot de passe de l'utilisateur
-	 * @param le nouveau mot de passe de l'utilisateur
+	 * @param password le nouveau mot de passe de l'utilisateur
 	 *
 	 * @see User#password
 	 */
@@ -116,7 +116,7 @@ public class User implements Serializable {
 
 	/**
 	 * Change le statut de l'uitilisateur
-	 * @param le nouveau de l'utilisateur (invité ou non)
+	 * @param state le nouveau de l'utilisateur (invité ou non)
 	 *
 	 * @see User#guest
 	 */
@@ -124,7 +124,7 @@ public class User implements Serializable {
 
 	/**
 	 * Modifie le numéro de page l'uitilisateur
-	 * @param le nouveau numéro de page de l'utilisateur
+	 * @param pageNum le nouveau numéro de page de l'utilisateur
 	 *
 	 * @see User#pageNum
 	 */
